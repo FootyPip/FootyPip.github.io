@@ -11,6 +11,13 @@ let gridState = [
 let usedClubs = new Set();
 let usedPlayers = new Set();
 
+const NATIONS_LIST = [
+  "Argentina","France","England","Brazil","Portugal","Spain","Netherlands","Germany","Italy","Croatia","Uruguay","Belgium","Switzerland","Morocco","Mexico","Japan","Senegal","Colombia","Austria","Denmark","Norway","Poland","South Korea","Ukraine","USA"
+];
+const OTHER_LIST = [
+  "UCL winner", "World cup winner", "Played in HNL"
+];
+
 // --- Tic-Tac-Toe Turn State ---
 let ticTurn = "X"; // X always starts
 
@@ -53,12 +60,6 @@ async function fetchClubs(mode = null) {
     } else {
         clubArray = clubsData["easy"];
     }
-const NATIONS_LIST = [
-  "Argentina","France","England","Brazil","Portugal","Spain","Netherlands","Germany","Italy","Croatia","Uruguay","Belgium","Switzerland","Morocco","Mexico","Japan","Senegal","Colombia","Austria","Denmark","Norway","Poland","South Korea","Ukraine","USA"
-];
-const OTHER_LIST = [
-  "UCL winner", "World cup winner", "Played in HNL"
-];
     // Return array of objects for compatibility, SORTED ALPHABETICALLY
     return clubArray
         .slice()
