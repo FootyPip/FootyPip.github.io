@@ -37,14 +37,27 @@ async function fetchClubs(mode = null) {
         const res = await fetch("data/clubs.json");
         clubsData = await res.json();
     }
-    // Determine mode key
-    let modeKey = "easy";
-    if (mode === "random-hard" || mode === "hard") modeKey = "hard";
-    else if (mode === "croatian-league" || mode === "hnl") modeKey = "hnl";
-    else if (mode === "random-easy" || mode === "easy" || mode === null) modeKey = "easy";
-    else if (mode === "manual") modeKey = "easy";
-    // Return array of objects for compatibility
-    return clubsData[modeKey].map(name => ({ name }));
+    let clubArray;
+    if (mode === "manual") {
+        // Combine and deduplicate 'hard' and 'hnl' clubs
+        clubArray = Array.from(
+            new Set([
+                ...clubsData["hard"],
+                ...clubsData["hnl"]
+            ])
+        );
+    } else if (mode === "random-hard" || mode === "hard") {
+        clubArray = clubsData["hard"];
+    } else if (mode === "croatian-league" || mode === "hnl") {
+        clubArray = clubsData["hnl"];
+    } else {
+        clubArray = clubsData["easy"];
+    }
+    // Return array of objects for compatibility, SORTED ALPHABETICALLY
+    return clubArray
+        .slice()
+        .sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}))
+        .map(name => ({ name }));
 }
 
 async function fetchPlayers(club = null) {
@@ -52,13 +65,20 @@ async function fetchPlayers(club = null) {
         const res = await fetch("data/players.json");
         playersData = await res.json();
     }
+    let playerList;
     if (club && club !== "CHOOSE CLUB" && playersData[club]) {
-        return playersData[club].map(name => ({ name }));
+        playerList = playersData[club];
+    } else {
+        // All unique players
+        const allPlayers = new Set();
+        Object.values(playersData).forEach(arr => arr.forEach(p => allPlayers.add(p)));
+        playerList = Array.from(allPlayers);
     }
-    // All unique players
-    const allPlayers = new Set();
-    Object.values(playersData).forEach(arr => arr.forEach(p => allPlayers.add(p)));
-    return Array.from(allPlayers).map(name => ({ name }));
+    // SORT alphabetically and return as [{name: ...}, ...]
+    return playerList
+        .slice()
+        .sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}))
+        .map(name => ({ name }));
 }
 
 async function fetchClubPositions(mode = "manual") {
@@ -309,6 +329,8 @@ async function populatePlayerModal(cell) {
     playerList.innerHTML = "";
     let players = await fetchPlayers();
     let availablePlayers = players.map(p => p.name).filter(p => !usedPlayers.has(p));
+    // SORT PLAYERS ALPHABETICALLY
+    availablePlayers = availablePlayers.slice().sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
     if (availablePlayers.length === 0) {
         let li = document.createElement("li");
         li.textContent = "No players available!";
