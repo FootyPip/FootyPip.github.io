@@ -368,3 +368,12 @@ h2 {
 .club-filter-btn:not(:last-child) {
     margin-right: 0;
 }
+.club-badge-in-list {
+    width: 34px !important;
+    height: 34px !important;
+    margin-right: 10px;
+    object-fit: contain;
+    display: inline-block;
+    vertical-align: middle;
+    background: transparent;
+}
