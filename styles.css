@@ -377,3 +377,10 @@ h2 {
     vertical-align: middle;
     background: transparent;
 }
+#clubList li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-start !important;
+    text-align: left !important;
+}
