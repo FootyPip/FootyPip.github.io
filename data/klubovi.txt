@@ -1,0 +1,86 @@
+Arsenal F.C.
+Aston Villa F.C.
+Blackburn Rovers F.C.
+Brentford F.C.
+Brighton & Hove Albion F.C.
+Burnley F.C.
+Chelsea F.C.
+Crystal Palace F.C.
+Derby County F.C.
+Everton F.C.
+Fulham F.C.
+Ipswich Town F.C.
+Leeds United F.C.
+Leicester City F.C.
+Liverpool F.C.
+Manchester City F.C.
+Manchester United F.C.
+Newcastle United F.C.
+Nottingham Forest F.C.
+Southampton F.C.
+Stoke City F.C.
+Tottenham Hotspur F.C.
+Watford F.C.
+West Bromwich Albion F.C.
+West Ham United F.C.
+Wolverhampton Wanderers F.C.
+FC Barcelona
+Real Betis
+Real Madrid CF
+Valencia CF
+Villarreal CF
+Lille OSC
+OGC Nice
+Olympique de Marseille
+Olympique Lyonnais
+Bayer 04 Leverkusen
+Borussia Dortmund
+Borussia Mönchengladbach
+Eintracht Frankfurt
+FC Augsburg
+FC Schalke 04
+Hamburger SV
+RB Leipzig
+SC Freiburg
+SV Werder Bremen
+TSG 1899 Hoffenheim
+VfB Stuttgart
+VfL Wolfsburg
+AEK Athens F.C.
+Olympiacos F.C.
+AC Milan
+ACF Fiorentina
+AS Roma
+Atalanta BC
+SS Lazio
+SSC Napoli
+Udinese Calcio
+PSV Eindhoven
+FC Porto
+Celtic F.C.
+Rangers F.C.
+FK Partizan
+FC Dynamo Kyiv
+FC Shakhtar Donetsk
+AFC Bournemouth
+Paris Saint-Germain FC
+Bologna FC 1909
+AFC Ajax
+PAOK FC
+Stade Rennais FC
+Girona FC
+Juventus FC
+Sevilla FC
+Real Sociedad
+FC Bayern Munich
+Atlético Madrid
+Sporting CP
+Red Star Belgrade
+S.L. Benfica
+Fenerbahçe S.K.
+Galatasaray S.K.
+Beşiktaş J.K.
+Parma Calcio 1913
+Feyenoord
+Athletic Bilbao
+Inter Milan
