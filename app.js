@@ -268,20 +268,17 @@ async function populateClubModal() {
 
     // --- Classify all clubs by type ---
     const clubsRaw = await fetchClubs(currentMode);
-    // clubsRaw is [{name: ...}, ...]
     let clubs = [], nations = [], others = [];
     clubsRaw.forEach(c => {
         if (NATIONS_LIST.includes(c.name)) nations.push(c.name);
         else if (OTHER_LIST.includes(c.name)) others.push(c.name);
         else clubs.push(c.name);
     });
-    // Sort all lists alphabetically (for consistency)
     clubs.sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
     nations.sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
     others.sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
 
     // --- Add filter buttons ---
-    // Remove previous filter buttons if any (by class)
     let oldBtnsDiv = clubList.parentElement.querySelector(".club-filter-buttons");
     if (oldBtnsDiv) oldBtnsDiv.remove();
 
@@ -301,11 +298,53 @@ async function populateClubModal() {
     // --- Show list based on selected type ---
     function showList(type) {
         clubList.innerHTML = "";
-        let srcList = type === "clubs" ? clubs : type === "nations" ? nations : others;
+        let srcList, placeholder;
+        if (type === "clubs") {
+            srcList = clubs;
+            placeholder = "Search club...";
+        } else if (type === "nations") {
+            srcList = nations;
+            placeholder = "Search nation...";
+        } else {
+            srcList = others;
+            placeholder = "Search...";
+        }
+        clubSearch.placeholder = placeholder;
+
         srcList.forEach(clubName => {
             if (usedClubs.has(clubName)) return;
             let li = document.createElement("li");
-            li.textContent = clubName;
+
+            // --- Badge logic ---
+            let badgeImg = document.createElement("img");
+            badgeImg.className = "club-badge club-badge-in-list";
+            badgeImg.style.width = "34px";
+            badgeImg.style.height = "34px";
+            badgeImg.style.objectFit = "contain";
+            badgeImg.style.marginRight = "10px";
+            badgeImg.style.verticalAlign = "middle";
+            badgeImg.style.background = "transparent";
+            badgeImg.style.display = "inline-block";
+            badgeImg.alt = clubName;
+
+            if (type === "clubs" || type === "nations") {
+                // Use name for badge
+                badgeImg.src = `badges/${clubName.toLowerCase()}.png`;
+                badgeImg.onerror = function() { this.src = "badges/default.png"; };
+            } else {
+                badgeImg.src = "badges/default.png";
+            }
+
+            li.style.display = "flex";
+            li.style.alignItems = "center";
+            li.style.gap = "10px";
+
+            li.appendChild(badgeImg);
+
+            let span = document.createElement("span");
+            span.textContent = clubName;
+            li.appendChild(span);
+
             li.onclick = async function() {
                 // Simulate the tentative club selection
                 let testTop = [...topClubs];
@@ -377,7 +416,6 @@ async function populateClubModal() {
         });
     };
 }
-
 // --- REWORK: Only show valid players for the cell! ---
 async function populatePlayerModal(cell) {
     playerSearch.value = ""; // <-- reset search at top!
