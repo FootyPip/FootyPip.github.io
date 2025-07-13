@@ -53,6 +53,12 @@ async function fetchClubs(mode = null) {
     } else {
         clubArray = clubsData["easy"];
     }
+const NATIONS_LIST = [
+  "Argentina","France","England","Brazil","Portugal","Spain","Netherlands","Germany","Italy","Croatia","Uruguay","Belgium","Switzerland","Morocco","Mexico","Japan","Senegal","Colombia","Austria","Denmark","Norway","Poland","South Korea","Ukraine","USA"
+];
+const OTHER_LIST = [
+  "UCL winner", "World cup winner", "Played in HNL"
+];
     // Return array of objects for compatibility, SORTED ALPHABETICALLY
     return clubArray
         .slice()
@@ -258,63 +264,112 @@ function getClubNameFromCell(cell) {
 async function populateClubModal() {
     clubSearch.value = ""; 
     clubList.innerHTML = "";
-    let clubs = await fetchClubs(currentMode);
-    let otherClubs, posType, posIdx;
-    if (currentClubCell.classList.contains('top')) {
-        posType = "top";
-        otherClubs = leftClubs;
-        posIdx = parseInt(currentClubCell.getAttribute('data-idx'));
-    } else {
-        posType = "left";
-        otherClubs = topClubs;
-        posIdx = parseInt(currentClubCell.getAttribute('data-idx'));
-    }
-    clubs.forEach(club => {
-        let clubName = club.name;
-        if (usedClubs.has(clubName)) return;
-        let li = document.createElement("li");
-        li.textContent = clubName;
-        li.onclick = async function() {
-            // Simulate the tentative club selection
-            let testTop = [...topClubs];
-            let testLeft = [...leftClubs];
-            if (posType === "top") testTop[posIdx] = clubName;
-            else testLeft[posIdx] = clubName;
 
-            // Check all intersections
-            let possible = true;
-            for (let row = 0; row < 3; ++row) {
-                for (let col = 0; col < 3; ++col) {
-                    let c1 = testTop[col];
-                    let c2 = testLeft[row];
-                    if (c1 !== "CHOOSE CLUB" && c2 !== "CHOOSE CLUB") {
-                        let ok = await clubsHaveIntersection(c1, c2);
-                        if (!ok) {
-                            Swal.fire({
-                                html: "<b>PLEASE, CHOOSE ANOTHER CLUB!</b><br>Beacuse there isn't a player that fits these two categories:<br><b>" + c1 + "</b> and <b>" + c2 + "</b>",
-                                icon: "warning",
-                                background: '#174e2c',
-                                color: '#ffffff'
-                            });
-                            return; // Immediately stop, don't set club
+    // --- Classify all clubs by type ---
+    const clubsRaw = await fetchClubs(currentMode);
+    // clubsRaw is [{name: ...}, ...]
+    let clubs = [], nations = [], others = [];
+    clubsRaw.forEach(c => {
+        if (NATIONS_LIST.includes(c.name)) nations.push(c.name);
+        else if (OTHER_LIST.includes(c.name)) others.push(c.name);
+        else clubs.push(c.name);
+    });
+    // Sort all lists alphabetically (for consistency)
+    clubs.sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
+    nations.sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
+    others.sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
+
+    // --- Add filter buttons ---
+    let btnsDiv = document.createElement("div");
+    btnsDiv.style.display = "flex";
+    btnsDiv.style.justifyContent = "space-between";
+    btnsDiv.style.marginBottom = "10px";
+    btnsDiv.style.gap = "6px";
+    btnsDiv.innerHTML = `
+        <button class="club-filter-btn active" data-type="clubs" style="flex:1;font-weight:bold">CLUBS</button>
+        <button class="club-filter-btn" data-type="nations" style="flex:1;font-weight:bold">NATIONS</button>
+        <button class="club-filter-btn" data-type="other" style="flex:1;font-weight:bold">OTHER</button>
+    `;
+    // Remove previous filter buttons if any
+    let prevBtns = clubList.parentElement.querySelector(".club-filter-btn");
+    if(prevBtns) {
+        let filterDiv = clubList.parentElement.querySelector('div[style*="club-filter-btn"]');
+        if(filterDiv) filterDiv.remove();
+    }
+    clubList.parentElement.insertBefore(btnsDiv, clubList);
+
+    // --- Show list based on selected type ---
+    function showList(type) {
+        clubList.innerHTML = "";
+        let srcList = type === "clubs" ? clubs : type === "nations" ? nations : others;
+        srcList.forEach(clubName => {
+            if (usedClubs.has(clubName)) return;
+            let li = document.createElement("li");
+            li.textContent = clubName;
+            li.onclick = async function() {
+                // Simulate the tentative club selection
+                let testTop = [...topClubs];
+                let testLeft = [...leftClubs];
+                let posType, posIdx;
+                if (currentClubCell.classList.contains('top')) {
+                    posType = "top";
+                    posIdx = parseInt(currentClubCell.getAttribute('data-idx'));
+                } else {
+                    posType = "left";
+                    posIdx = parseInt(currentClubCell.getAttribute('data-idx'));
+                }
+                if (posType === "top") testTop[posIdx] = clubName;
+                else testLeft[posIdx] = clubName;
+
+                // Check all intersections
+                let possible = true;
+                for (let row = 0; row < 3; ++row) {
+                    for (let col = 0; col < 3; ++col) {
+                        let c1 = testTop[col];
+                        let c2 = testLeft[row];
+                        if (c1 !== "CHOOSE CLUB" && c2 !== "CHOOSE CLUB") {
+                            let ok = await clubsHaveIntersection(c1, c2);
+                            if (!ok) {
+                                Swal.fire({
+                                    html: "<b>PLEASE, CHOOSE ANOTHER CLUB!</b><br>Beacuse there isn't a player that fits these two categories:<br><b>" + c1 + "</b> and <b>" + c2 + "</b>",
+                                    icon: "warning",
+                                    background: '#174e2c',
+                                    color: '#ffffff'
+                                });
+                                return; // Immediately stop, don't set club
+                            }
                         }
                     }
                 }
-            }
-            if (!possible) return; // Don't pick this club
+                if (!possible) return; // Don't pick this club
 
-            // Otherwise, accept the pick as before:
-            setClubCellWithBadgeAndName(currentClubCell, clubName);
-            usedClubs.add(clubName);
-            if (posType === "top") topClubs[posIdx] = clubName;
-            else leftClubs[posIdx] = clubName;
-            currentClubCell.onclick = null;
-            currentClubCell.style.cursor = "default";
-            hideModal(clubModal);
-            if (allClubsChosen()) unlockGridCells();
+                // Otherwise, accept the pick as before:
+                setClubCellWithBadgeAndName(currentClubCell, clubName);
+                usedClubs.add(clubName);
+                if (posType === "top") topClubs[posIdx] = clubName;
+                else leftClubs[posIdx] = clubName;
+                currentClubCell.onclick = null;
+                currentClubCell.style.cursor = "default";
+                hideModal(clubModal);
+                if (allClubsChosen()) unlockGridCells();
+            };
+            clubList.appendChild(li);
+        });
+    }
+
+    // --- Add filter logic ---
+    btnsDiv.querySelectorAll(".club-filter-btn").forEach(btn => {
+        btn.onclick = function() {
+            btnsDiv.querySelectorAll(".club-filter-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            showList(btn.getAttribute("data-type"));
         };
-        clubList.appendChild(li);
     });
+
+    // --- Initial load: show clubs ---
+    showList("clubs");
+
+    // --- Search logic ---
     clubSearch.oninput = function() {
         let v = normalizeStr(this.value);
         Array.from(clubList.children).forEach(li => {
