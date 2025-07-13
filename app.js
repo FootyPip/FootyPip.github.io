@@ -365,7 +365,7 @@ async function populateClubModal() {
                             let ok = await clubsHaveIntersection(c1, c2);
                             if (!ok) {
                                 Swal.fire({
-                                    html: "<b>PLEASE, CHOOSE ANOTHER CLUB!</b><br>Beacuse there isn't a player that fits these two categories:<br><b>" + c1 + "</b> and <b>" + c2 + "</b>",
+                                    html: "<b>PLEASE, CHOOSE ANOTHER CLUB!</b><br>There isn't a player that fits these two categories:<br><b>" + c1 + "</b> and <b>" + c2 + "</b>",
                                     icon: "warning",
                                     background: '#174e2c',
                                     color: '#ffffff'
@@ -479,9 +479,21 @@ function checkWin() {
 function showWin(winner) {
     setTimeout(() => {
         if (winner === "Draw") {
-            alert("It's a draw!");
+            Swal.fire({
+                title: "It's a draw!",
+                icon: "info",
+                background: '#174e2c',
+                color: '#ffffff',
+                confirmButtonColor: "#19d678"
+            });
         } else {
-            alert(`Player ${winner === "X" ? "✖" : "◯"} wins!`);
+            Swal.fire({
+                title: `Player ${winner === "X" ? "✖" : "◯"} wins!`,
+                icon: "success",
+                background: '#174e2c',
+                color: '#ffffff',
+                confirmButtonColor: "#19d678"
+            });
         }
         renderClubs(currentMode); // Reset board
         renderGrid();
