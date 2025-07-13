@@ -262,6 +262,17 @@ h2 {
     background: #19d678;
     color: #14341b;
 }
+#clubList {
+    text-align: left !important;
+}
+
+#clubList li {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    width: 100% !important;
+}
 
 .club-badge {
     width: 64px;
