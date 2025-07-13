@@ -405,9 +405,12 @@ async function populateClubModal() {
 
     // --- Search logic ---
     clubSearch.oninput = function() {
-        let v = normalizeStr(this.value);
+        const v = normalizeStr(this.value);
         Array.from(clubList.children).forEach(li => {
-            li.style.display = normalizeStr(li.textContent).includes(v) ? "" : "none";
+            // Find the span containing the name
+            const nameSpan = li.querySelector("span");
+            const clubText = nameSpan ? nameSpan.textContent : li.textContent;
+            li.style.display = normalizeStr(clubText).includes(v) ? "" : "none";
         });
     };
 }
