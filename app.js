@@ -377,26 +377,6 @@ async function populateClubModal() {
         });
     };
 }
-    // --- Add filter logic ---
-    btnsDiv.querySelectorAll(".club-filter-btn").forEach(btn => {
-        btn.onclick = function() {
-            btnsDiv.querySelectorAll(".club-filter-btn").forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-            showList(btn.getAttribute("data-type"));
-        };
-    });
-
-    // --- Initial load: show clubs ---
-    showList("clubs");
-
-    // --- Search logic ---
-    clubSearch.oninput = function() {
-        let v = normalizeStr(this.value);
-        Array.from(clubList.children).forEach(li => {
-            li.style.display = normalizeStr(li.textContent).includes(v) ? "" : "none";
-        });
-    };
-}
 
 // --- REWORK: Only show valid players for the cell! ---
 async function populatePlayerModal(cell) {
