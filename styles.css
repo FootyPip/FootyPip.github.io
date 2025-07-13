@@ -337,3 +337,34 @@ h2 {
     word-break: break-word;
     overflow-wrap: anywhere;
 }
+.club-filter-buttons {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.club-filter-btn {
+    background: #19d678;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.85rem 0.6rem;
+    font-size: 1.07rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.17s, color 0.17s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.09);
+    flex: 1 1 0px;
+    letter-spacing: 0.02em;
+    outline: none;
+}
+
+.club-filter-btn:hover,
+.club-filter-btn.active {
+    background: #29e98d;
+    color: #14341b;
+}
+
+.club-filter-btn:not(:last-child) {
+    margin-right: 0;
+}
