@@ -307,7 +307,7 @@ async function populateClubModal() {
             placeholder = "Search nation...";
         } else {
             srcList = others;
-            placeholder = "Search...";
+            placeholder = "Search other...";
         }
         clubSearch.placeholder = placeholder;
 
