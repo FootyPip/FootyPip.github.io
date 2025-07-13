@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FootyPip - Ball Knowladge Games</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>FOOTY TIC-TAC-TOE</h1>
+        <h2>Football-inspired twist on classic tic-tac-toe</h2>
+        <div class="mode-buttons">
+            <button class="mode-btn" id="manual">Manual Selection<br><span>Choose clubs yourself</span></button>
+            <button class="mode-btn" id="random-easy">Random Easy<br><span>Easy random clubs</span></button>
+            <button class="mode-btn" id="random-hard">Random Hard<br><span>Hard random clubs</span></button>
+            <button class="mode-btn" id="croatian-league">Croatian League<br><span>Croatian clubs only</span></button>
+        </div>
+        <div class="center-area">
+            <div class="status-bar-wrap">
+                <div id="turn-info-box" class="turn-info-box">
+                    <span id="turn-info"></span>
+                </div>
+                <button id="skip-turn-btn">Skip Turn</button>
+            </div>
+            <div class="board-grid-wrap" id="board-grid-wrap">
+                <!-- The title cell -->
+                <div class="title-cell">
+                    <img src="{{ url_for('static', filename='FootyPip.png') }}" alt="logo" style="max-width:90px; max-height:90px; display:block; margin:auto;">
+                </div>
+                <!-- Top clubs -->
+                <div class="club-cell top top-0" data-pos="top" data-idx="0">CHOOSE CLUB</div>
+                <div class="club-cell top top-1" data-pos="top" data-idx="1">CHOOSE CLUB</div>
+                <div class="club-cell top top-2" data-pos="top" data-idx="2">CHOOSE CLUB</div>
+                <!-- Left clubs -->
+                <div class="club-cell left left-0" data-pos="left" data-idx="0">CHOOSE CLUB</div>
+                <div class="club-cell left left-1" data-pos="left" data-idx="1">CHOOSE CLUB</div>
+                <div class="club-cell left left-2" data-pos="left" data-idx="2">CHOOSE CLUB</div>
+                <!-- Main grid 3x3 -->
+                <button class="cell r0c0" data-row="0" data-col="0"></button>
+                <button class="cell r0c1" data-row="0" data-col="1"></button>
+                <button class="cell r0c2" data-row="0" data-col="2"></button>
+                <button class="cell r1c0" data-row="1" data-col="0"></button>
+                <button class="cell r1c1" data-row="1" data-col="1"></button>
+                <button class="cell r1c2" data-row="1" data-col="2"></button>
+                <button class="cell r2c0" data-row="2" data-col="0"></button>
+                <button class="cell r2c1" data-row="2" data-col="1"></button>
+                <button class="cell r2c2" data-row="2" data-col="2"></button>
+            </div>
+        </div>
+        <div class="footer">
+            Click on a grid cell to select a player. The goal is to get three players in a row!
+        </div>
+    </div>
+
+    <!-- Modal for selecting club -->
+    <div id="clubModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeClubModal">&times;</span>
+            <h3>Choose a Club</h3>
+            <input type="text" id="clubSearch" placeholder="Search club...">
+            <ul id="clubList"></ul>
+        </div>
+    </div>
+
+    <!-- Modal for selecting player -->
+    <div id="playerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closePlayerModal">&times;</span>
+            <h3>Choose a Player</h3>
+            <input type="text" id="playerSearch" placeholder="Search player...">
+            <ul id="playerList"></ul>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
