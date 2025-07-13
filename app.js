@@ -327,13 +327,8 @@ async function populateClubModal() {
             badgeImg.style.display = "inline-block";
             badgeImg.alt = clubName;
 
-            if (type === "clubs" || type === "nations") {
-                // Use name for badge
-                badgeImg.src = `badges/${clubName.toLowerCase()}.png`;
-                badgeImg.onerror = function() { this.src = "badges/default.png"; };
-            } else {
-                badgeImg.src = "badges/default.png";
-            }
+            badgeImg.src = `badges/${clubName.toLowerCase()}.png`;
+            badgeImg.onerror = function() { this.src = "badges/default.png"; };
 
             li.style.display = "flex";
             li.style.alignItems = "center";
