@@ -236,13 +236,27 @@ h2 {
     max-height: 230px;
     overflow-y: auto;
 }
-#clubList li, #playerList li {
+#playerList li {
     padding: 0.7rem;
     border-radius: 7px;
     margin-bottom: 3px;
     background: #1d5632;
     cursor: pointer;
     transition: background 0.2s;
+}
+
+#clubList li {
+    padding: 0.7rem;
+    border-radius: 7px;
+    margin-bottom: 3px;
+    background: #1d5632;
+    cursor: pointer;
+    transition: background 0.2s;
+     display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-start !important;
+    text-align: left !important;
 }
 #clubList li:hover, #playerList li:hover {
     background: #19d678;
@@ -376,11 +390,4 @@ h2 {
     display: inline-block;
     vertical-align: middle;
     background: transparent;
-}
-#clubList li {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    justify-content: flex-start !important;
-    text-align: left !important;
 }
