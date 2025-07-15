@@ -13,7 +13,7 @@ let usedPlayers = new Set();
 let clubsData = null;
 let playersData = null;
 let allAvailablePlayers = null;
-
+let clubPlayersMap = {};
 
 const NATIONS_LIST = [
   "Argentina","France","England","Brazil","Portugal","Spain","Netherlands","Germany","Italy","Croatia","Uruguay","Belgium","Switzerland","Morocco","Mexico","Japan","Senegal","Colombia","Austria","Denmark","Norway","Poland","South Korea","Ukraine","USA"
@@ -41,7 +41,6 @@ function normalizeStr(str) {
 }
 
 // --- DATA LOADERS ---
-// Only ONE preloader!
 let dataReadyPromise = (async function preloadData() {
     await Promise.all([
         fetchClubs(),
@@ -101,51 +100,55 @@ async function prepareAllAvailablePlayers() {
     allAvailablePlayers = Array.from(allPlayers).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
 }
 
-async function fetchClubPositions(mode = "manual") {
-    // Only manual mode is truly supported in static mode
-    if (mode === "manual") {
-        return {
-            top: ["CHOOSE CATEGORY", "CHOOSE CATEGORY", "CHOOSE CATEGORY"],
-            left: ["CHOOSE CATEGORY", "CHOOSE CATEGORY", "CHOOSE CATEGORY"]
-        };
+// --- Club → Player Set Precompute ---
+function buildClubPlayersMap() {
+    clubPlayersMap = {};
+    for (const [club, players] of Object.entries(playersData)) {
+        clubPlayersMap[club] = new Set(players);
     }
+}
 
-    // For random modes, pick from clubs (ensure intersection for each cell)
+// --- FAST INTERSECTION CHECK ---
+function clubsHaveIntersectionSync(clubA, clubB) {
+    if (!clubA || !clubB || clubA === "CHOOSE CATEGORY" || clubB === "CHOOSE CATEGORY") return true;
+    const setA = clubPlayersMap[clubA];
+    const setB = clubPlayersMap[clubB];
+    if (!setA || !setB) return false;
+    for (const player of setA) {
+        if (setB.has(player)) return true;
+    }
+    return false;
+}
+
+// --- FAST RANDOM CLUBS ---
+function getRandomValidClubsSync(clubsList) {
     let tries = 0;
     while (tries < 30) {
-        let top = [];
-        let left = [];
-        let clubs = await fetchClubs(mode);
-        let clubNames = clubs.map(c => c.name);
-        // Shuffle
-        clubNames = clubNames.sort(() => Math.random() - 0.5);
-        top = clubNames.slice(0, 3);
-        left = clubNames.slice(3, 6);
-        // Check all intersections
+        let clubNames = clubsList.slice().sort(() => Math.random() - 0.5);
+        let top = clubNames.slice(0, 3);
+        let left = clubNames.slice(3, 6);
         let ok = true;
         for (let row = 0; row < 3 && ok; ++row) {
             for (let col = 0; col < 3 && ok; ++col) {
                 let c1 = top[col];
                 let c2 = left[row];
-                let intersection = await clubsHaveIntersection(c1, c2);
-                if (!intersection) ok = false;
+                if (!clubsHaveIntersectionSync(c1, c2)) ok = false;
             }
         }
         if (ok) return { top, left };
         tries++;
     }
-    // fallback
-    let clubs = await fetchClubs(mode);
-    let clubNames = clubs.map(c => c.name);
+    // fallback:
+    let clubNames = clubsList.slice();
     return {
         top: clubNames.slice(0, 3),
         left: clubNames.slice(3, 6)
     };
 }
 
-// --- Utility: Does there exist a player for both clubs? ---
+// --- Utility: Does there exist a player for both clubs? (async, only used in manual mode) ---
 async function clubsHaveIntersection(clubA, clubB) {
-    if (!clubA || !clubB || clubA === "CHOOSE CATEGORY" || clubB === "CHOOSE CATEGORY") return true; // Don't block empty/initial
+    if (!clubA || !clubB || clubA === "CHOOSE CATEGORY" || clubB === "CHOOSE CATEGORY") return true;
     let [playersA, playersB] = await Promise.all([
         fetchPlayers(clubA),
         fetchPlayers(clubB)
@@ -154,28 +157,43 @@ async function clubsHaveIntersection(clubA, clubB) {
     return playersB.some(p => setA.has(p.name));
 }
 
-// For random modes: Try picking clubs until a valid grid is found.
-async function getRandomValidClubs(mode) {
-    let tries = 0;
-    let data;
-    while (tries < 30) { // Try up to 30 times before giving up
-        data = await fetchClubPositions(mode);
-        let ok = true;
-        for (let row = 0; row < 3 && ok; ++row) {
-            for (let col = 0; col < 3 && ok; ++col) {
-                let c1 = data.top[col];
-                let c2 = data.left[row];
-                let fits = await clubsHaveIntersection(c1, c2);
-                if (!fits) ok = false;
-            }
-        }
-        if (ok) return data;
-        tries++;
+// --- Club Positions (manual/random) ---
+async function fetchClubPositions(mode = "manual") {
+    if (mode === "manual") {
+        return {
+            top: ["CHOOSE CATEGORY", "CHOOSE CATEGORY", "CHOOSE CATEGORY"],
+            left: ["CHOOSE CATEGORY", "CHOOSE CATEGORY", "CHOOSE CATEGORY"]
+        };
     }
-    alert("Could not find a valid club grid after multiple tries!");
-    // fallback: just return whatever, to not break UI
-    return await fetchClubPositions(mode);
+
+    // For random modes: Use fast sync version!
+    let clubs = await fetchClubs(mode);
+    let clubNames = clubs.map(c => c.name);
+    return getRandomValidClubsSync(clubNames);
 }
+
+// --- For random modes: Try picking clubs until a valid grid is found (NO LONGER USED, kept for reference only) ---
+// async function getRandomValidClubs(mode) {
+//     let tries = 0;
+//     let data;
+//     while (tries < 30) { // Try up to 30 times before giving up
+//         data = await fetchClubPositions(mode);
+//         let ok = true;
+//         for (let row = 0; row < 3 && ok; ++row) {
+//             for (let col = 0; col < 3 && ok; ++col) {
+//                 let c1 = data.top[col];
+//                 let c2 = data.left[row];
+//                 let fits = await clubsHaveIntersection(c1, c2);
+//                 if (!fits) ok = false;
+//             }
+//         }
+//         if (ok) return data;
+//         tries++;
+//     }
+//     alert("Could not find a valid club grid after multiple tries!");
+//     // fallback: just return whatever, to not break UI
+//     return await fetchClubPositions(mode);
+// }
 
 function setClubCellWithBadgeAndName(cell, clubName) {
     cell.innerHTML = "";
@@ -226,7 +244,8 @@ async function renderClubs(mode = "manual") {
         });
     } else {
         // RANDOM MODES - fill clubs from backend, but only if all intersections are valid
-        let data = await getRandomValidClubs(mode);
+        // Use new fast logic
+        let data = await fetchClubPositions(mode);
         topClubs = data.top;
         leftClubs = data.left;
         clubCellsTop.forEach((cell, i) => setClubCellWithBadgeAndName(cell, topClubs[i]));
@@ -287,14 +306,10 @@ function debounce(fn, delay) {
 }
 
 // --- Only show clubs not already chosen and not making impossible grids ---
-async function populateClubModal() {
+function populateClubModal() {
     clubSearch.value = "";
     clubList.innerHTML = "";
     
-    if (!clubsData) {
-        const res = await fetch("data/clubs.json");
-        clubsData = await res.json();
-    }
     const hardClubs = clubsData["hard"];
     const hnlClubs = clubsData["hnl"];
     function filterRealClubs(arr) {
@@ -325,7 +340,6 @@ async function populateClubModal() {
     `;
     clubList.parentElement.insertBefore(btnsDiv, clubList);
 
-    // --- Focus search bar on open ---
     setTimeout(() => clubSearch.focus(), 0);
 
     let currentIndex = 0; // for keyboard navigation
@@ -353,7 +367,6 @@ async function populateClubModal() {
         visibleClubs = srcList.filter(clubName =>
             !usedClubs.has(clubName) &&
             clubName.toLowerCase().includes(searchQuery)
-        
         );
 
         clubList.innerHTML = "";
@@ -383,7 +396,7 @@ async function populateClubModal() {
             span.textContent = clubName;
             li.appendChild(span);
 
-            li.onclick = async function() {
+            li.onclick = function() {
                 // Simulate the tentative club selection
                 let testTop = [...topClubs];
                 let testLeft = [...leftClubs];
@@ -398,14 +411,14 @@ async function populateClubModal() {
                 if (posType === "top") testTop[posIdx] = clubName;
                 else testLeft[posIdx] = clubName;
 
-                // Check all intersections
+                // Check all intersections (sync, instant)
                 let possible = true;
-                for (let row = 0; row < 3; ++row) {
-                    for (let col = 0; col < 3; ++col) {
+                for (let row = 0; row < 3 && possible; ++row) {
+                    for (let col = 0; col < 3 && possible; ++col) {
                         let c1 = testTop[col];
                         let c2 = testLeft[row];
                         if (c1 !== "CHOOSE CATEGORY" && c2 !== "CHOOSE CATEGORY") {
-                            let ok = await clubsHaveIntersection(c1, c2);
+                            let ok = clubsHaveIntersectionSync(c1, c2);
                             if (!ok) {
                                 Swal.fire({
                                     html: "<b>PLEASE, CHOOSE ANOTHER CATEGORY!</b><br>There isn't a player that fits these two categories:<br><b>" + c1 + "</b> and <b>" + c2 + "</b>",
@@ -413,12 +426,12 @@ async function populateClubModal() {
                                     background: '#174e2c',
                                     color: '#ffffff'
                                 });
-                                return; // Immediately stop, don't set club
+                                possible = false;
                             }
                         }
                     }
                 }
-                if (!possible) return; // Don't pick this club
+                if (!possible) return;
 
                 setClubCellWithBadgeAndName(currentClubCell, clubName);
                 usedClubs.add(clubName);
@@ -431,8 +444,7 @@ async function populateClubModal() {
             };
             clubList.appendChild(li);
         });
-        clubList.scrollTop = 0
-        // Reset selection
+        clubList.scrollTop = 0;
         currentIndex = -1;
         updateActiveListItem();
     }
@@ -449,7 +461,6 @@ async function populateClubModal() {
 
     clubSearch.oninput = function() {
         renderList(currentListType);
-        // After search input, do not highlight any result
         currentIndex = 0;
         updateActiveListItem();
     };
@@ -460,7 +471,7 @@ async function populateClubModal() {
         if (e.key === "ArrowDown") {
             e.preventDefault();
             if (currentIndex === -1) {
-                currentIndex = 0; // highlight first on first arrow down
+                currentIndex = 0;
             } else {
                 currentIndex = (currentIndex + 1) % visibleClubs.length;
             }
@@ -470,7 +481,7 @@ async function populateClubModal() {
         } else if (e.key === "ArrowUp") {
             e.preventDefault();
             if (currentIndex === -1) {
-                currentIndex = visibleClubs.length - 1; // highlight last on first arrow up
+                currentIndex = visibleClubs.length - 1;
             } else {
                 currentIndex = (currentIndex - 1 + visibleClubs.length) % visibleClubs.length;
             }
@@ -489,9 +500,9 @@ async function populateClubModal() {
         btn.onclick = function() {
             btnsDiv.querySelectorAll(".club-filter-btn").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
-            clubSearch.value = ""; // <-- Reset search bar on category change
+            clubSearch.value = "";
             renderList(btn.getAttribute("data-type"));
-            setTimeout(() => clubSearch.focus(), 0); // Focus search bar after rendering new list
+            setTimeout(() => clubSearch.focus(), 0);
         };
     });
 
@@ -615,27 +626,40 @@ function checkWin() {
 }
 function showWin(winner) {
     setTimeout(() => {
+        let title, icon;
         if (winner === "Draw") {
-            Swal.fire({
-                title: "It's a draw!",
-                icon: "info",
-                background: '#174e2c',
-                color: '#ffffff',
-                confirmButtonColor: "#19d678"
-            });
+            title = "It's a draw!";
+            icon = "info";
         } else {
-            Swal.fire({
-                title: `Player ${winner === "X" ? "✖" : "◯"} wins!`,
-                icon: "success",
-                background: '#174e2c',
-                color: '#ffffff',
-                confirmButtonColor: "#19d678"
-            });
+            title = `Player ${winner === "X" ? "✖" : "◯"} wins!`;
+            icon = "success";
         }
-        renderClubs(currentMode); // Reset board
-        renderGrid();
-        ticTurn = "X";
-        updateTurnInfo();
+        Swal.fire({
+            title: title,
+            icon: icon,
+            background: '#174e2c',
+            color: '#ffffff',
+            confirmButtonColor: "#19d678",
+            showCancelButton: true,
+            confirmButtonText: "New Round",
+            cancelButtonText: "Start Menu"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                renderClubs(currentMode); // Start new round
+                renderGrid();
+                ticTurn = "X";
+                updateTurnInfo();
+            } else {
+                // Go to start menu: reset to manual mode and reset UI
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                document.getElementById('manual').classList.add('active');
+                currentMode = "manual";
+                renderClubs(currentMode);
+                renderGrid();
+                ticTurn = "X";
+                updateTurnInfo();
+            }
+        });
     }, 100);
 }
 
@@ -738,11 +762,48 @@ window.onclick = (event) => {
 };
 
 // --- INIT ---
+
+// --- LOADING OVERLAY ---
+// Create loading overlay and spinner
+const loadingOverlay = document.createElement('div');
+loadingOverlay.id = 'loading-overlay';
+loadingOverlay.style.position = 'fixed';
+loadingOverlay.style.top = '0';
+loadingOverlay.style.left = '0';
+loadingOverlay.style.width = '100vw';
+loadingOverlay.style.height = '100vh';
+loadingOverlay.style.background = 'rgba(23, 78, 44, 0.95)';
+loadingOverlay.style.display = 'flex';
+loadingOverlay.style.flexDirection = 'column';
+loadingOverlay.style.justifyContent = 'center';
+loadingOverlay.style.alignItems = 'center';
+loadingOverlay.style.zIndex = '9999';
+loadingOverlay.innerHTML = `
+  <div style="display:flex;flex-direction:column;align-items:center;gap:24px;">
+    <div class="spinner" style="width:64px;height:64px;border:8px solid #19d678;border-top:8px solid #fff;border-radius:50%;animation:spin 1s linear infinite;"></div>
+    <div style="color:#fff;font-size:2rem;font-weight:bold;letter-spacing:2px;">Loading...</div>
+  </div>
+`;
+document.body.appendChild(loadingOverlay);
+
+// Add spinner animation style
+const style = document.createElement('style');
+style.innerHTML = `
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}`;
+document.head.appendChild(style);
+
+// Show loading overlay until data is ready and UI is rendered
 dataReadyPromise.then(() => {
+    buildClubPlayersMap();
     prepareAllAvailablePlayers().then(() => {
         renderClubs();
         renderGrid();
         ticTurn = "X";
         updateTurnInfo();
+        // Hide loading overlay
+        loadingOverlay.style.display = 'none';
     });
 });
