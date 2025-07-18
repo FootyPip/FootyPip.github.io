@@ -1,6 +1,6 @@
 let currentClubCell = null;
 let currentGridCell = null;
-let currentMode = "manual"; // default
+let currentMode = "manual";
 let topClubs = [];
 let leftClubs = [];
 let gridState = [
@@ -10,27 +10,39 @@ let gridState = [
 ];
 let usedClubs = new Set();
 let usedPlayers = new Set();
-let clubsData = null;
-let playersData = null;
-let allAvailablePlayers = null;
-let clubPlayersMap = {};
 
-const NATIONS_LIST = [
-  "Argentina","France","England","Brazil","Portugal","Spain","Netherlands","Germany","Italy","Croatia","Uruguay","Belgium","Switzerland","Morocco","Mexico","Japan","Senegal","Colombia","Austria","Denmark","Norway","Poland","South Korea","Ukraine","USA"
-];
-const OTHER_LIST = [
-  "UCL winner", "World cup winner", "Played in HNL"
-];
+let categoriesData = null;
+let clubNationalityPlayers = null;
+let playerIdList = null; // array of player objects
+let playerIdMap = {}; // id → player object
+let allAvailablePlayerIds = null; // array of all player IDs
+let categoryPlayersMap = {}; // category → Set of player IDs
 
-// --- Tic-Tac-Toe Turn State ---
-let ticTurn = "X"; // X always starts
+let nationsList = [];
+let otherList = [];
+
+let scoreX = 0;
+let scoreO = 0;
+
+let ticTurn = "X";
 
 function updateTurnInfo() {
-    document.getElementById("turn-info").innerHTML = 
-        `Turn: <span class="turn-symbol">${ticTurn === "X" ? "✖" : "◯"}</span>`;
+    const symbolImg = ticTurn === "X"
+        ? `<img src="signs/x.png" alt="X" class="turn-img"/>`
+        : `<img src="signs/o.png" alt="O" class="turn-img"/>`;
+    document.getElementById("turn-info").innerHTML =
+        `<span class="turn-label">Turn:</span>${symbolImg}`;
 }
-updateTurnInfo()
-// Skip turn logic
+updateTurnInfo();
+
+function updateScoreInfo() {
+    const xImg = `<img src="signs/x.png" alt="X" class="turn-img"/>`;
+    const oImg = `<img src="signs/o.png" alt="O" class="turn-img"/>`;
+    document.getElementById("score-info").innerHTML =
+        `${xImg} ${scoreX} - ${scoreO} ${oImg}`;
+}
+updateScoreInfo();
+
 document.getElementById("skip-turn-btn").onclick = function() {
     ticTurn = ticTurn === "X" ? "O" : "X";
     updateTurnInfo();
@@ -43,157 +55,128 @@ function normalizeStr(str) {
 // --- DATA LOADERS ---
 let dataReadyPromise = (async function preloadData() {
     await Promise.all([
-        fetchClubs(),
-        fetchPlayers()
+        fetchCategories(),
+        fetchClubNationalityPlayers(),
+        fetchPlayerIdList()
     ]);
+    extractSpecialListsFromCategories();
+    buildCategoryPlayersMap();
+    await prepareAllAvailablePlayers();
 })();
 
-async function fetchClubs(mode = null) {
-    if (!clubsData) {
-        const res = await fetch("data/clubs.json");
-        clubsData = await res.json();
+async function fetchCategories() {
+    if (!categoriesData) {
+        const res = await fetch("data/categories.json");
+        categoriesData = await res.json();
     }
-    let clubArray;
-    if (mode === "manual") {
-        clubArray = Array.from(
-            new Set([
-                ...clubsData["hard"],
-                ...clubsData["hnl"]
-            ])
-        );
-    } else if (mode === "random-hard" || mode === "hard") {
-        clubArray = clubsData["hard"];
-    } else if (mode === "croatian-league" || mode === "hnl") {
-        clubArray = clubsData["hnl"];
-    } else {
-        clubArray = clubsData["easy"];
+    return categoriesData;
+}
+async function fetchClubNationalityPlayers() {
+    if (!clubNationalityPlayers) {
+        const res = await fetch("data/clubs_and_nationalities_players.json");
+        clubNationalityPlayers = await res.json();
     }
-    return clubArray
-        .slice()
-        .sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}))
-        .map(name => ({ name }));
+    return clubNationalityPlayers;
+}
+async function fetchPlayerIdList() {
+    if (!playerIdList) {
+        const res = await fetch("data/players_ids.json");
+        playerIdList = await res.json();
+        playerIdMap = {};
+        for (const player of playerIdList) {
+            playerIdMap[player.id] = player;
+        }
+    }
+    return playerIdList;
 }
 
-async function fetchPlayers(club = null) {
-    if (!playersData) {
-        const res = await fetch("data/players.json");
-        playersData = await res.json();
+function extractSpecialListsFromCategories() {
+    nationsList = Array.isArray(categoriesData.nations) ? categoriesData.nations : [];
+    otherList = Array.isArray(categoriesData.other) ? categoriesData.other : [];
+}
+
+function buildCategoryPlayersMap() {
+    categoryPlayersMap = {};
+    for (const [category, playerIds] of Object.entries(clubNationalityPlayers)) {
+        categoryPlayersMap[category] = new Set(playerIds);
     }
-    let playerList;
-    if (club && club !== "CHOOSE CATEGORY" && playersData[club]) {
-        playerList = playersData[club];
-    } else {
-        const allPlayers = new Set();
-        Object.values(playersData).forEach(arr => arr.forEach(p => allPlayers.add(p)));
-        playerList = Array.from(allPlayers);
-    }
-    return playerList
-        .slice()
-        .sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}))
-        .map(name => ({ name }));
 }
 
 async function prepareAllAvailablePlayers() {
-    await dataReadyPromise;
-    const allPlayers = new Set();
-    Object.values(playersData).forEach(arr => arr.forEach(p => allPlayers.add(p)));
-    allAvailablePlayers = Array.from(allPlayers).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+    await fetchPlayerIdList();
+    allAvailablePlayerIds = playerIdList.map(player => player.id);
 }
 
-// --- Club → Player Set Precompute ---
-function buildClubPlayersMap() {
-    clubPlayersMap = {};
-    for (const [club, players] of Object.entries(playersData)) {
-        clubPlayersMap[club] = new Set(players);
+// --- Fetch categories (was clubs) ---
+async function fetchCategoriesList(mode = null) {
+    await fetchCategories();
+    let catArray;
+    if (mode === "manual") {
+        catArray = Array.from(
+            new Set([
+                ...categoriesData["hard"],
+                ...categoriesData["hnl"]
+            ])
+        );
+    } else if (mode === "random-hard" || mode === "hard") {
+        catArray = categoriesData["hard"];
+    } else if (mode === "croatian-league" || mode === "hnl") {
+        catArray = categoriesData["hnl"];
+    } else {
+        catArray = categoriesData["easy"];
     }
+    return catArray
+        .slice()
+        .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
+        .map(name => ({ name }));
 }
 
-// --- FAST INTERSECTION CHECK ---
-function clubsHaveIntersectionSync(clubA, clubB) {
-    if (!clubA || !clubB || clubA === "CHOOSE CATEGORY" || clubB === "CHOOSE CATEGORY") return true;
-    const setA = clubPlayersMap[clubA];
-    const setB = clubPlayersMap[clubB];
+function categoriesHaveIntersectionSync(catA, catB) {
+    if (!catA || !catB || catA === "CHOOSE CATEGORY" || catB === "CHOOSE CATEGORY") return true;
+    const setA = categoryPlayersMap[catA];
+    const setB = categoryPlayersMap[catB];
     if (!setA || !setB) return false;
-    for (const player of setA) {
-        if (setB.has(player)) return true;
+    for (const playerId of setA) {
+        if (setB.has(playerId)) return true;
     }
     return false;
 }
 
-// --- FAST RANDOM CLUBS ---
-function getRandomValidClubsSync(clubsList) {
+function getRandomValidCategoriesSync(categoriesList) {
     let tries = 0;
     while (tries < 30) {
-        let clubNames = clubsList.slice().sort(() => Math.random() - 0.5);
-        let top = clubNames.slice(0, 3);
-        let left = clubNames.slice(3, 6);
+        let catNames = categoriesList.slice().sort(() => Math.random() - 0.5);
+        let top = catNames.slice(0, 3);
+        let left = catNames.slice(3, 6);
         let ok = true;
         for (let row = 0; row < 3 && ok; ++row) {
             for (let col = 0; col < 3 && ok; ++col) {
                 let c1 = top[col];
                 let c2 = left[row];
-                if (!clubsHaveIntersectionSync(c1, c2)) ok = false;
+                if (!categoriesHaveIntersectionSync(c1, c2)) ok = false;
             }
         }
         if (ok) return { top, left };
         tries++;
     }
-    // fallback:
-    let clubNames = clubsList.slice();
+    let catNames = categoriesList.slice();
     return {
-        top: clubNames.slice(0, 3),
-        left: clubNames.slice(3, 6)
+        top: catNames.slice(0, 3),
+        left: catNames.slice(3, 6)
     };
 }
 
-// --- Utility: Does there exist a player for both clubs? (async, only used in manual mode) ---
-async function clubsHaveIntersection(clubA, clubB) {
-    if (!clubA || !clubB || clubA === "CHOOSE CATEGORY" || clubB === "CHOOSE CATEGORY") return true;
-    let [playersA, playersB] = await Promise.all([
-        fetchPlayers(clubA),
-        fetchPlayers(clubB)
-    ]);
-    let setA = new Set(playersA.map(p => p.name));
-    return playersB.some(p => setA.has(p.name));
-}
-
-// --- Club Positions (manual/random) ---
-async function fetchClubPositions(mode = "manual") {
+async function fetchCategoryPositions(mode = "manual") {
     if (mode === "manual") {
         return {
             top: ["CHOOSE CATEGORY", "CHOOSE CATEGORY", "CHOOSE CATEGORY"],
             left: ["CHOOSE CATEGORY", "CHOOSE CATEGORY", "CHOOSE CATEGORY"]
         };
     }
-
-    // For random modes: Use fast sync version!
-    let clubs = await fetchClubs(mode);
-    let clubNames = clubs.map(c => c.name);
-    return getRandomValidClubsSync(clubNames);
+    let cats = await fetchCategoriesList(mode);
+    let catNames = cats.map(c => c.name);
+    return getRandomValidCategoriesSync(catNames);
 }
-
-// --- For random modes: Try picking clubs until a valid grid is found (NO LONGER USED, kept for reference only) ---
-// async function getRandomValidClubs(mode) {
-//     let tries = 0;
-//     let data;
-//     while (tries < 30) { // Try up to 30 times before giving up
-//         data = await fetchClubPositions(mode);
-//         let ok = true;
-//         for (let row = 0; row < 3 && ok; ++row) {
-//             for (let col = 0; col < 3 && ok; ++col) {
-//                 let c1 = data.top[col];
-//                 let c2 = data.left[row];
-//                 let fits = await clubsHaveIntersection(c1, c2);
-//                 if (!fits) ok = false;
-//             }
-//         }
-//         if (ok) return data;
-//         tries++;
-//     }
-//     alert("Could not find a valid club grid after multiple tries!");
-//     // fallback: just return whatever, to not break UI
-//     return await fetchClubPositions(mode);
-// }
 
 function setClubCellWithBadgeAndName(cell, clubName) {
     cell.innerHTML = "";
@@ -222,12 +205,10 @@ async function renderClubs(mode = "manual") {
     usedClubs = new Set();
 
     if (mode === "manual") {
-        // Reset to "CHOOSE CATEGORY"
         topClubs = ["CHOOSE CATEGORY", "CHOOSE CATEGORY", "CHOOSE CATEGORY"];
         leftClubs = ["CHOOSE CATEGORY", "CHOOSE CATEGORY", "CHOOSE CATEGORY"];
         clubCellsTop.forEach((cell, i) => setClubCellWithBadgeAndName(cell, "CHOOSE CATEGORY"));
         clubCellsLeft.forEach((cell, i) => setClubCellWithBadgeAndName(cell, "CHOOSE CATEGORY"));
-        // Enable club picking
         document.querySelectorAll('.club-cell.top, .club-cell.left').forEach(cell => {
             if (cell.textContent === "CHOOSE CATEGORY") {
                 cell.onclick = function() {
@@ -243,14 +224,11 @@ async function renderClubs(mode = "manual") {
             }
         });
     } else {
-        // RANDOM MODES - fill clubs from backend, but only if all intersections are valid
-        // Use new fast logic
-        let data = await fetchClubPositions(mode);
+        let data = await fetchCategoryPositions(mode);
         topClubs = data.top;
         leftClubs = data.left;
         clubCellsTop.forEach((cell, i) => setClubCellWithBadgeAndName(cell, topClubs[i]));
         clubCellsLeft.forEach((cell, i) => setClubCellWithBadgeAndName(cell, leftClubs[i]));
-        // Lock club cells
         document.querySelectorAll('.club-cell.top, .club-cell.left').forEach(cell => {
             cell.onclick = null;
             cell.style.cursor = "default";
@@ -274,27 +252,18 @@ async function renderGrid() {
         cell.disabled = false;
         cell.style.cursor = "pointer";
         cell.onclick = function() {
-            // In manual mode: block until all clubs chosen
             if (currentMode === "manual" && !allClubsChosen()) {
                 return;
             }
-            // Don't allow click if already locked:
             if (cell.hasAttribute("data-locked")) return;
             currentGridCell = cell;
             showModal(playerModal);
             populatePlayerModal(cell);
         };
     });
-    // In manual mode: lock all grid cells until clubs chosen
     if (currentMode === "manual" && !allClubsChosen()) {
         lockGridCells();
     }
-}
-
-function getClubNameFromCell(cell) {
-    if (cell.textContent === "CHOOSE CATEGORY" || cell.textContent === "") return null;
-    let span = cell.querySelector(".club-name-under-badge");
-    return span ? span.textContent : null;
 }
 
 function debounce(fn, delay) {
@@ -309,20 +278,21 @@ function debounce(fn, delay) {
 function populateClubModal() {
     clubSearch.value = "";
     clubList.innerHTML = "";
-    
-    const hardClubs = clubsData["hard"];
-    const hnlClubs = clubsData["hnl"];
-    function filterRealClubs(arr) {
-        return arr.filter(
-            name => !NATIONS_LIST.includes(name) && !OTHER_LIST.includes(name)
-        );
-    }
-    const clubs = filterRealClubs(hardClubs).sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
-    const hnl = filterRealClubs(hnlClubs).sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
-    const nations = hardClubs.filter(c => NATIONS_LIST.includes(c)).sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
-    const others = hardClubs.filter(c => OTHER_LIST.includes(c)).sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
 
-    // --- Add filter buttons (always above clubList, never replacing it) ---
+    // clubs is the union of all elements in easy and hard but not in nationsList
+    const easyClubs = categoriesData["easy"] || [];
+    const hardClubs = categoriesData["hard"] || [];
+    let clubsSet = new Set([...easyClubs, ...hardClubs]);
+    nationsList.forEach(nation => clubsSet.delete(nation));
+    let clubs = Array.from(clubsSet).sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
+    // hnl clubs should also be minus nations
+    const hnlClubs = (categoriesData["hnl"] || []).filter(name => !nationsList.includes(name))
+        .sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
+    // nations list for modal
+    const nations = nationsList.slice().sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
+    // others (from otherList)
+    const others = (otherList || []).slice().sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
+
     let oldBtnsDiv = clubList.parentElement.querySelector(".club-filter-buttons");
     if (oldBtnsDiv) oldBtnsDiv.remove();
 
@@ -342,9 +312,21 @@ function populateClubModal() {
 
     setTimeout(() => clubSearch.focus(), 0);
 
-    let currentIndex = 0; // for keyboard navigation
+    let currentIndex = 0;
+    let mouseActiveIndex = -1;
+    let mouseHovering = false;
     let currentListType = "clubs";
     let visibleClubs = [];
+
+    function updateActiveListItem() {
+        Array.from(clubList.children).forEach((li, idx) => {
+            if (mouseActiveIndex > -1 && mouseHovering) {
+                li.classList.toggle("active", idx === mouseActiveIndex);
+            } else {
+                li.classList.toggle("active", idx === currentIndex && !mouseHovering);
+            }
+        });
+    }
 
     function renderList(type) {
         currentListType = type;
@@ -353,7 +335,7 @@ function populateClubModal() {
             srcList = clubs;
             clubSearch.placeholder = "Search club...";
         } else if (type === "hnl") {
-            srcList = hnl;
+            srcList = hnlClubs;
             clubSearch.placeholder = "Search HNL club...";
         } else if (type === "nations") {
             srcList = nations;
@@ -362,7 +344,6 @@ function populateClubModal() {
             srcList = others;
             clubSearch.placeholder = "Search other...";
         }
-
         const searchQuery = clubSearch.value.trim().toLowerCase();
         visibleClubs = srcList.filter(clubName =>
             !usedClubs.has(clubName) &&
@@ -397,7 +378,6 @@ function populateClubModal() {
             li.appendChild(span);
 
             li.onclick = function() {
-                // Simulate the tentative club selection
                 let testTop = [...topClubs];
                 let testLeft = [...leftClubs];
                 let posType, posIdx;
@@ -411,14 +391,13 @@ function populateClubModal() {
                 if (posType === "top") testTop[posIdx] = clubName;
                 else testLeft[posIdx] = clubName;
 
-                // Check all intersections (sync, instant)
                 let possible = true;
                 for (let row = 0; row < 3 && possible; ++row) {
                     for (let col = 0; col < 3 && possible; ++col) {
                         let c1 = testTop[col];
                         let c2 = testLeft[row];
                         if (c1 !== "CHOOSE CATEGORY" && c2 !== "CHOOSE CATEGORY") {
-                            let ok = clubsHaveIntersectionSync(c1, c2);
+                            let ok = categoriesHaveIntersectionSync(c1, c2);
                             if (!ok) {
                                 Swal.fire({
                                     html: "<b>PLEASE, CHOOSE ANOTHER CATEGORY!</b><br>There isn't a player that fits these two categories:<br><b>" + c1 + "</b> and <b>" + c2 + "</b>",
@@ -442,32 +421,54 @@ function populateClubModal() {
                 hideModal(clubModal);
                 if (allClubsChosen()) unlockGridCells();
             };
+
+            li.onmouseenter = function () {
+                mouseActiveIndex = idx;
+                mouseHovering = true;
+                updateActiveListItem();
+            };
+            li.onmouseleave = function () {
+                mouseActiveIndex = -1;
+                mouseHovering = false;
+                updateActiveListItem();
+            };
             clubList.appendChild(li);
         });
-        clubList.scrollTop = 0;
-        currentIndex = -1;
+        // highlight first element if exists and not hovering
+        currentIndex = (visibleClubs.length > 0 && clubSearch.value.trim() !== "") ? 0 : -1;
+        mouseActiveIndex = -1;
+        mouseHovering = false;
         updateActiveListItem();
-    }
-
-    function updateActiveListItem() {
-        Array.from(clubList.children).forEach((li, idx) => {
-            if (idx === currentIndex) {
-                li.classList.add("active");
-            } else {
-                li.classList.remove("active");
-            }
-        });
+        // Remove highlight from all when mouse leaves the list area
+        clubList.onmouseleave = function() {
+            mouseActiveIndex = -1;
+            mouseHovering = false;
+            currentIndex = -1;
+            updateActiveListItem();
+        };
+        clubList.onmouseenter = function() {};
     }
 
     clubSearch.oninput = function() {
         renderList(currentListType);
-        currentIndex = 0;
+        clubList.onmouseleave = function() {
+            mouseActiveIndex = -1;
+            mouseHovering = false;
+            currentIndex = -1; // No highlight until search changes again
+            updateActiveListItem();
+        if (clubSearch.value.trim() !== "" && visibleClubs.length > 0) {
+            currentIndex = 0;
+        } else {
+            currentIndex = -1;
+        }
+        mouseActiveIndex = -1;
+        mouseHovering = false;
         updateActiveListItem();
+};
     };
 
     clubSearch.onkeydown = function(e) {
         if (!visibleClubs.length) return;
-
         if (e.key === "ArrowDown") {
             e.preventDefault();
             if (currentIndex === -1) {
@@ -475,6 +476,8 @@ function populateClubModal() {
             } else {
                 currentIndex = (currentIndex + 1) % visibleClubs.length;
             }
+            mouseActiveIndex = -1;
+            mouseHovering = false;
             updateActiveListItem();
             let li = clubList.children[currentIndex];
             if (li) li.scrollIntoView({block: "nearest"});
@@ -485,13 +488,16 @@ function populateClubModal() {
             } else {
                 currentIndex = (currentIndex - 1 + visibleClubs.length) % visibleClubs.length;
             }
+            mouseActiveIndex = -1;
+            mouseHovering = false;
             updateActiveListItem();
             let li = clubList.children[currentIndex];
             if (li) li.scrollIntoView({block: "nearest"});
         } else if (e.key === "Enter") {
             e.preventDefault();
-            if (currentIndex >= 0 && clubList.children[currentIndex]) {
-                clubList.children[currentIndex].click();
+            let chosenIdx = (mouseHovering && mouseActiveIndex > -1) ? mouseActiveIndex : currentIndex;
+            if (chosenIdx >= 0 && clubList.children[chosenIdx]) {
+                clubList.children[chosenIdx].click();
             }
         }
     };
@@ -502,21 +508,44 @@ function populateClubModal() {
             btn.classList.add("active");
             clubSearch.value = "";
             renderList(btn.getAttribute("data-type"));
+            clubList.onmouseleave = function() {
+                mouseActiveIndex = -1;
+                mouseHovering = false;
+                currentIndex = -1; // No highlight until search changes again
+                updateActiveListItem();
+            };
             setTimeout(() => clubSearch.focus(), 0);
         };
     });
 
     renderList("clubs");
+        clubList.onmouseleave = function() {
+        mouseActiveIndex = -1;
+        mouseHovering = false;
+        currentIndex = -1; // No highlight until search changes again
+        updateActiveListItem();
+    };
     clubList.scrollTop = 0;
 }
 
+
+
+function getPlayersForCategories(catA, catB) {
+    if (!catA || !catB || catA === "CHOOSE CATEGORY" || catB === "CHOOSE CATEGORY") return [];
+    const setA = categoryPlayersMap[catA] || new Set();
+    const setB = categoryPlayersMap[catB] || new Set();
+    return Array.from(setA).filter(id => setB.has(id));
+}
+
+// --- Modal for picking a player; displays ALL players, date of birth if present ---
 function populatePlayerModal(cell) {
     playerSearch.value = "";
     playerList.innerHTML = "";
 
-    // No loading spinner needed!
-    let visiblePlayers = [];
+    let visiblePlayerIds = [];
     let currentIndex = -1;
+    let mouseActiveIndex = -1;
+    let mouseHovering = false;
 
     setTimeout(() => {
         playerSearch.focus();
@@ -526,32 +555,37 @@ function populatePlayerModal(cell) {
         }, 150);
 
         playerSearch.onkeydown = function (e) {
-            if (!visiblePlayers.length) return;
+            if (!visiblePlayerIds.length) return;
 
             if (e.key === "ArrowDown") {
                 e.preventDefault();
                 if (currentIndex === -1) {
                     currentIndex = 0;
                 } else {
-                    currentIndex = (currentIndex + 1) % visiblePlayers.length;
+                    currentIndex = (currentIndex + 1) % visiblePlayerIds.length;
                 }
+                mouseActiveIndex = -1;
+                mouseHovering = false;
                 updateActiveListItem();
                 let li = playerList.children[currentIndex];
                 if (li) li.scrollIntoView({ block: "nearest" });
             } else if (e.key === "ArrowUp") {
                 e.preventDefault();
                 if (currentIndex === -1) {
-                    currentIndex = visiblePlayers.length - 1;
+                    currentIndex = visiblePlayerIds.length - 1;
                 } else {
-                    currentIndex = (currentIndex - 1 + visiblePlayers.length) % visiblePlayers.length;
+                    currentIndex = (currentIndex - 1 + visiblePlayerIds.length) % visiblePlayerIds.length;
                 }
+                mouseActiveIndex = -1;
+                mouseHovering = false;
                 updateActiveListItem();
                 let li = playerList.children[currentIndex];
                 if (li) li.scrollIntoView({ block: "nearest" });
             } else if (e.key === "Enter") {
                 e.preventDefault();
-                if (currentIndex >= 0 && playerList.children[currentIndex]) {
-                    playerList.children[currentIndex].click();
+                let chosenIdx = (mouseHovering && mouseActiveIndex > -1) ? mouseActiveIndex : currentIndex;
+                if (chosenIdx >= 0 && playerList.children[chosenIdx]) {
+                    playerList.children[chosenIdx].click();
                 }
             }
         };
@@ -560,57 +594,86 @@ function populatePlayerModal(cell) {
             const searchQuery = normalizeStr(playerSearch.value.trim());
             if (!searchQuery) {
                 playerList.innerHTML = "";
-                visiblePlayers = [];
+                visiblePlayerIds = [];
                 currentIndex = -1;
+                mouseActiveIndex = -1;
+                mouseHovering = false;
                 return;
             }
-            visiblePlayers = allAvailablePlayers.filter(playerName =>
-                !usedPlayers.has(playerName) &&
-                normalizeStr(playerName).includes(searchQuery)
-            );
+            visiblePlayerIds = allAvailablePlayerIds
+                .filter(pid => !usedPlayers.has(pid))
+                .map(pid => playerIdMap[pid])
+                .filter(player => player && normalizeStr(player.name).includes(searchQuery))
+                .sort((a, b) => a.name.localeCompare(b.name, undefined, {sensitivity: 'base'}))
+                .map(player => player.id);
+
             playerList.innerHTML = "";
-            visiblePlayers.forEach((playerName, idx) => {
+            visiblePlayerIds.forEach((playerId, idx) => {
+                const player = playerIdMap[playerId];
                 let li = document.createElement("li");
-                li.textContent = playerName;
+                li.textContent = player.name + (player.dateOfBirth ? ` (${player.dateOfBirth})` : "");
                 li.onclick = function () {
-                    handlePlayerPick(cell, playerName);
+                    handlePlayerPick(cell, playerId);
                     hideModal(playerModal);
+                };
+                li.onmouseenter = function () {
+                    mouseActiveIndex = idx;
+                    mouseHovering = true;
+                    updateActiveListItem();
+                };
+                li.onmouseleave = function () {
+                    mouseActiveIndex = -1;
+                    mouseHovering = false;
+                    updateActiveListItem();
                 };
                 playerList.appendChild(li);
             });
-            currentIndex = visiblePlayers.length > 0 ? 0 : -1;
+
+            if (visiblePlayerIds.length > 0 && playerSearch.value.trim() !== "") {
+                currentIndex = 0;
+            } else {
+                currentIndex = -1;
+            }
+            mouseActiveIndex = -1;
+            mouseHovering = false;
             updateActiveListItem();
+
+            playerList.addEventListener("mouseleave", function() {
+                mouseActiveIndex = -1;
+                mouseHovering = false;
+                currentIndex = -1;
+                updateActiveListItem();
+            });
         }
 
         function updateActiveListItem() {
             Array.from(playerList.children).forEach((li, idx) => {
-                if (idx === currentIndex) {
-                    li.classList.add("active");
+                if (mouseActiveIndex > -1 && mouseHovering) {
+                    li.classList.toggle("active", idx === mouseActiveIndex);
                 } else {
-                    li.classList.remove("active");
+                    li.classList.toggle("active", idx === currentIndex && !mouseHovering && currentIndex > -1);
                 }
             });
         }
+
+        renderPlayerList();
     }, 0);
 }
 
 // --- WIN CHECK ---
 function checkWin() {
-    // Rows
     for (let r = 0; r < 3; r++) {
         if (gridState[r][0] && gridState[r][0] === gridState[r][1] && gridState[r][1] === gridState[r][2]) {
             showWin(gridState[r][0]);
             return;
         }
     }
-    // Columns
     for (let c = 0; c < 3; c++) {
         if (gridState[0][c] && gridState[0][c] === gridState[1][c] && gridState[1][c] === gridState[2][c]) {
             showWin(gridState[0][c]);
             return;
         }
     }
-    // Diagonals
     if (gridState[0][0] && gridState[0][0] === gridState[1][1] && gridState[1][1] === gridState[2][2]) {
         showWin(gridState[0][0]);
         return;
@@ -619,7 +682,6 @@ function checkWin() {
         showWin(gridState[0][2]);
         return;
     }
-    // Draw?
     if ([].concat(...gridState).every(x => x)) {
         showWin("Draw");
     }
@@ -633,6 +695,9 @@ function showWin(winner) {
         } else {
             title = `Player ${winner === "X" ? "✖" : "◯"} wins!`;
             icon = "success";
+            if (winner === "X") scoreX++;
+            if (winner === "O") scoreO++;
+            updateScoreInfo();
         }
         Swal.fire({
             title: title,
@@ -645,12 +710,11 @@ function showWin(winner) {
             cancelButtonText: "Start Menu"
         }).then((result) => {
             if (result.isConfirmed) {
-                renderClubs(currentMode); // Start new round
+                renderClubs(currentMode);
                 renderGrid();
                 ticTurn = "X";
                 updateTurnInfo();
             } else {
-                // Go to start menu: reset to manual mode and reset UI
                 document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
                 document.getElementById('manual').classList.add('active');
                 currentMode = "manual";
@@ -663,30 +727,26 @@ function showWin(winner) {
     }, 100);
 }
 
-async function handlePlayerPick(cell, playerName) {
+async function handlePlayerPick(cell, playerId) {
     let row = parseInt(cell.dataset.row), col = parseInt(cell.dataset.col);
     let rowCat = leftClubs[row];
     let colCat = topClubs[col];
 
-    let [playersCol, playersRow] = await Promise.all([
-        fetchPlayers(colCat),
-        fetchPlayers(rowCat)
-    ]);
-    let playerSetCol = new Set(playersCol.map(p => p.name));
-    let playerSetRow = new Set(playersRow.map(p => p.name));
+    const playersCol = categoryPlayersMap[colCat] || new Set();
+    const playersRow = categoryPlayersMap[rowCat] || new Set();
 
-    let isValid = playerSetCol.has(playerName) && playerSetRow.has(playerName);
+    let isValid = playersCol.has(playerId) && playersRow.has(playerId);
 
     if (isValid) {
-        usedPlayers.add(playerName);
+        usedPlayers.add(playerId);
+        const player = playerIdMap[playerId];
         cell.innerHTML = `
             <div style="display: flex; flex-direction: column; align-items: center;">
                 <span class="tic-sign">${ticTurn === "X" ? "✖" : "◯"}</span>
-                <span class="player-under-sign">${getDisplaySurname(playerName)}</span>
+                <span class="player-under-sign">${getDisplaySurname(player.name)}</span>
             </div>
         `;
         gridState[row][col] = ticTurn;
-        // Lock this cell:
         cell.setAttribute("data-locked", "true");
         cell.disabled = true;
         cell.style.cursor = "default";
@@ -698,11 +758,8 @@ async function handlePlayerPick(cell, playerName) {
 }
 
 function getDisplaySurname(playerName) {
-    // Remove bracketed part
     let nameNoBracket = playerName.replace(/\s*\(.*?\)\s*/g, '').trim();
-    // Split into words
     let words = nameNoBracket.split(/\s+/);
-    // Rules:
     if (words.length <= 2) {
         return words[words.length-1];
     } else {
@@ -729,7 +786,6 @@ function unlockGridCells() {
     });
 }
 
-// Gamemode buttons
 document.querySelectorAll('.mode-btn').forEach(btn => {
     btn.onclick = function() {
         document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
@@ -745,7 +801,6 @@ document.querySelectorAll('.mode-btn').forEach(btn => {
     }
 });
 
-// Modal logic (unchanged)
 const clubModal = document.getElementById("clubModal");
 const playerModal = document.getElementById("playerModal");
 const clubList = document.getElementById("clubList");
@@ -761,49 +816,10 @@ window.onclick = (event) => {
     if (event.target == playerModal) hideModal(playerModal);
 };
 
-// --- INIT ---
 
-// --- LOADING OVERLAY ---
-// Create loading overlay and spinner
-const loadingOverlay = document.createElement('div');
-loadingOverlay.id = 'loading-overlay';
-loadingOverlay.style.position = 'fixed';
-loadingOverlay.style.top = '0';
-loadingOverlay.style.left = '0';
-loadingOverlay.style.width = '100vw';
-loadingOverlay.style.height = '100vh';
-loadingOverlay.style.background = 'rgba(23, 78, 44, 0.95)';
-loadingOverlay.style.display = 'flex';
-loadingOverlay.style.flexDirection = 'column';
-loadingOverlay.style.justifyContent = 'center';
-loadingOverlay.style.alignItems = 'center';
-loadingOverlay.style.zIndex = '9999';
-loadingOverlay.innerHTML = `
-  <div style="display:flex;flex-direction:column;align-items:center;gap:24px;">
-    <div class="spinner" style="width:64px;height:64px;border:8px solid #19d678;border-top:8px solid #fff;border-radius:50%;animation:spin 1s linear infinite;"></div>
-    <div style="color:#fff;font-size:2rem;font-weight:bold;letter-spacing:2px;">Loading...</div>
-  </div>
-`;
-document.body.appendChild(loadingOverlay);
-
-// Add spinner animation style
-const style = document.createElement('style');
-style.innerHTML = `
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}`;
-document.head.appendChild(style);
-
-// Show loading overlay until data is ready and UI is rendered
 dataReadyPromise.then(() => {
-    buildClubPlayersMap();
-    prepareAllAvailablePlayers().then(() => {
-        renderClubs();
-        renderGrid();
-        ticTurn = "X";
-        updateTurnInfo();
-        // Hide loading overlay
-        loadingOverlay.style.display = 'none';
-    });
+    renderClubs();
+    renderGrid();
+    ticTurn = "X";
+    updateTurnInfo();
 });

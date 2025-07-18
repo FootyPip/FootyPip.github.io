@@ -309,65 +309,74 @@ h2 {
     font-size: 1.2rem;
 }
 
-.turn-info-box {
-    display: inline-flex; /* matches button's inline-block + flex for centering */
-    align-items: center;
-    justify-content: center;
-    width: 180px;
-    height: 48px;
-    background: #f2c94c;
-    color: #14341b;
-    border: none;
-    border-radius: 8px;
-    padding: 0; /* remove extra padding */
-    font-size: 1.23rem;
+.turn-label {
+    font-size: inherit;      /* Inherit the button's font-size */
     font-weight: bold;
-    font-family: inherit; /* matches button font */
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    letter-spacing: 0.04em;
-    margin-right: 0.4rem;
-    text-align: center;
-    line-height: normal;
-}
-
-.turn-symbol {
+    margin-right: 12px;
     display: inline-block;
-    width: 1.3em;
-    height: 1.3em;
-    font-size: 1.35em;
-    text-align: center;
-    line-height: 1.2em;
-    vertical-align: middle;
-    font-family: 'Consolas', monospace, Arial, sans-serif;
+    line-height: 1;
 }
 
+.turn-img {
+    width: 2rem;
+    height: 2rem;
+    display: inline-block;
+    vertical-align: middle;
+    object-fit: contain;
+    margin-bottom: 3px;
+}
+
+.score-bar,
+.turn-info-box,
 #skip-turn-btn {
-    width: 180px;
-    height: 48px;
-    background: #f2c94c;
-    color: #14341b;
+    width: 170px;
+    height: 60px;
+    background: #00b374;
+    color: #ffffff;
     font-weight: bold;
     border: none;
-    border-radius: 8px;
-    padding: 0; /* match turn-info-box */
-    cursor: pointer;
-    font-size: 1.23rem;
+    border-radius: 14px;
+    font-size: 1.6rem;
     font-family: inherit;
-    transition: background 0.2s;
-    margin-left: 0.4rem;
     box-shadow: 0 2px 6px rgba(0,0,0,0.09);
     letter-spacing: 0.04em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 0 16px;
     text-align: center;
-    line-height: normal;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+#skip-turn-btn {
+    cursor: pointer;
 }
 
-#skip-turn-btn:hover {
-    background: #ffe082;
+.score-bar{
+    width: 190px;
+    font-size: 1.8rem
 }
+.score-bar[disabled], .score-bar:disabled {
+    opacity: 1;
+    cursor: default;
+}
+
+.turn-info-box[disabled], .turn-info-box:disabled {
+    opacity: 1;
+    cursor: default;
+}
+
+#skip-turn-btn:hover:not(:disabled) {
+    background: #08723f;
+}
+
 .status-bar-wrap {
-    justify-content: center;
+    display: flex;
     align-items: center;
-    gap: 1.5rem; /* for spacing */
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 12px;
 }
 .tic-sign {
     font-size: 3.7rem;
