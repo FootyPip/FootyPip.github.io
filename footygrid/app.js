@@ -286,8 +286,7 @@ function populateClubModal() {
     let clubsSet = new Set([...easyClubs, ...hardClubs]);
     nationsList.forEach(nation => clubsSet.delete(nation));
     let clubs = Array.from(clubsSet).sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
-    const hnlClubs = (categoriesData["hnl"] || []).filter(name => !nationsList.includes(name))
-        .sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
+    const hnlClubs = (categoriesData["hnl"] || []).sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
     const nations = nationsList.slice().sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
     const others = (otherList || []).slice().sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
 
@@ -459,6 +458,7 @@ function populateClubModal() {
         currentClubCell.style.cursor = "default";
         hideModal(clubModal);
         if (allClubsChosen()) unlockGridCells();
+        updateStatusBarVisibility(); 
         highlightIdx = -1;
         dropdownOpen = false;
     }
@@ -587,7 +587,9 @@ function populatePlayerModal(cell) {
                 .sort((a, b) => a.name.localeCompare(b.name, undefined, {sensitivity: 'base'}));
             playerList.innerHTML = "";
             highlightIdx = -1;
-            suggestions.forEach((player, idx) => {
+
+            // Limit to first 30 results for speed
+            suggestions.slice(0, 30).forEach((player, idx) => {
                 let li = document.createElement("li");
                 li.textContent = player.name + (player.dateOfBirth ? ` (${player.dateOfBirth})` : "");
                 li.onmouseenter = function() {
@@ -610,6 +612,7 @@ function populatePlayerModal(cell) {
             updateHighlight();
         }
 
+        // INSTANT SEARCH RESPONSE
         playerSearch.oninput = function () {
             userInputValue = playerSearch.value;
             dropdownOpen = true;
@@ -733,6 +736,7 @@ function showWin(winner) {
             if (result.isConfirmed) {
                 renderClubs(currentMode);
                 renderGrid();
+                updateStatusBarVisibility();
                 ticTurn = "X";
                 updateTurnInfo();
             } else {
@@ -741,6 +745,7 @@ function showWin(winner) {
                 currentMode = "manual";
                 renderClubs(currentMode);
                 renderGrid();
+                updateStatusBarVisibility();
                 ticTurn = "X";
                 updateTurnInfo();
             }
@@ -807,6 +812,17 @@ function unlockGridCells() {
     });
 }
 
+function updateStatusBarVisibility() {
+    const statusBar = document.querySelector('.status-bar-wrap');
+    // A round is "active" if not manual mode, or if all clubs chosen in manual mode
+    let active = currentMode !== "manual" || allClubsChosen();
+    if (active) {
+        statusBar.classList.remove('invisible');
+    } else {
+        statusBar.classList.add('invisible');
+    }
+}
+
 document.querySelectorAll('.mode-btn').forEach(btn => {
     btn.onclick = function() {
         document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
@@ -817,6 +833,7 @@ document.querySelectorAll('.mode-btn').forEach(btn => {
         else if (btn.id === "croatian-league") currentMode = "croatian-league";
         renderClubs(currentMode);
         renderGrid();
+        updateStatusBarVisibility();
         ticTurn = "X";
         updateTurnInfo();
     }
@@ -841,6 +858,20 @@ window.onclick = (event) => {
 dataReadyPromise.then(() => {
     renderClubs();
     renderGrid();
+    updateStatusBarVisibility(); // <--- Add here
     ticTurn = "X";
     updateTurnInfo();
 });
+
+document.getElementById("sidebarToggle").onclick = function() {
+    document.getElementById("sidebarDrawer").classList.add("open");
+    document.getElementById("sidebarBackdrop").style.display = "block";
+};
+document.getElementById("sidebarBackdrop").onclick = function() {
+    document.getElementById("sidebarDrawer").classList.remove("open");
+    document.getElementById("sidebarBackdrop").style.display = "none";
+};
+document.getElementById("sidebarCloseBtn").onclick = function() {
+    document.getElementById("sidebarDrawer").classList.remove("open");
+    document.getElementById("sidebarBackdrop").style.display = "none";
+};

@@ -7,17 +7,95 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- HEADER NAVBAR -->
+    <header class="main-header">
+        <button class="menu-btn" id="sidebarToggle" aria-label="Open sidebar">
+            <span class="menu-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </span>
+        </button>
+        <button class="home-btn" onclick="location.href='/'">
+            <img src="FootyPip.png" alt="FootyPip Logo" class="header-logo">
+            <span class="header-title">FootyPip</span>
+        </button>
+        <span class="header-center-title">FootyGrid</span>
+    </header>
+
+    <nav class="sidebar-drawer" id="sidebarDrawer">
+        <div class="sidebar-top">
+            <button class="sidebar-home-btn" onclick="location.href='/'" tabindex="0">
+                <img src="FootyPip.png" alt="FootyPip Logo" class="sidebar-logo">
+                <span class="sidebar-title">FootyPip</span>
+            </button>
+            <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close sidebar" tabindex="0">&times;</button>
+        </div>
+        <div class="sidebar-header">Games</div>
+        <ul class="sidebar-menu">
+            <li>
+                <a class="sidebar-game-btn active" href="/footygrid">
+                    <span class="sidebar-game-title">⚽ FootyGrid</span>
+                    <span class="sidebar-game-desc">Classic football tic-tac-toe</span>
+                </a>
+            </li>
+            <li>
+                <div class="sidebar-game-btn disabled">
+                    <span class="sidebar-game-title">⚽ FootyGrid+</span>
+                    <span class="sidebar-game-desc coming-soon-row">
+                        <span class="lock-icon">🔒</span>
+                        <span>Coming Soon</span>
+                    </span>
+                </div>
+            </li>
+            <li>
+                <div class="sidebar-game-btn disabled">
+                    <span class="sidebar-game-title">🌍 GeoFooty</span>
+                    <span class="sidebar-game-desc coming-soon-row">
+                        <span class="lock-icon">🔒</span>
+                        <span>Coming Soon</span>
+                    </span>
+                </div>
+            </li>
+            <li>
+                <div class="sidebar-game-btn disabled">
+                    <span class="sidebar-game-title">❓ FootyGuessr</span>
+                    <span class="sidebar-game-desc coming-soon-row">
+                        <span class="lock-icon">🔒</span>
+                        <span>Coming Soon</span>
+                    </span>
+                </div>
+            </li>
+            <li>
+                <div class="sidebar-game-btn disabled">
+                    <span class="sidebar-game-title">🎯 FootyDarts</span>
+                    <span class="sidebar-game-desc coming-soon-row">
+                        <span class="lock-icon">🔒</span>
+                        <span>Coming Soon</span>
+                    </span>
+                </div>
+            </li>
+            <li>
+                <div class="sidebar-game-btn disabled">
+                    <span class="sidebar-game-title">💰 FootyMillionaire</span>
+                    <span class="sidebar-game-desc coming-soon-row">
+                        <span class="lock-icon">🔒</span>
+                        <span>Coming Soon</span>
+                    </span>
+                </div>
+            </li>
+        </ul>
+    </nav>
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
     <div class="container">
-        <h1>FootyGrid</h1>
-        <h2>Football-inspired twist on classic tic-tac-toe</h2>
         <div class="mode-buttons">
-            <button class="mode-btn" id="manual">Manual selection<br><span>Choose Categories</span></button>
+            <button class="mode-btn active" id="manual">Manual selection<br><span>Choose Categories</span></button>
             <button class="mode-btn" id="random-easy">Random Easy<br><span>Easy random clubs</span></button>
             <button class="mode-btn" id="random-hard">Random Hard<br><span>Hard random clubs</span></button>
             <button class="mode-btn" id="croatian-league">Random HNL<br><span>Croatian clubs only</span></button>
         </div>
         <div class="center-area">
-            <div class="status-bar-wrap">
+            <div class="status-bar-wrap invisible">
                 <button id="score-bar" class="score-bar" disabled>
                     <span id="score-info"></span>
                 </button>
@@ -78,7 +156,6 @@
         </div>
     </div>
 
-    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="app.js"></script>
 </body>

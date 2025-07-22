@@ -1,24 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>FootyPip - Ball Knowledge Games</title>
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <style>
-    body { background: #093016; color: #fff; font-family: 'Segoe UI', Arial, sans-serif; text-align: center; padding: 5vw; }
-    a { color: #19d678; font-size: 1.4rem; text-decoration: none; }
-    a:hover { color: #29e98d; }
-    h1 { font-size: 2.3rem; }
-  </style>
+    <meta charset="UTF-8">
+    <title>FootyPip - Ball Knowledge Games</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Welcome to FootyPip!</h1>
-  <p>
-    Play our football-inspired games:
-  </p>
-  <p>
-    <a href="footygrid/">Play FootyGrid</a>
-  </p>
-  <!-- Add more links or content here for future expansion -->
+    <!-- HEADER NAVBAR -->
+    <header class="main-header">
+        <button class="menu-btn" id="sidebarToggle" aria-label="Open sidebar">
+            <span class="menu-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </span>
+        </button>
+        <button class="home-btn" onclick="location.href='/'">
+            <img src="FootyPip.png" alt="FootyPip Logo" class="header-logo">
+            <span class="header-title">FootyPip</span>
+        </button>
+        <span class="header-center-title">Ball Knowledge Games</span>
+    </header>
+
+    <!-- SIDEBAR DRAWER (unchanged from before, not shown for brevity) -->
+    <nav class="sidebar-drawer" id="sidebarDrawer">
+        <div class="sidebar-top">
+            <button class="sidebar-home-btn" onclick="location.href='/'" tabindex="0">
+                <img src="FootyPip.png" alt="FootyPip Logo" class="sidebar-logo">
+                <span class="sidebar-title">FootyPip</span>
+            </button>
+            <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close sidebar" tabindex="0">&times;</button>
+        </div>
+        <div class="sidebar-header">Games</div>
+        <ul class="sidebar-menu">
+            <li>
+                <a class="sidebar-game-btn active" href="footygrid/">
+                    <span class="sidebar-game-title">⚽ FootyGrid</span>
+                    <span class="sidebar-game-desc">Classic football tic-tac-toe</span>
+                </a>
+            </li>
+            <li>
+                <div class="sidebar-game-btn disabled">
+                    <span class="sidebar-game-title">⚽ FootyGrid+</span>
+                    <span class="sidebar-game-desc"><span class="lock-icon">🔒</span> Coming Soon</span>
+                </div>
+            </li>
+            <li>
+                <div class="sidebar-game-btn disabled">
+                    <span class="sidebar-game-title">🌍 GeoFooty</span>
+                    <span class="sidebar-game-desc"><span class="lock-icon">🔒</span> Coming Soon</span>
+                </div>
+            </li>
+            <li>
+                <div class="sidebar-game-btn disabled">
+                    <span class="sidebar-game-title">❓ FootyGuessr</span>
+                    <span class="sidebar-game-desc"><span class="lock-icon">🔒</span> Coming Soon</span>
+                </div>
+            </li>
+            <li>
+                <div class="sidebar-game-btn disabled">
+                    <span class="sidebar-game-title">🎯 FootyDarts</span>
+                    <span class="sidebar-game-desc"><span class="lock-icon">🔒</span> Coming Soon</span>
+                </div>
+            </li>
+            <li>
+                <div class="sidebar-game-btn disabled">
+                    <span class="sidebar-game-title">💰 FootyMillionaire</span>
+                    <span class="sidebar-game-desc"><span class="lock-icon">🔒</span> Coming Soon</span>
+                </div>
+            </li>
+        </ul>
+    </nav>
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <div class="hero-section">
+        <div class="hero-inner">
+            <h1 class="hero-title">Test Your Football Knowledge!</h1>
+            <p class="hero-subtitle">Pick a game to get started</p>
+        </div>
+    </div>
+
+    <main class="container">
+        <div class="games-grid">
+            <a href="footygrid/" class="game-card">
+                <span class="game-icon">⚽</span>
+                <div class="game-info">
+                    <div class="game-title">FootyGrid</div>
+                    <div class="game-desc">Classic football tic-tac-toe</div>
+                </div>
+            </a>
+            <div class="game-card disabled">
+                <span class="game-icon">⚽</span>
+                <div class="game-info">
+                    <div class="game-title">FootyGrid+</div>
+                    <div class="game-desc">
+                        <span class="coming-soon-label"><span class="lock-icon">🔒</span> Coming Soon</span>
+                    </div>
+                </div>
+            </div>
+            <div class="game-card disabled">
+                <span class="game-icon">🌍</span>
+                <div class="game-info">
+                    <div class="game-title">GeoFooty</div>
+                    <div class="game-desc">
+                        <span class="coming-soon-label"><span class="lock-icon">🔒</span> Coming Soon</span>
+                    </div>
+                </div>
+            </div>
+            <div class="game-card disabled">
+                <span class="game-icon">❓</span>
+                <div class="game-info">
+                    <div class="game-title">FootyGuessr</div>
+                    <div class="game-desc">
+                        <span class="coming-soon-label"><span class="lock-icon">🔒</span> Coming Soon</span>
+                    </div>
+                </div>
+            </div>
+            <div class="game-card disabled">
+                <span class="game-icon">🎯</span>
+                <div class="game-info">
+                    <div class="game-title">FootyDarts</div>
+                    <div class="game-desc">
+                        <span class="coming-soon-label"><span class="lock-icon">🔒</span> Coming Soon</span>
+                    </div>
+                </div>
+            </div>
+            <div class="game-card disabled">
+                <span class="game-icon">💰</span>
+                <div class="game-info">
+                    <div class="game-title">FootyMillionaire</div>
+                    <div class="game-desc">
+                        <span class="coming-soon-label"><span class="lock-icon">🔒</span> Coming Soon</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sidebar open/close logic
+        document.addEventListener("DOMContentLoaded", function() {
+            var sidebarDrawer = document.getElementById("sidebarDrawer");
+            var sidebarBackdrop = document.getElementById("sidebarBackdrop");
+            var sidebarToggle = document.getElementById("sidebarToggle");
+            var sidebarCloseBtn = document.getElementById("sidebarCloseBtn");
+            sidebarToggle.onclick = function() {
+                sidebarDrawer.classList.add("open");
+                sidebarBackdrop.style.display = "block";
+            };
+            sidebarBackdrop.onclick = function() {
+                sidebarDrawer.classList.remove("open");
+                sidebarBackdrop.style.display = "none";
+            };
+            sidebarCloseBtn.onclick = function() {
+                sidebarDrawer.classList.remove("open");
+                sidebarBackdrop.style.display = "none";
+            };
+
+            // Optional: close sidebar after clicking a game
+            document.querySelectorAll('.sidebar-game-btn:not(.disabled)').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    sidebarDrawer.classList.remove("open");
+                    sidebarBackdrop.style.display = "none";
+                });
+            });
+        });
+    </script>
 </body>
 </html>
