@@ -275,22 +275,20 @@ function debounce(fn, delay) {
 }
 
 // --- Only show clubs not already chosen and not making impossible grids ---
+let suppressClubSearchBlur = false;
+
 function populateClubModal() {
     clubSearch.value = "";
     clubList.innerHTML = "";
 
-    // clubs is the union of all elements in easy and hard but not in nationsList
     const easyClubs = categoriesData["easy"] || [];
     const hardClubs = categoriesData["hard"] || [];
     let clubsSet = new Set([...easyClubs, ...hardClubs]);
     nationsList.forEach(nation => clubsSet.delete(nation));
     let clubs = Array.from(clubsSet).sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
-    // hnl clubs should also be minus nations
     const hnlClubs = (categoriesData["hnl"] || []).filter(name => !nationsList.includes(name))
         .sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
-    // nations list for modal
     const nations = nationsList.slice().sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
-    // others (from otherList)
     const others = (otherList || []).slice().sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
 
     let oldBtnsDiv = clubList.parentElement.querySelector(".club-filter-buttons");
@@ -312,23 +310,28 @@ function populateClubModal() {
 
     setTimeout(() => clubSearch.focus(), 0);
 
-    let currentIndex = 0;
-    let mouseActiveIndex = -1;
-    let mouseHovering = false;
+    let userInputValue = "";
+    let suggestions = [];
+    let highlightIdx = -1;
+    let dropdownOpen = true;
     let currentListType = "clubs";
-    let visibleClubs = [];
 
-    function updateActiveListItem() {
+    function updateHighlight() {
         Array.from(clubList.children).forEach((li, idx) => {
-            if (mouseActiveIndex > -1 && mouseHovering) {
-                li.classList.toggle("active", idx === mouseActiveIndex);
-            } else {
-                li.classList.toggle("active", idx === currentIndex && !mouseHovering);
-            }
+            li.classList.toggle("active", idx === highlightIdx);
         });
+        if (highlightIdx >= 0 && clubList.children[highlightIdx]) {
+            clubList.children[highlightIdx].scrollIntoView({ block: "nearest" });
+        }
+        if (highlightIdx === -1) {
+            clubSearch.value = userInputValue;
+            setTimeout(() => {
+                clubSearch.selectionStart = clubSearch.selectionEnd = clubSearch.value.length;
+            }, 0);
+        }
     }
 
-    function renderList(type) {
+    function renderList(type, preserveInput = true) {
         currentListType = type;
         let srcList;
         if (type === "clubs") {
@@ -344,16 +347,19 @@ function populateClubModal() {
             srcList = others;
             clubSearch.placeholder = "Search other...";
         }
-        const searchQuery = clubSearch.value.trim().toLowerCase();
-        visibleClubs = srcList.filter(clubName =>
+        if (!preserveInput) {
+            clubSearch.value = "";
+            userInputValue = "";
+        }
+        const query = clubSearch.value.trim().toLowerCase();
+        suggestions = srcList.filter(clubName =>
             !usedClubs.has(clubName) &&
-            clubName.toLowerCase().includes(searchQuery)
+            clubName.toLowerCase().includes(query)
         );
-
         clubList.innerHTML = "";
-        visibleClubs.forEach((clubName, idx) => {
+        highlightIdx = -1;
+        suggestions.forEach((clubName, idx) => {
             let li = document.createElement("li");
-
             let badgeImg = document.createElement("img");
             badgeImg.className = "club-badge club-badge-in-list";
             badgeImg.style.width = "34px";
@@ -366,300 +372,315 @@ function populateClubModal() {
             badgeImg.alt = clubName;
             badgeImg.src = `badges/${clubName.toLowerCase()}.png`;
             badgeImg.onerror = function() { this.src = "badges/default.png"; };
-
             li.style.display = "flex";
             li.style.alignItems = "center";
             li.style.gap = "10px";
             li.appendChild(badgeImg);
-
             let span = document.createElement("span");
             span.className = "club-list-name";
             span.textContent = clubName;
             li.appendChild(span);
 
+            li.onmouseenter = function() {
+                highlightIdx = idx;
+                updateHighlight();
+            };
+            li.onmouseleave = function() {
+                highlightIdx = -1;
+                updateHighlight();
+            };
             li.onclick = function() {
-                let testTop = [...topClubs];
-                let testLeft = [...leftClubs];
-                let posType, posIdx;
-                if (currentClubCell.classList.contains('top')) {
-                    posType = "top";
-                    posIdx = parseInt(currentClubCell.getAttribute('data-idx'));
-                } else {
-                    posType = "left";
-                    posIdx = parseInt(currentClubCell.getAttribute('data-idx'));
-                }
-                if (posType === "top") testTop[posIdx] = clubName;
-                else testLeft[posIdx] = clubName;
-
-                let possible = true;
-                for (let row = 0; row < 3 && possible; ++row) {
-                    for (let col = 0; col < 3 && possible; ++col) {
-                        let c1 = testTop[col];
-                        let c2 = testLeft[row];
-                        if (c1 !== "CHOOSE CATEGORY" && c2 !== "CHOOSE CATEGORY") {
-                            let ok = categoriesHaveIntersectionSync(c1, c2);
-                            if (!ok) {
-                                Swal.fire({
-                                    html: "<b>PLEASE, CHOOSE ANOTHER CATEGORY!</b><br>There isn't a player that fits these two categories:<br><b>" + c1 + "</b> and <b>" + c2 + "</b>",
-                                    icon: "warning",
-                                    background: '#174e2c',
-                                    color: '#ffffff'
-                                });
-                                possible = false;
-                            }
-                        }
-                    }
-                }
-                if (!possible) return;
-
-                setClubCellWithBadgeAndName(currentClubCell, clubName);
-                usedClubs.add(clubName);
-                if (posType === "top") topClubs[posIdx] = clubName;
-                else leftClubs[posIdx] = clubName;
-                currentClubCell.onclick = null;
-                currentClubCell.style.cursor = "default";
-                hideModal(clubModal);
-                if (allClubsChosen()) unlockGridCells();
-            };
-
-            li.onmouseenter = function () {
-                mouseActiveIndex = idx;
-                mouseHovering = true;
-                updateActiveListItem();
-            };
-            li.onmouseleave = function () {
-                mouseActiveIndex = -1;
-                mouseHovering = false;
-                updateActiveListItem();
+                clubSearch.value = suggestions[idx];
+                userInputValue = suggestions[idx];
+                dropdownOpen = false;
+                pickClub(suggestions[idx]);
             };
             clubList.appendChild(li);
         });
-        // highlight first element if exists and not hovering
-        currentIndex = (visibleClubs.length > 0 && clubSearch.value.trim() !== "") ? 0 : -1;
-        mouseActiveIndex = -1;
-        mouseHovering = false;
-        updateActiveListItem();
-        // Remove highlight from all when mouse leaves the list area
-        clubList.onmouseleave = function() {
-            mouseActiveIndex = -1;
-            mouseHovering = false;
-            currentIndex = -1;
-            updateActiveListItem();
-        };
-        clubList.onmouseenter = function() {};
+        updateHighlight();
     }
 
-    clubSearch.oninput = function() {
-        renderList(currentListType);
-        clubList.onmouseleave = function() {
-            mouseActiveIndex = -1;
-            mouseHovering = false;
-            currentIndex = -1; // No highlight until search changes again
-            updateActiveListItem();
-        if (clubSearch.value.trim() !== "" && visibleClubs.length > 0) {
-            currentIndex = 0;
-        } else {
-            currentIndex = -1;
-        }
-        mouseActiveIndex = -1;
-        mouseHovering = false;
-        updateActiveListItem();
-};
-    };
-
-    clubSearch.onkeydown = function(e) {
-        if (!visibleClubs.length) return;
-        if (e.key === "ArrowDown") {
-            e.preventDefault();
-            if (currentIndex === -1) {
-                currentIndex = 0;
-            } else {
-                currentIndex = (currentIndex + 1) % visibleClubs.length;
-            }
-            mouseActiveIndex = -1;
-            mouseHovering = false;
-            updateActiveListItem();
-            let li = clubList.children[currentIndex];
-            if (li) li.scrollIntoView({block: "nearest"});
-        } else if (e.key === "ArrowUp") {
-            e.preventDefault();
-            if (currentIndex === -1) {
-                currentIndex = visibleClubs.length - 1;
-            } else {
-                currentIndex = (currentIndex - 1 + visibleClubs.length) % visibleClubs.length;
-            }
-            mouseActiveIndex = -1;
-            mouseHovering = false;
-            updateActiveListItem();
-            let li = clubList.children[currentIndex];
-            if (li) li.scrollIntoView({block: "nearest"});
-        } else if (e.key === "Enter") {
-            e.preventDefault();
-            let chosenIdx = (mouseHovering && mouseActiveIndex > -1) ? mouseActiveIndex : currentIndex;
-            if (chosenIdx >= 0 && clubList.children[chosenIdx]) {
-                clubList.children[chosenIdx].click();
-            }
-        }
-    };
-
+    // Filter button logic with blur suppression
     btnsDiv.querySelectorAll(".club-filter-btn").forEach(btn => {
+        btn.onmousedown = function() { suppressClubSearchBlur = true; };
         btn.onclick = function() {
             btnsDiv.querySelectorAll(".club-filter-btn").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
+            highlightIdx = -1;
+            dropdownOpen = true;
             clubSearch.value = "";
-            renderList(btn.getAttribute("data-type"));
-            clubList.onmouseleave = function() {
-                mouseActiveIndex = -1;
-                mouseHovering = false;
-                currentIndex = -1; // No highlight until search changes again
-                updateActiveListItem();
-            };
+            userInputValue = "";
+            renderList(btn.getAttribute("data-type"), true);
+            clubList.style.display = "block";
             setTimeout(() => clubSearch.focus(), 0);
         };
     });
 
-    renderList("clubs");
-        clubList.onmouseleave = function() {
-        mouseActiveIndex = -1;
-        mouseHovering = false;
-        currentIndex = -1; // No highlight until search changes again
-        updateActiveListItem();
+    function pickClub(clubName) {
+        let testTop = [...topClubs];
+        let testLeft = [...leftClubs];
+        let posType, posIdx;
+        if (currentClubCell.classList.contains('top')) {
+            posType = "top";
+            posIdx = parseInt(currentClubCell.getAttribute('data-idx'));
+        } else {
+            posType = "left";
+            posIdx = parseInt(currentClubCell.getAttribute('data-idx'));
+        }
+        if (posType === "top") testTop[posIdx] = clubName;
+        else testLeft[posIdx] = clubName;
+
+        let possible = true;
+        for (let row = 0; row < 3 && possible; ++row) {
+            for (let col = 0; col < 3 && possible; ++col) {
+                let c1 = testTop[col];
+                let c2 = testLeft[row];
+                if (c1 !== "CHOOSE CATEGORY" && c2 !== "CHOOSE CATEGORY") {
+                    let ok = categoriesHaveIntersectionSync(c1, c2);
+                    if (!ok) {
+                        Swal.fire({
+                            html: "<b>PLEASE, CHOOSE ANOTHER CATEGORY!</b><br>There isn't a player that fits these two categories:<br><b>" + c1 + "</b> and <b>" + c2 + "</b>",
+                            icon: "warning",
+                            background: '#174e2c',
+                            color: '#ffffff'
+                        });
+                        possible = false;
+                    }
+                }
+            }
+        }
+        if (!possible) return;
+
+        setClubCellWithBadgeAndName(currentClubCell, clubName);
+        usedClubs.add(clubName);
+        if (posType === "top") topClubs[posIdx] = clubName;
+        else leftClubs[posIdx] = clubName;
+        currentClubCell.onclick = null;
+        currentClubCell.style.cursor = "default";
+        hideModal(clubModal);
+        if (allClubsChosen()) unlockGridCells();
+        highlightIdx = -1;
+        dropdownOpen = false;
+    }
+
+    clubSearch.oninput = function(e) {
+        userInputValue = clubSearch.value;
+        dropdownOpen = true;
+        highlightIdx = -1;
+        renderList(currentListType, true);
     };
+
+    clubSearch.onfocus = function() {
+        dropdownOpen = true;
+        renderList(currentListType, true);
+    };
+
+    clubSearch.onblur = function() {
+        setTimeout(() => {
+            if (suppressClubSearchBlur) {
+                suppressClubSearchBlur = false;
+                clubSearch.focus();
+                return;
+            }
+            dropdownOpen = false;
+            clubList.innerHTML = "";
+        }, 120);
+    };
+
+    clubSearch.onkeydown = function(e) {
+        if (!dropdownOpen) return;
+        if (suggestions.length === 0) return;
+
+        if (e.key === "ArrowDown") {
+            e.preventDefault();
+            if (highlightIdx === -1) {
+                highlightIdx = 0;
+            } else if (highlightIdx === suggestions.length - 1) {
+                highlightIdx = -1;
+            } else {
+                highlightIdx++;
+            }
+            updateHighlight();
+            if (highlightIdx >= 0) {
+                clubSearch.value = suggestions[highlightIdx];
+            }
+        } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            if (highlightIdx === -1) {
+                highlightIdx = suggestions.length - 1;
+            } else if (highlightIdx === 0) {
+                highlightIdx = -1;
+            } else {
+                highlightIdx--;
+            }
+            updateHighlight();
+            if (highlightIdx >= 0) {
+                clubSearch.value = suggestions[highlightIdx];
+            }
+        } else if (e.key === "Enter") {
+            e.preventDefault();
+            if (highlightIdx >= 0) {
+                clubSearch.value = suggestions[highlightIdx];
+                userInputValue = suggestions[highlightIdx];
+                dropdownOpen = false;
+                pickClub(suggestions[highlightIdx]);
+            }
+        } else if (e.key === "Escape") {
+            e.preventDefault();
+            highlightIdx = -1;
+            updateHighlight();
+            clubSearch.value = userInputValue;
+            dropdownOpen = false;
+            clubList.innerHTML = "";
+        }
+    };
+
+    renderList("clubs");
     clubList.scrollTop = 0;
 }
 
-
-
-function getPlayersForCategories(catA, catB) {
-    if (!catA || !catB || catA === "CHOOSE CATEGORY" || catB === "CHOOSE CATEGORY") return [];
-    const setA = categoryPlayersMap[catA] || new Set();
-    const setB = categoryPlayersMap[catB] || new Set();
-    return Array.from(setA).filter(id => setB.has(id));
-}
 
 // --- Modal for picking a player; displays ALL players, date of birth if present ---
 function populatePlayerModal(cell) {
     playerSearch.value = "";
     playerList.innerHTML = "";
 
-    let visiblePlayerIds = [];
-    let currentIndex = -1;
-    let mouseActiveIndex = -1;
-    let mouseHovering = false;
+    let userInputValue = "";
+    let suggestions = [];
+    let highlightIdx = -1;
+    let dropdownOpen = true;
 
     setTimeout(() => {
         playerSearch.focus();
 
-        playerSearch.oninput = debounce(function () {
-            renderPlayerList();
-        }, 150);
-
-        playerSearch.onkeydown = function (e) {
-            if (!visiblePlayerIds.length) return;
-
-            if (e.key === "ArrowDown") {
-                e.preventDefault();
-                if (currentIndex === -1) {
-                    currentIndex = 0;
-                } else {
-                    currentIndex = (currentIndex + 1) % visiblePlayerIds.length;
-                }
-                mouseActiveIndex = -1;
-                mouseHovering = false;
-                updateActiveListItem();
-                let li = playerList.children[currentIndex];
-                if (li) li.scrollIntoView({ block: "nearest" });
-            } else if (e.key === "ArrowUp") {
-                e.preventDefault();
-                if (currentIndex === -1) {
-                    currentIndex = visiblePlayerIds.length - 1;
-                } else {
-                    currentIndex = (currentIndex - 1 + visiblePlayerIds.length) % visiblePlayerIds.length;
-                }
-                mouseActiveIndex = -1;
-                mouseHovering = false;
-                updateActiveListItem();
-                let li = playerList.children[currentIndex];
-                if (li) li.scrollIntoView({ block: "nearest" });
-            } else if (e.key === "Enter") {
-                e.preventDefault();
-                let chosenIdx = (mouseHovering && mouseActiveIndex > -1) ? mouseActiveIndex : currentIndex;
-                if (chosenIdx >= 0 && playerList.children[chosenIdx]) {
-                    playerList.children[chosenIdx].click();
-                }
+        function updateHighlight() {
+            Array.from(playerList.children).forEach((li, idx) => {
+                li.classList.toggle("active", idx === highlightIdx);
+            });
+            if (highlightIdx >= 0 && playerList.children[highlightIdx]) {
+                playerList.children[highlightIdx].scrollIntoView({ block: "nearest" });
             }
-        };
+            if (highlightIdx === -1) {
+                playerSearch.value = userInputValue;
+                setTimeout(() => {
+                    playerSearch.selectionStart = playerSearch.selectionEnd = playerSearch.value.length;
+                }, 0);
+            }
+        }
 
-        function renderPlayerList() {
-            const searchQuery = normalizeStr(playerSearch.value.trim());
-            if (!searchQuery) {
+        function renderPlayerList(preserveInput = true) {
+            const query = normalizeStr(playerSearch.value.trim());
+            if (!preserveInput) {
+                playerSearch.value = "";
+                userInputValue = "";
+            }
+            if (!query) {
                 playerList.innerHTML = "";
-                visiblePlayerIds = [];
-                currentIndex = -1;
-                mouseActiveIndex = -1;
-                mouseHovering = false;
+                suggestions = [];
+                highlightIdx = -1;
                 return;
             }
-            visiblePlayerIds = allAvailablePlayerIds
+            suggestions = allAvailablePlayerIds
                 .filter(pid => !usedPlayers.has(pid))
                 .map(pid => playerIdMap[pid])
-                .filter(player => player && normalizeStr(player.name).includes(searchQuery))
-                .sort((a, b) => a.name.localeCompare(b.name, undefined, {sensitivity: 'base'}))
-                .map(player => player.id);
-
+                .filter(player => player && normalizeStr(player.name).includes(query))
+                .sort((a, b) => a.name.localeCompare(b.name, undefined, {sensitivity: 'base'}));
             playerList.innerHTML = "";
-            visiblePlayerIds.forEach((playerId, idx) => {
-                const player = playerIdMap[playerId];
+            highlightIdx = -1;
+            suggestions.forEach((player, idx) => {
                 let li = document.createElement("li");
                 li.textContent = player.name + (player.dateOfBirth ? ` (${player.dateOfBirth})` : "");
-                li.onclick = function () {
-                    handlePlayerPick(cell, playerId);
+                li.onmouseenter = function() {
+                    highlightIdx = idx;
+                    updateHighlight();
+                };
+                li.onmouseleave = function() {
+                    highlightIdx = -1;
+                    updateHighlight();
+                };
+                li.onclick = function() {
+                    playerSearch.value = suggestions[idx].name;
+                    userInputValue = suggestions[idx].name;
+                    dropdownOpen = false;
+                    handlePlayerPick(cell, suggestions[idx].id);
                     hideModal(playerModal);
-                };
-                li.onmouseenter = function () {
-                    mouseActiveIndex = idx;
-                    mouseHovering = true;
-                    updateActiveListItem();
-                };
-                li.onmouseleave = function () {
-                    mouseActiveIndex = -1;
-                    mouseHovering = false;
-                    updateActiveListItem();
                 };
                 playerList.appendChild(li);
             });
-
-            if (visiblePlayerIds.length > 0 && playerSearch.value.trim() !== "") {
-                currentIndex = 0;
-            } else {
-                currentIndex = -1;
-            }
-            mouseActiveIndex = -1;
-            mouseHovering = false;
-            updateActiveListItem();
-
-            playerList.addEventListener("mouseleave", function() {
-                mouseActiveIndex = -1;
-                mouseHovering = false;
-                currentIndex = -1;
-                updateActiveListItem();
-            });
+            updateHighlight();
         }
 
-        function updateActiveListItem() {
-            Array.from(playerList.children).forEach((li, idx) => {
-                if (mouseActiveIndex > -1 && mouseHovering) {
-                    li.classList.toggle("active", idx === mouseActiveIndex);
+        playerSearch.oninput = function () {
+            userInputValue = playerSearch.value;
+            dropdownOpen = true;
+            highlightIdx = -1;
+            renderPlayerList(true);
+        };
+
+        playerSearch.onfocus = function () {
+            dropdownOpen = true;
+            renderPlayerList(true);
+        };
+
+        playerSearch.onblur = function () {
+            setTimeout(() => {
+                dropdownOpen = false;
+                playerList.innerHTML = "";
+            }, 120);
+        };
+
+        playerSearch.onkeydown = function (e) {
+            if (!dropdownOpen) return;
+            if (suggestions.length === 0) return;
+            if (e.key === "ArrowDown") {
+                e.preventDefault();
+                if (highlightIdx === -1) {
+                    highlightIdx = 0;
+                } else if (highlightIdx === suggestions.length - 1) {
+                    highlightIdx = -1;
                 } else {
-                    li.classList.toggle("active", idx === currentIndex && !mouseHovering && currentIndex > -1);
+                    highlightIdx++;
                 }
-            });
-        }
+                updateHighlight();
+                if (highlightIdx >= 0) {
+                    playerSearch.value = suggestions[highlightIdx].name;
+                }
+            } else if (e.key === "ArrowUp") {
+                e.preventDefault();
+                if (highlightIdx === -1) {
+                    highlightIdx = suggestions.length - 1;
+                } else if (highlightIdx === 0) {
+                    highlightIdx = -1;
+                } else {
+                    highlightIdx--;
+                }
+                updateHighlight();
+                if (highlightIdx >= 0) {
+                    playerSearch.value = suggestions[highlightIdx].name;
+                }
+            } else if (e.key === "Enter") {
+                e.preventDefault();
+                if (highlightIdx >= 0) {
+                    playerSearch.value = suggestions[highlightIdx].name;
+                    userInputValue = suggestions[highlightIdx].name;
+                    dropdownOpen = false;
+                    handlePlayerPick(cell, suggestions[highlightIdx].id);
+                    hideModal(playerModal);
+                }
+            } else if (e.key === "Escape") {
+                e.preventDefault();
+                highlightIdx = -1;
+                updateHighlight();
+                playerSearch.value = userInputValue;
+                dropdownOpen = false;
+                playerList.innerHTML = "";
+            }
+        };
 
         renderPlayerList();
+        playerList.scrollTop = 0;
     }, 0);
 }
-
 // --- WIN CHECK ---
 function checkWin() {
     for (let r = 0; r < 3; r++) {
