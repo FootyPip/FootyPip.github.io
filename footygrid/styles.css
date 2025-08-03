@@ -414,6 +414,20 @@ h2 {
     color: #14341b;
 }
 
+.player-pos-on-hover {
+    min-width: 38px;
+    text-align: right;
+    font-weight: bold;
+    color: #19d678;
+    transition: color 0.15s;
+}
+
+/* When hovering or active, change the position color for contrast */
+#playerList li:hover .player-pos-on-hover,
+#playerList li.active .player-pos-on-hover {
+    color: #14341b !important;
+}
+
 /* Modal header flex */
 .modal-header-flex {
     display: flex;
@@ -745,4 +759,3 @@ h2 {
     .sidebar-game-title { font-size: 1rem; }
     .sidebar-game-desc { font-size: 0.89rem; }
 }
-

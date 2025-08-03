@@ -541,6 +541,9 @@ function populateClubModal() {
 
 
 // --- Modal for picking a player; displays ALL players, date of birth if present ---
+// ... [all previous code remains unchanged]
+
+// --- Modal for picking a player; displays ALL players, date of birth if present ---
 function populatePlayerModal(cell) {
     playerSearch.value = "";
     playerList.innerHTML = "";
@@ -588,17 +591,49 @@ function populatePlayerModal(cell) {
             playerList.innerHTML = "";
             highlightIdx = -1;
 
-            // Limit to first 30 results for speed
-            suggestions.slice(0, 30).forEach((player, idx) => {
+            // Limit to first 20 results for speed
+            suggestions.slice(0, 20).forEach((player, idx) => {
                 let li = document.createElement("li");
-                li.textContent = player.name + (player.dateOfBirth ? ` (${player.dateOfBirth})` : "");
+                li.style.display = "flex";
+                li.style.alignItems = "center";
+                li.style.justifyContent = "space-between";
+                li.style.gap = "10px";
+
+                // Left: name + (dateOfBirth)
+                let nameSpan = document.createElement("span");
+                nameSpan.style.flex = "1";
+                nameSpan.style.textAlign = "left";
+                nameSpan.textContent = player.name;
+
+                if (player.dateOfBirth) {
+                    let dobSpan = document.createElement("span");
+                    dobSpan.style.color = "#a9a9a9";
+                    dobSpan.style.marginLeft = "8px";
+                    dobSpan.style.fontSize = "90%";
+                    dobSpan.textContent = `(${player.dateOfBirth})`;
+                    nameSpan.appendChild(dobSpan);
+                }
+
+                // Right: position (always present for hover effect)
+                let posSpan = document.createElement("span");
+                posSpan.className = "player-pos-on-hover";
+                posSpan.style.minWidth = "38px";
+                posSpan.style.textAlign = "right";
+                posSpan.style.fontWeight = "bold";
+                posSpan.style.color = "#19d678";
+                posSpan.textContent = player.position ? player.position : "";
+                li.appendChild(nameSpan);
+                li.appendChild(posSpan);
+
                 li.onmouseenter = function() {
                     highlightIdx = idx;
                     updateHighlight();
+                    posSpan.classList.add("show-pos"); // add class to reveal
                 };
                 li.onmouseleave = function() {
                     highlightIdx = -1;
                     updateHighlight();
+                    posSpan.classList.remove("show-pos");
                 };
                 li.onclick = function() {
                     playerSearch.value = suggestions[idx].name;
@@ -684,6 +719,7 @@ function populatePlayerModal(cell) {
         playerList.scrollTop = 0;
     }, 0);
 }
+// ... [rest of your code remains unchanged]
 // --- WIN CHECK ---
 function checkWin() {
     for (let r = 0; r < 3; r++) {
