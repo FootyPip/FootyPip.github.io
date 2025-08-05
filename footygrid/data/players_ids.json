@@ -39867,7 +39867,9 @@
   },
   {
     "id": "55114",
-    "name": "Oliver Sorg"
+    "name": "Oliver Sorg",
+    "dateOfBirth": "May 29, 1990",
+    "position": "RB"
   },
   {
     "id": "55115",
@@ -94330,6 +94332,10 @@
     "name": "Billy Davies"
   },
   {
+    "id": "500053",
+    "name": "Pavel Sulc"
+  },
+  {
     "id": "500054",
     "name": "David Jurásek"
   },
@@ -108938,6 +108944,10 @@
     "name": "Luca Raimund"
   },
   {
+    "id": "907559",
+    "name": "Nelson Deossa"
+  },
+  {
     "id": "907813",
     "name": "Pablo Marín"
   },
@@ -110790,6 +110800,12 @@
   {
     "id": "960057",
     "name": "Juan Córdoba"
+  },
+  {
+    "id": "960444",
+    "name": "Oliver Sorg",
+    "dateOfBirth": "Jul 31, 2007",
+    "position": "LB"
   },
   {
     "id": "960681",
@@ -113318,6 +113334,10 @@
   {
     "id": "1070330",
     "name": "Justin Phillips"
+  },
+  {
+    "id": "1070979",
+    "name": "Wael Mohya"
   },
   {
     "id": "1071138",
