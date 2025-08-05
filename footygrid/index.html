@@ -2,160 +2,170 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>FootyGrid - Footy tic-tac-toe</title>
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FootyGrid – Football Tic-Tac-Toe | FootyPip</title>
+    <link rel="icon" href="favicon.ico">
     <link rel="stylesheet" href="styles.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- HEADER NAVBAR -->
-    <header class="main-header">
-        <button class="menu-btn" id="sidebarToggle" aria-label="Open sidebar">
-            <span class="menu-icon">
-                <span></span>
-                <span></span>
-                <span></span>
-            </span>
-        </button>
-        <button class="home-btn" onclick="location.href='/'">
-            <img src="FootyPip.png" alt="FootyPip Logo" class="header-logo">
-            <span class="header-title">FootyPip</span>
-        </button>
-        <span class="header-center-title">FootyGrid</span>
-    </header>
-
-    <nav class="sidebar-drawer" id="sidebarDrawer">
-        <div class="sidebar-top">
-            <button class="sidebar-home-btn" onclick="location.href='/'" tabindex="0">
-                <img src="FootyPip.png" alt="FootyPip Logo" class="sidebar-logo">
-                <span class="sidebar-title">FootyPip</span>
+    <main>
+        <!-- HEADER NAVBAR -->
+        <header class="main-header">
+            <button class="menu-btn" id="sidebarToggle" aria-label="Open sidebar">
+                <span class="menu-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
             </button>
-            <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close sidebar" tabindex="0">&times;</button>
-        </div>
-        <div class="sidebar-header">Games</div>
-        <ul class="sidebar-menu">
-            <li>
-                <a class="sidebar-game-btn active" href="/footygrid">
-                    <span class="sidebar-game-title">⚽ FootyGrid</span>
-                    <span class="sidebar-game-desc">Classic football tic-tac-toe</span>
-                </a>
-            </li>
-            <li>
-                <div class="sidebar-game-btn disabled">
-                    <span class="sidebar-game-title">⚽ FootyGrid+</span>
-                    <span class="sidebar-game-desc coming-soon-row">
-                        <span class="lock-icon">🔒</span>
-                        <span>Coming Soon</span>
-                    </span>
-                </div>
-            </li>
-            <li>
-                <div class="sidebar-game-btn disabled">
-                    <span class="sidebar-game-title">🌍 GeoFooty</span>
-                    <span class="sidebar-game-desc coming-soon-row">
-                        <span class="lock-icon">🔒</span>
-                        <span>Coming Soon</span>
-                    </span>
-                </div>
-            </li>
-            <li>
-                <div class="sidebar-game-btn disabled">
-                    <span class="sidebar-game-title">❓ FootyGuessr</span>
-                    <span class="sidebar-game-desc coming-soon-row">
-                        <span class="lock-icon">🔒</span>
-                        <span>Coming Soon</span>
-                    </span>
-                </div>
-            </li>
-            <li>
-                <div class="sidebar-game-btn disabled">
-                    <span class="sidebar-game-title">🎯 FootyDarts</span>
-                    <span class="sidebar-game-desc coming-soon-row">
-                        <span class="lock-icon">🔒</span>
-                        <span>Coming Soon</span>
-                    </span>
-                </div>
-            </li>
-            <li>
-                <div class="sidebar-game-btn disabled">
-                    <span class="sidebar-game-title">💰 FootyMillionaire</span>
-                    <span class="sidebar-game-desc coming-soon-row">
-                        <span class="lock-icon">🔒</span>
-                        <span>Coming Soon</span>
-                    </span>
-                </div>
-            </li>
-        </ul>
-    </nav>
-    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
-    <div class="container">
-        <div class="mode-buttons">
-            <button class="mode-btn active" id="manual">Manual selection<br><span>Choose Categories</span></button>
-            <button class="mode-btn" id="random-easy">Random Easy<br><span>Easy random clubs</span></button>
-            <button class="mode-btn" id="random-hard">Random Hard<br><span>Hard random clubs</span></button>
-            <button class="mode-btn" id="croatian-league">Random HNL<br><span>Croatian clubs only</span></button>
-        </div>
-        <div class="center-area">
-            <div class="status-bar-wrap invisible">
-                <button id="score-bar" class="score-bar" disabled>
-                    <span id="score-info"></span>
+            <button class="home-btn" onclick="location.href='/'">
+                <img src="FootyPip.png" alt="FootyPip Logo" class="header-logo">
+                <span class="header-title">FootyPip</span>
+            </button>
+            <span class="header-center-title">FootyGrid</span>
+        </header>
+
+        <nav class="sidebar-drawer" id="sidebarDrawer">
+            <div class="sidebar-top">
+                <button class="sidebar-home-btn" onclick="location.href='/'" tabindex="0">
+                    <img src="FootyPip.png" alt="FootyPip Logo" class="sidebar-logo">
+                    <span class="sidebar-title">FootyPip</span>
                 </button>
-                <button id="turn-info-box" class="turn-info-box" disabled>
-                    <span id="turn-info"></span>
-                </button>
-                <button id="skip-turn-btn">Skip Turn</button>
+                <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close sidebar" tabindex="0">&times;</button>
             </div>
-            <div class="board-grid-wrap" id="board-grid-wrap">
-                <!-- The title cell -->
-                <div class="title-cell">
-                    <img src="FootyPip.png" alt="logo" style="max-width:90px; max-height:90px; display:block; margin:auto;">
+            <div class="sidebar-header">Games</div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a class="sidebar-game-btn active" href="/footygrid">
+                        <span class="sidebar-game-title">⚽ FootyGrid</span>
+                        <span class="sidebar-game-desc">Classic football tic-tac-toe</span>
+                    </a>
+                </li>
+                <li>
+                    <div class="sidebar-game-btn disabled">
+                        <span class="sidebar-game-title">⚽ FootyGrid+</span>
+                        <span class="sidebar-game-desc coming-soon-row">
+                            <span class="lock-icon">🔒</span>
+                            <span>Coming Soon</span>
+                        </span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sidebar-game-btn disabled">
+                        <span class="sidebar-game-title">🌍 GeoFooty</span>
+                        <span class="sidebar-game-desc coming-soon-row">
+                            <span class="lock-icon">🔒</span>
+                            <span>Coming Soon</span>
+                        </span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sidebar-game-btn disabled">
+                        <span class="sidebar-game-title">❓ FootyGuessr</span>
+                        <span class="sidebar-game-desc coming-soon-row">
+                            <span class="lock-icon">🔒</span>
+                            <span>Coming Soon</span>
+                        </span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sidebar-game-btn disabled">
+                        <span class="sidebar-game-title">🎯 FootyDarts</span>
+                        <span class="sidebar-game-desc coming-soon-row">
+                            <span class="lock-icon">🔒</span>
+                            <span>Coming Soon</span>
+                        </span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sidebar-game-btn disabled">
+                        <span class="sidebar-game-title">💰 FootyMillionaire</span>
+                        <span class="sidebar-game-desc coming-soon-row">
+                            <span class="lock-icon">🔒</span>
+                            <span>Coming Soon</span>
+                        </span>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <section class="game-container">
+            <nav class="mode-buttons" aria-label="Game Modes">
+                <button class="mode-btn btn-manual active" id="manual"><i class="fa-solid fa-sliders"></i> Manual pick<br><span>Choose Categories</span></button>
+                <button class="mode-btn btn-random-easy" id="random-easy"><i class="fa-solid fa-dice-one"></i> Random Easy<br><span>Easy random clubs</span></button>
+                <button class="mode-btn btn-random-hard" id="random-hard"><i class="fa-solid fa-dice-six"></i> Random Hard<br><span>Hard random clubs</span></button>
+                <button class="mode-btn btn-hnl" id="croatian-league"><i class="fa-solid fa-flag-checkered"></i> Random HNL<br><span>Croatian clubs only</span></button>
+            </nav>
+
+            <section class="scoreboard" aria-label="Scoreboard">
+                <div class="score-info" id="score-info">
+                    <!-- Score: X image 0 - 0 O image -->
                 </div>
-                <!-- Top clubs -->
-                <div class="club-cell top top-0" data-pos="top" data-idx="0">CHOOSE CATEGORY</div>
-                <div class="club-cell top top-1" data-pos="top" data-idx="1">CHOOSE CATEGORY</div>
-                <div class="club-cell top top-2" data-pos="top" data-idx="2">CHOOSE CATEGORY</div>
-                <!-- Left clubs -->
-                <div class="club-cell left left-0" data-pos="left" data-idx="0">CHOOSE CATEGORY</div>
-                <div class="club-cell left left-1" data-pos="left" data-idx="1">CHOOSE CATEGORY</div>
-                <div class="club-cell left left-2" data-pos="left" data-idx="2">CHOOSE CATEGORY</div>
-                <!-- Main grid 3x3 -->
-                <button class="cell r0c0" data-row="0" data-col="0"></button>
-                <button class="cell r0c1" data-row="0" data-col="1"></button>
-                <button class="cell r0c2" data-row="0" data-col="2"></button>
-                <button class="cell r1c0" data-row="1" data-col="0"></button>
-                <button class="cell r1c1" data-row="1" data-col="1"></button>
-                <button class="cell r1c2" data-row="1" data-col="2"></button>
-                <button class="cell r2c0" data-row="2" data-col="0"></button>
-                <button class="cell r2c1" data-row="2" data-col="1"></button>
-                <button class="cell r2c2" data-row="2" data-col="2"></button>
+                <div class="turn-info" id="turn-info">
+                    <!-- Turn: X image -->
+                </div>
+                <button class="btn-skip" id="skip-turn-btn" aria-label="Skip Turn"><i class="fa-solid fa-arrow-rotate-right"></i> Skip Turn</button>
+            </section>
+
+            <section class="board-area">
+                <div class="board-grid-wrap grid" id="board-grid-wrap" role="grid" aria-label="FootyGrid 3x3 board">
+                    <!-- Row 0 -->
+                    <div class="title-cell" aria-hidden="true">
+                        <img src="FootyPip.png" alt="logo" style="max-width:90px; max-height:90px; display:block; margin:auto;">
+                    </div>
+                    <div class="club-cell top top-0" data-pos="top" data-idx="0" tabindex="0" aria-label="Top Category 1">CHOOSE CATEGORY</div>
+                    <div class="club-cell top top-1" data-pos="top" data-idx="1" tabindex="0" aria-label="Top Category 2">CHOOSE CATEGORY</div>
+                    <div class="club-cell top top-2" data-pos="top" data-idx="2" tabindex="0" aria-label="Top Category 3">CHOOSE CATEGORY</div>
+                    <!-- Row 1 -->
+                    <div class="club-cell left left-0" data-pos="left" data-idx="0" tabindex="0" aria-label="Left Category 1">CHOOSE CATEGORY</div>
+                    <button class="cell grid-cell r1c1" data-row="0" data-col="0" aria-label="Grid cell 1-1"></button>
+                    <button class="cell grid-cell r1c2" data-row="0" data-col="1" aria-label="Grid cell 1-2"></button>
+                    <button class="cell grid-cell r1c3" data-row="0" data-col="2" aria-label="Grid cell 1-3"></button>
+                    <!-- Row 2 -->
+                    <div class="club-cell left left-1" data-pos="left" data-idx="1" tabindex="0" aria-label="Left Category 2">CHOOSE CATEGORY</div>
+                    <button class="cell grid-cell r2c1" data-row="1" data-col="0" aria-label="Grid cell 2-1"></button>
+                    <button class="cell grid-cell r2c2" data-row="1" data-col="1" aria-label="Grid cell 2-2"></button>
+                    <button class="cell grid-cell r2c3" data-row="1" data-col="2" aria-label="Grid cell 2-3"></button>
+                    <!-- Row 3 -->
+                    <div class="club-cell left left-2" data-pos="left" data-idx="2" tabindex="0" aria-label="Left Category 3">CHOOSE CATEGORY</div>
+                    <button class="cell grid-cell r3c1" data-row="2" data-col="0" aria-label="Grid cell 3-1"></button>
+                    <button class="cell grid-cell r3c2" data-row="2" data-col="1" aria-label="Grid cell 3-2"></button>
+                    <button class="cell grid-cell r3c3" data-row="2" data-col="2" aria-label="Grid cell 3-3"></button>
+                </div>
+            </section>
+
+            <footer class="footer">
+                <p>Click on a grid cell to select a player.<br>The goal is to get three players in a row!</p>
+            </footer>
+        </section>
+
+        <!-- Modal for selecting club -->
+        <div id="clubModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="clubModalTitle">
+            <div class="modal-content">
+                <span class="close" id="closeClubModal" aria-label="Close">&times;</span>
+                <h3 id="clubModalTitle">Choose a Category</h3>
+                <input type="text" id="clubSearch" placeholder="Search club..." aria-label="Search club">
+                <ul id="clubList"></ul>
             </div>
         </div>
-        <div class="footer">
-            Click on a grid cell to select a player. The goal is to get three players in a row!
-        </div>
-    </div>
 
-    <!-- Modal for selecting club -->
-    <div id="clubModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeClubModal">&times;</span>
-            <h3>Choose a Category</h3>
-            <input type="text" id="clubSearch" placeholder="Search club...">
-            <ul id="clubList"></ul>
-        </div>
-    </div>
-
-    <!-- Modal for selecting player -->
-    <div id="playerModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header-flex">
-                <h3 class="choose-player-title">Choose a Player</h3>
-                <span class="close" id="closePlayerModal">&times;</span>
+        <!-- Modal for selecting player -->
+        <div id="playerModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="playerModalTitle">
+            <div class="modal-content">
+                <div class="modal-header-flex">
+                    <h3 id="playerModalTitle" class="choose-player-title">Choose a Player</h3>
+                    <span class="close" id="closePlayerModal" aria-label="Close">&times;</span>
+                </div>
+                <input type="text" id="playerSearch" placeholder="Search player..." aria-label="Search player">
+                <ul id="playerList"></ul>
             </div>
-            <input type="text" id="playerSearch" placeholder="Search player...">
-            <ul id="playerList"></ul>
         </div>
-    </div>
-
+    </main>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="app.js"></script>
 </body>

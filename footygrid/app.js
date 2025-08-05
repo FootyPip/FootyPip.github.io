@@ -31,7 +31,7 @@ function updateTurnInfo() {
         ? `<img src="signs/x.png" alt="X" class="turn-img"/>`
         : `<img src="signs/o.png" alt="O" class="turn-img"/>`;
     document.getElementById("turn-info").innerHTML =
-        `<span class="turn-label">Turn:</span>${symbolImg}`;
+        `<span class="turn-label">Turn:</span> ${symbolImg}`;
 }
 updateTurnInfo();
 
@@ -41,6 +41,7 @@ function updateScoreInfo() {
     document.getElementById("score-info").innerHTML =
         `${xImg} ${scoreX} - ${scoreO} ${oImg}`;
 }
+
 updateScoreInfo();
 
 document.getElementById("skip-turn-btn").onclick = function() {
@@ -181,7 +182,7 @@ async function fetchCategoryPositions(mode = "manual") {
 function setClubCellWithBadgeAndName(cell, clubName) {
     cell.innerHTML = "";
     if (clubName === "CHOOSE CATEGORY") {
-        cell.textContent = "CHOOSE CATEGORY";
+        cell.innerHTML = '<span class="choose-category-text">CHOOSE CATEGORY</span>';
     } else {
         const img = document.createElement('img');
         img.src = `badges/${clubName.toLowerCase()}.png`;
@@ -243,20 +244,20 @@ async function renderGrid() {
         [null, null, null],
         [null, null, null]
     ];
-
     await dataReadyPromise;
 
-    document.querySelectorAll('.cell').forEach(cell => {
+    // ONLY setup the intersection cells (those with both data-row and data-col)
+    document.querySelectorAll('.grid-cell[data-row][data-col]').forEach(cell => {
         cell.innerHTML = "";
         cell.removeAttribute("data-locked");
+        cell.classList.remove("cell-locked", "cell-active", "cell-win");
         cell.disabled = false;
         cell.style.cursor = "pointer";
         cell.onclick = function() {
-            if (currentMode === "manual" && !allClubsChosen()) {
-                return;
-            }
-            if (cell.hasAttribute("data-locked")) return;
+            if (currentMode === "manual" && !allClubsChosen()) return;
+            if (cell.hasAttribute("data-locked") || cell.classList.contains("cell-locked")) return;
             currentGridCell = cell;
+            activateCellFeedback(cell); // visual feedback
             showModal(playerModal);
             populatePlayerModal(cell);
         };
@@ -272,6 +273,16 @@ function debounce(fn, delay) {
         clearTimeout(timeoutId);
         timeoutId = setTimeout(() => fn.apply(this, args), delay);
     };
+}
+
+function activateCellFeedback(cell) {
+    cell.classList.add('cell-active');
+    setTimeout(() => cell.classList.remove('cell-active'), 300);
+}
+
+function activateCellFeedback(cell) {
+    cell.classList.add('cell-active');
+    setTimeout(() => cell.classList.remove('cell-active'), 300);
 }
 
 // --- Only show clubs not already chosen and not making impossible grids ---
@@ -475,13 +486,16 @@ function populateClubModal() {
         renderList(currentListType, true);
     };
 
-    clubSearch.onblur = function() {
+    clubSearch.onblur = function(e) {
+        // Only close if focus goes to another element inside clubModal (like clicking a club)
+        // Otherwise, DO NOTHING: window focus loss will not close the list
         setTimeout(() => {
-            if (suppressClubSearchBlur) {
-                suppressClubSearchBlur = false;
-                clubSearch.focus();
-                return;
+            // Check if the new focused element is inside clubModal
+            const active = document.activeElement;
+            if (clubModal.contains(active)) {
+                return; // Don't close
             }
+            // If you really want to close only if clicking outside modal
             dropdownOpen = false;
             clubList.innerHTML = "";
         }, 120);
@@ -722,23 +736,31 @@ function populatePlayerModal(cell) {
 // ... [rest of your code remains unchanged]
 // --- WIN CHECK ---
 function checkWin() {
+    // Helper: get cell by row/col
+    function getCell(r, c) {
+        return document.querySelector(`.grid-cell[data-row="${r}"][data-col="${c}"]`);
+    }
     for (let r = 0; r < 3; r++) {
         if (gridState[r][0] && gridState[r][0] === gridState[r][1] && gridState[r][1] === gridState[r][2]) {
+            animateWinCells([getCell(r,0), getCell(r,1), getCell(r,2)]);
             showWin(gridState[r][0]);
             return;
         }
     }
     for (let c = 0; c < 3; c++) {
         if (gridState[0][c] && gridState[0][c] === gridState[1][c] && gridState[1][c] === gridState[2][c]) {
+            animateWinCells([getCell(0,c), getCell(1,c), getCell(2,c)]);
             showWin(gridState[0][c]);
             return;
         }
     }
     if (gridState[0][0] && gridState[0][0] === gridState[1][1] && gridState[1][1] === gridState[2][2]) {
+        animateWinCells([getCell(0,0), getCell(1,1), getCell(2,2)]);
         showWin(gridState[0][0]);
         return;
     }
     if (gridState[0][2] && gridState[0][2] === gridState[1][1] && gridState[1][1] === gridState[2][0]) {
+        animateWinCells([getCell(0,2), getCell(1,1), getCell(2,0)]);
         showWin(gridState[0][2]);
         return;
     }
@@ -793,10 +815,8 @@ async function handlePlayerPick(cell, playerId) {
     let row = parseInt(cell.dataset.row), col = parseInt(cell.dataset.col);
     let rowCat = leftClubs[row];
     let colCat = topClubs[col];
-
     const playersCol = categoryPlayersMap[colCat] || new Set();
     const playersRow = categoryPlayersMap[rowCat] || new Set();
-
     let isValid = playersCol.has(playerId) && playersRow.has(playerId);
 
     if (isValid) {
@@ -810,14 +830,17 @@ async function handlePlayerPick(cell, playerId) {
         `;
         gridState[row][col] = ticTurn;
         cell.setAttribute("data-locked", "true");
+        cell.classList.add("cell-locked");
         cell.disabled = true;
         cell.style.cursor = "default";
         cell.onclick = null;
+        activateCellFeedback(cell);
         checkWin();
     }
     ticTurn = ticTurn === "X" ? "O" : "X";
     updateTurnInfo();
 }
+
 
 function getDisplaySurname(playerName) {
     let nameNoBracket = playerName.replace(/\s*\(.*?\)\s*/g, '').trim();
@@ -834,15 +857,17 @@ function allClubsChosen() {
 }
 
 function lockGridCells() {
-    document.querySelectorAll('.cell').forEach(cell => {
+    document.querySelectorAll('.grid-cell[data-row][data-col]').forEach(cell => {
         cell.disabled = true;
+        cell.classList.add("cell-locked");
         cell.style.cursor = "default";
     });
 }
 function unlockGridCells() {
-    document.querySelectorAll('.cell').forEach(cell => {
+    document.querySelectorAll('.grid-cell[data-row][data-col]').forEach(cell => {
         if (!cell.hasAttribute("data-locked")) {
             cell.disabled = false;
+            cell.classList.remove("cell-locked");
             cell.style.cursor = "pointer";
         }
     });
