@@ -10961,7 +10961,9 @@
   },
   {
     "id": "6107",
-    "name": "Abdoulaye Faye"
+    "name": "Abdoulaye Faye",
+    "dateOfBirth": "Feb 26, 1978",
+    "position": "CB"
   },
   {
     "id": "6117",
@@ -94426,6 +94428,10 @@
     "name": "George Lawrence"
   },
   {
+    "id": "502017",
+    "name": "Balsa Popovic"
+  },
+  {
     "id": "502022",
     "name": "Stefan Milic"
   },
@@ -96786,6 +96792,10 @@
     "name": "Nahuel Estévez"
   },
   {
+    "id": "552564",
+    "name": "Krsto Ljubanovic"
+  },
+  {
     "id": "552614",
     "name": "Kornell McDonald"
   },
@@ -97496,6 +97506,10 @@
   {
     "id": "567201",
     "name": "Iván Parra"
+  },
+  {
+    "id": "567454",
+    "name": "Lorenzo Lucchesi"
   },
   {
     "id": "567465",
@@ -101142,6 +101156,10 @@
   {
     "id": "637514",
     "name": "Carl Davordzie"
+  },
+  {
+    "id": "637669",
+    "name": "Emre Demir"
   },
   {
     "id": "637783",
@@ -104850,6 +104868,10 @@
     "name": "Luis Hasa"
   },
   {
+    "id": "724272",
+    "name": "Franco Corelli"
+  },
+  {
     "id": "724273",
     "name": "Roko Brajkovic",
     "dateOfBirth": "Jul 3, 2005",
@@ -105192,6 +105214,10 @@
   {
     "id": "735095",
     "name": "Sabatino Nese"
+  },
+  {
+    "id": "735353",
+    "name": "Athanasios Koutsogoulas"
   },
   {
     "id": "735354",
@@ -108744,6 +108770,10 @@
     "name": "Mamadou Mbacke"
   },
   {
+    "id": "898807",
+    "name": "Konstantinos Kostoulas"
+  },
+  {
     "id": "898812",
     "name": "Christos Alexiou"
   },
@@ -109566,6 +109596,10 @@
     "name": "Kerim Alajbegovic"
   },
   {
+    "id": "930150",
+    "name": "Tommaso Ebone"
+  },
+  {
     "id": "930415",
     "name": "Antonio Gomis"
   },
@@ -109918,6 +109952,10 @@
   {
     "id": "937713",
     "name": "Max Schmitt"
+  },
+  {
+    "id": "937716",
+    "name": "Karlo Lukman"
   },
   {
     "id": "937720",
@@ -110856,6 +110894,10 @@
     "name": "Vanja Radulaski"
   },
   {
+    "id": "963401",
+    "name": "Matija Ninic"
+  },
+  {
     "id": "963627",
     "name": "Sean Hankin"
   },
@@ -111780,6 +111822,10 @@
     "name": "Joselu Pérez"
   },
   {
+    "id": "1000138",
+    "name": "Paul Pöpperl"
+  },
+  {
     "id": "1000626",
     "name": "Enric García"
   },
@@ -112570,6 +112616,10 @@
     "name": "Chido Obi"
   },
   {
+    "id": "1043003",
+    "name": "Yasin Özcan"
+  },
+  {
     "id": "1043525",
     "name": "Chris Beech"
   },
@@ -112646,6 +112696,10 @@
   {
     "id": "1045462",
     "name": "Moses Zambrang Barnabas"
+  },
+  {
+    "id": "1045489",
+    "name": "Benjamin Gibanjek"
   },
   {
     "id": "1045514",
@@ -113590,6 +113644,10 @@
     "name": "Eduardo Felicíssimo"
   },
   {
+    "id": "1081995",
+    "name": "Mohamadou Kanté"
+  },
+  {
     "id": "1082114",
     "name": "Ante Kavelj"
   },
@@ -113866,6 +113924,10 @@
     "name": "Ognjen Teofilovic"
   },
   {
+    "id": "1108022",
+    "name": "Deniz Zeitler"
+  },
+  {
     "id": "1108049",
     "name": "Amara Nallo"
   },
@@ -114108,6 +114170,10 @@
   {
     "id": "1124492",
     "name": "Jakov Kujundzic"
+  },
+  {
+    "id": "1124705",
+    "name": "Borna Graonic"
   },
   {
     "id": "1124798",
@@ -114570,6 +114636,10 @@
     "name": "Josip Perkovic"
   },
   {
+    "id": "1174895",
+    "name": "Lukas Zahora"
+  },
+  {
     "id": "1175301",
     "name": "Federico Nardin"
   },
@@ -114606,6 +114676,10 @@
     "name": "Federico Steffanoni"
   },
   {
+    "id": "1178393",
+    "name": "Antoñito Cordero"
+  },
+  {
     "id": "1178758",
     "name": "Malick Yalcouyé"
   },
@@ -114616,6 +114690,12 @@
   {
     "id": "1181283",
     "name": "İsa Halidi"
+  },
+  {
+    "id": "1182738",
+    "name": "Abdoulaye Faye",
+    "dateOfBirth": "Sep 22, 2004",
+    "position": "CB"
   },
   {
     "id": "1183719",
