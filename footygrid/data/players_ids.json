@@ -2140,6 +2140,10 @@
     "name": "Lodewijk Roembiak"
   },
   {
+    "id": "819",
+    "name": "Miodrag Vukotić"
+  },
+  {
     "id": "820",
     "name": "David Montero"
   },
@@ -5542,6 +5546,10 @@
   {
     "id": "3429",
     "name": "Kennet Andersson"
+  },
+  {
+    "id": "3430",
+    "name": "Kakhaber Kaladze"
   },
   {
     "id": "3431",
@@ -10056,8 +10064,16 @@
     "name": "Valerio Fiori"
   },
   {
+    "id": "5800",
+    "name": "Dida"
+  },
+  {
     "id": "5802",
     "name": "Thomas Helveg"
+  },
+  {
+    "id": "5803",
+    "name": "Paolo Maldini"
   },
   {
     "id": "5805",
@@ -10094,6 +10110,12 @@
   {
     "id": "5818",
     "name": "Massimo Ambrosini"
+  },
+  {
+    "id": "5819",
+    "name": "Serginho",
+    "dateOfBirth": "Jun 27, 1971",
+    "position": "LB"
   },
   {
     "id": "5821",
@@ -10830,6 +10852,10 @@
     "name": "Shunsuke Nakamura"
   },
   {
+    "id": "6071",
+    "name": "Francesco Cozza"
+  },
+  {
     "id": "6073",
     "name": "Ricardo Verón"
   },
@@ -10848,6 +10874,10 @@
   {
     "id": "6078",
     "name": "Gianluca Savoldi"
+  },
+  {
+    "id": "6079",
+    "name": "Zeljko Kalac"
   },
   {
     "id": "6081",
@@ -10920,6 +10950,10 @@
   {
     "id": "6103",
     "name": "Alexander Huber"
+  },
+  {
+    "id": "6105",
+    "name": "Drazen Brncic"
   },
   {
     "id": "6106",
@@ -11518,6 +11552,10 @@
   {
     "id": "6791",
     "name": "Kai Herdling"
+  },
+  {
+    "id": "6792",
+    "name": "Luca Antonini"
   },
   {
     "id": "6793",
@@ -15448,6 +15486,10 @@
     "name": "Dean Gordon"
   },
   {
+    "id": "10055",
+    "name": "Alessandro Costacurta"
+  },
+  {
     "id": "10080",
     "name": "Jörg Nowotny"
   },
@@ -17072,6 +17114,10 @@
     "name": "Lee Beevers"
   },
   {
+    "id": "13266",
+    "name": "Samir Beloufa"
+  },
+  {
     "id": "13270",
     "name": "Matt Bloomfield"
   },
@@ -17246,6 +17292,10 @@
   {
     "id": "13433",
     "name": "Ady Williams"
+  },
+  {
+    "id": "13436",
+    "name": "Aliyu Datti"
   },
   {
     "id": "13438",
@@ -23172,6 +23222,10 @@
     "name": "Gianni Comandini"
   },
   {
+    "id": "21685",
+    "name": "Roberto D'Aversa"
+  },
+  {
     "id": "21686",
     "name": "Matteo Gianello"
   },
@@ -23256,6 +23310,10 @@
   {
     "id": "21764",
     "name": "Massimo Perna"
+  },
+  {
+    "id": "21765",
+    "name": "Andrea Rabito"
   },
   {
     "id": "21769",
@@ -23372,6 +23430,10 @@
     "name": "Gianluca Pegolo"
   },
   {
+    "id": "21873",
+    "name": "Carlo Teodorani"
+  },
+  {
     "id": "21876",
     "name": "Federico Balzaretti"
   },
@@ -23402,6 +23464,10 @@
   {
     "id": "21901",
     "name": "Francesco Baldini"
+  },
+  {
+    "id": "21903",
+    "name": "Eder Baù"
   },
   {
     "id": "21904",
@@ -23546,6 +23612,10 @@
   {
     "id": "22110",
     "name": "Luca Franchini"
+  },
+  {
+    "id": "22111",
+    "name": "Mirco Gasparetto"
   },
   {
     "id": "22123",
@@ -23954,6 +24024,10 @@
   {
     "id": "22602",
     "name": "Lutz Schwerinski"
+  },
+  {
+    "id": "22605",
+    "name": "Alessandro Venditti"
   },
   {
     "id": "22614",
@@ -24638,6 +24712,10 @@
   {
     "id": "24306",
     "name": "Daniele Ficagna"
+  },
+  {
+    "id": "24315",
+    "name": "Lorenzo Rossetti"
   },
   {
     "id": "24316",
@@ -25536,6 +25614,10 @@
     "name": "Cicinho",
     "dateOfBirth": "Jun 24, 1980",
     "position": "RB"
+  },
+  {
+    "id": "26105",
+    "name": "Valter Birsa"
   },
   {
     "id": "26133",
@@ -27512,6 +27594,10 @@
     "name": "Alessandro Gazzi"
   },
   {
+    "id": "28828",
+    "name": "Gabriele Aldegani"
+  },
+  {
     "id": "28829",
     "name": "Eddy Baggio"
   },
@@ -29420,6 +29506,10 @@
     "name": "Mauro Bressan"
   },
   {
+    "id": "33330",
+    "name": "Matteo Giordano"
+  },
+  {
     "id": "33333",
     "name": "Gustavo Lazzaretti"
   },
@@ -30500,6 +30590,10 @@
   {
     "id": "34909",
     "name": "Simone Bentivoglio"
+  },
+  {
+    "id": "34914",
+    "name": "Stefano Mondini"
   },
   {
     "id": "34944",
@@ -34082,6 +34176,10 @@
     "name": "Davide Bassi"
   },
   {
+    "id": "41935",
+    "name": "Lino Marzorati"
+  },
+  {
     "id": "41936",
     "name": "Mattia Passarini"
   },
@@ -34136,6 +34234,10 @@
     "name": "George Elokobi"
   },
   {
+    "id": "42049",
+    "name": "Franco Baresi"
+  },
+  {
     "id": "42050",
     "name": "Alparslan Erdem"
   },
@@ -34166,6 +34268,10 @@
   {
     "id": "42118",
     "name": "Saverio Guariniello"
+  },
+  {
+    "id": "42121",
+    "name": "Matteo Pelatti"
   },
   {
     "id": "42198",
@@ -34370,6 +34476,10 @@
   {
     "id": "42667",
     "name": "Marius Zaliukas"
+  },
+  {
+    "id": "42678",
+    "name": "Salvatore Bocchetti"
   },
   {
     "id": "42694",
@@ -34682,6 +34792,10 @@
     "name": "Luigi Bruins"
   },
   {
+    "id": "43760",
+    "name": "Kévin Constant"
+  },
+  {
     "id": "43763",
     "name": "Erik Pieters"
   },
@@ -34990,6 +35104,10 @@
     "name": "Daniele Magliocchetti"
   },
   {
+    "id": "44294",
+    "name": "Romano Perticone"
+  },
+  {
     "id": "44317",
     "name": "Bojan Jokic"
   },
@@ -35028,6 +35146,10 @@
   {
     "id": "44361",
     "name": "Oleksiy Gay"
+  },
+  {
+    "id": "44365",
+    "name": "Digão"
   },
   {
     "id": "44367",
@@ -35202,6 +35324,10 @@
     "name": "Beram Kayal"
   },
   {
+    "id": "44758",
+    "name": "Nicola Padoin"
+  },
+  {
     "id": "44778",
     "name": "Vítor Silva"
   },
@@ -35346,6 +35472,10 @@
   {
     "id": "45110",
     "name": "Romain Vincelot"
+  },
+  {
+    "id": "45113",
+    "name": "Patrick Kalambay"
   },
   {
     "id": "45121",
@@ -35644,6 +35774,10 @@
   {
     "id": "45569",
     "name": "Luca Bonfiglio"
+  },
+  {
+    "id": "45570",
+    "name": "Davide Facchin"
   },
   {
     "id": "45573",
@@ -38818,6 +38952,10 @@
     "name": "Davide Di Gennaro"
   },
   {
+    "id": "52150",
+    "name": "Mitja Novinic"
+  },
+  {
     "id": "52151",
     "name": "Isaac Vorsah"
   },
@@ -39946,6 +40084,10 @@
     "name": "Mauro Formica"
   },
   {
+    "id": "55895",
+    "name": "Leonel Vangioni"
+  },
+  {
     "id": "55898",
     "name": "Josh Wright"
   },
@@ -40096,8 +40238,48 @@
     "name": "Alessandro Carrozza"
   },
   {
+    "id": "56617",
+    "name": "Gastone Bottini"
+  },
+  {
+    "id": "56618",
+    "name": "Matteo Bruscagin"
+  },
+  {
+    "id": "56620",
+    "name": "Riccardo Caraglia"
+  },
+  {
+    "id": "56623",
+    "name": "Alex Guerci"
+  },
+  {
+    "id": "56624",
+    "name": "Matteo Lunati"
+  },
+  {
+    "id": "56625",
+    "name": "Daniel Offredi"
+  },
+  {
     "id": "56631",
     "name": "Erwin Mulder"
+  },
+  {
+    "id": "56632",
+    "name": "Emanuele Orlandi"
+  },
+  {
+    "id": "56633",
+    "name": "Enrico Travaini"
+  },
+  {
+    "id": "56634",
+    "name": "Kingsley Umunegbu"
+  },
+  {
+    "id": "56687",
+    "name": "Davide Ancelotti"
   },
   {
     "id": "56692",
@@ -42760,6 +42942,10 @@
     "name": "Jules Goda"
   },
   {
+    "id": "63254",
+    "name": "Nicola Pasini"
+  },
+  {
     "id": "63267",
     "name": "Nando",
     "dateOfBirth": "Apr 9, 1966",
@@ -43338,6 +43524,10 @@
   {
     "id": "66515",
     "name": "Alex Teixeira"
+  },
+  {
+    "id": "66521",
+    "name": "Keisuke Honda"
   },
   {
     "id": "66531",
@@ -44446,6 +44636,10 @@
     "name": "Chando"
   },
   {
+    "id": "71019",
+    "name": "Bartosz Salamon"
+  },
+  {
     "id": "71020",
     "name": "Luciano Becchio"
   },
@@ -44840,6 +45034,10 @@
   {
     "id": "72645",
     "name": "Diego Arismendi"
+  },
+  {
+    "id": "72648",
+    "name": "Mathías Cardacio"
   },
   {
     "id": "72653",
@@ -45444,6 +45642,10 @@
     "name": "Andrea Rispoli"
   },
   {
+    "id": "74471",
+    "name": "Marco van Basten"
+  },
+  {
     "id": "74550",
     "name": "Jefferson",
     "dateOfBirth": "Jul 5, 1988",
@@ -45860,6 +46062,10 @@
     "position": "CF"
   },
   {
+    "id": "76749",
+    "name": "Tabaré Viúdez"
+  },
+  {
     "id": "76799",
     "name": "Miguel Britos"
   },
@@ -46084,6 +46290,10 @@
   {
     "id": "77966",
     "name": "Oğuzhan Özyakup"
+  },
+  {
+    "id": "77970",
+    "name": "Elia Legati"
   },
   {
     "id": "77975",
@@ -46550,6 +46760,10 @@
     "name": "Georg Teigl"
   },
   {
+    "id": "81714",
+    "name": "Philipp Prosenik"
+  },
+  {
     "id": "81737",
     "name": "Rolf Meyer"
   },
@@ -46938,6 +47152,10 @@
   {
     "id": "83955",
     "name": "Jaume Durán"
+  },
+  {
+    "id": "83981",
+    "name": "Ferdinando Vitofrancesco"
   },
   {
     "id": "83986",
@@ -48114,16 +48332,44 @@
     "name": "Giulio Donati"
   },
   {
+    "id": "88685",
+    "name": "Antonio Donnarumma"
+  },
+  {
+    "id": "88686",
+    "name": "Denis Fondrini"
+  },
+  {
     "id": "88690",
     "name": "Alberto Gerbo"
+  },
+  {
+    "id": "88692",
+    "name": "Giorgio Gianola"
   },
   {
     "id": "88698",
     "name": "Aiman Napoli"
   },
   {
+    "id": "88699",
+    "name": "Wilfred Osuji"
+  },
+  {
+    "id": "88700",
+    "name": "Jordan Pedrocchi"
+  },
+  {
+    "id": "88701",
+    "name": "Filippo Perucchini"
+  },
+  {
     "id": "88706",
     "name": "Simone Romagnoli"
+  },
+  {
+    "id": "88707",
+    "name": "Alessandro Ruggeri"
   },
   {
     "id": "88709",
@@ -48164,6 +48410,10 @@
   {
     "id": "88909",
     "name": "Riccardo Saponara"
+  },
+  {
+    "id": "88941",
+    "name": "Federico Piazza"
   },
   {
     "id": "88971",
@@ -48456,6 +48706,10 @@
   {
     "id": "91059",
     "name": "Joshua King"
+  },
+  {
+    "id": "91241",
+    "name": "Giacomo Beretta"
   },
   {
     "id": "91245",
@@ -50542,6 +50796,10 @@
     "name": "Leon Crncic"
   },
   {
+    "id": "100176",
+    "name": "Gianmarco Zigoni"
+  },
+  {
     "id": "100287",
     "name": "Antoni Brdik"
   },
@@ -50578,6 +50836,10 @@
   {
     "id": "100591",
     "name": "Dino Stiglec"
+  },
+  {
+    "id": "100596",
+    "name": "Simonluca Agazzone"
   },
   {
     "id": "100737",
@@ -51204,12 +51466,28 @@
     "name": "Nicola Berti"
   },
   {
+    "id": "102474",
+    "name": "Roberto Donadoni"
+  },
+  {
+    "id": "102475",
+    "name": "Alberico Evani"
+  },
+  {
+    "id": "102480",
+    "name": "Daniele Massaro"
+  },
+  {
     "id": "102481",
     "name": "Lorenzo Minotti"
   },
   {
     "id": "102482",
     "name": "Roberto Mussi"
+  },
+  {
+    "id": "102483",
+    "name": "Mauro Tassotti"
   },
   {
     "id": "102485",
@@ -51400,6 +51678,10 @@
     "name": "Raffaele Trezzi"
   },
   {
+    "id": "102788",
+    "name": "Gianluca Zanetti"
+  },
+  {
     "id": "102791",
     "name": "Raffaele Sorriso"
   },
@@ -51434,6 +51716,10 @@
   {
     "id": "103381",
     "name": "Tiquinho Soares"
+  },
+  {
+    "id": "103415",
+    "name": "Adriano Marzeglia"
   },
   {
     "id": "103427",
@@ -51950,6 +52236,10 @@
     "name": "Richard van den Bosch"
   },
   {
+    "id": "105676",
+    "name": "Carlo Ferrario"
+  },
+  {
     "id": "105695",
     "name": "Jason Holt"
   },
@@ -52186,6 +52476,10 @@
   {
     "id": "106921",
     "name": "Oleg Protasov"
+  },
+  {
+    "id": "106923",
+    "name": "Sebastiano Rossi"
   },
   {
     "id": "106930",
@@ -53024,6 +53318,10 @@
     "name": "Marnick Vermijl"
   },
   {
+    "id": "110826",
+    "name": "Roberto Bortolotto"
+  },
+  {
     "id": "110858",
     "name": "Benik Afobe"
   },
@@ -53706,6 +54004,10 @@
     "name": "Alex Smith",
     "dateOfBirth": "Oct 31, 1991",
     "position": "CM"
+  },
+  {
+    "id": "116679",
+    "name": "Carlo Ancelotti"
   },
   {
     "id": "116683",
@@ -55194,6 +55496,10 @@
     "name": "Sergiy Sydorchuk"
   },
   {
+    "id": "124203",
+    "name": "Mattia El Hilali"
+  },
+  {
     "id": "124214",
     "name": "Amer Dupovac"
   },
@@ -56376,6 +56682,10 @@
     "name": "Steve Foster"
   },
   {
+    "id": "130324",
+    "name": "Gianmario Comi"
+  },
+  {
     "id": "130346",
     "name": "Luca Belcastro"
   },
@@ -56384,8 +56694,16 @@
     "name": "Filippo Boniperti"
   },
   {
+    "id": "130349",
+    "name": "Andrea De Vito"
+  },
+  {
     "id": "130350",
     "name": "Vittorio Ferrero"
+  },
+  {
+    "id": "130354",
+    "name": "Nnamdi Oduamadi"
   },
   {
     "id": "130360",
@@ -56414,6 +56732,10 @@
   {
     "id": "130389",
     "name": "Nicola Canzian"
+  },
+  {
+    "id": "130394",
+    "name": "Gianluca Lapadula"
   },
   {
     "id": "130396",
@@ -57218,6 +57540,10 @@
     "name": "Stewart Kerr"
   },
   {
+    "id": "136091",
+    "name": "Simone Calvano"
+  },
+  {
     "id": "136100",
     "name": "Elio De Silvestro"
   },
@@ -57488,6 +57814,10 @@
     "position": "CF"
   },
   {
+    "id": "138582",
+    "name": "Mauro Calvi"
+  },
+  {
     "id": "138630",
     "name": "Franck Rolling"
   },
@@ -57716,6 +58046,10 @@
   {
     "id": "140032",
     "name": "Andreas Samaris"
+  },
+  {
+    "id": "140080",
+    "name": "Matteo Deinite"
   },
   {
     "id": "140096",
@@ -57968,6 +58302,10 @@
   {
     "id": "142978",
     "name": "Alain Caveglia"
+  },
+  {
+    "id": "142983",
+    "name": "Gianluca Sordo"
   },
   {
     "id": "142989",
@@ -58754,6 +59092,14 @@
     "name": "Ivan Grubisic"
   },
   {
+    "id": "148589",
+    "name": "Mattia Dal Bello"
+  },
+  {
+    "id": "148598",
+    "name": "Stefano Pastrello"
+  },
+  {
     "id": "148657",
     "name": "Tomas Kalas"
   },
@@ -58790,6 +59136,10 @@
   {
     "id": "148824",
     "name": "Soma Novothny"
+  },
+  {
+    "id": "148878",
+    "name": "Nathan Schiavon"
   },
   {
     "id": "148894",
@@ -59248,6 +59598,10 @@
   {
     "id": "151307",
     "name": "David Garcion"
+  },
+  {
+    "id": "151314",
+    "name": "Michele Piccolo"
   },
   {
     "id": "151317",
@@ -60574,6 +60928,14 @@
     "name": "Milos Jojic"
   },
   {
+    "id": "160322",
+    "name": "Marco Baldan"
+  },
+  {
+    "id": "160334",
+    "name": "Simone Ganz"
+  },
+  {
     "id": "160341",
     "name": "Vasilios Karapialis"
   },
@@ -60896,6 +61258,18 @@
     "name": "Bojan Ostojic"
   },
   {
+    "id": "163045",
+    "name": "Davide Di Fabio"
+  },
+  {
+    "id": "163048",
+    "name": "Alberto Paleari"
+  },
+  {
+    "id": "163051",
+    "name": "Riccardo Piscitelli"
+  },
+  {
     "id": "163053",
     "name": "Mame Thiam"
   },
@@ -61104,6 +61478,10 @@
   {
     "id": "163999",
     "name": "Juri Cisotti"
+  },
+  {
+    "id": "164020",
+    "name": "Marco Pinato"
   },
   {
     "id": "164055",
@@ -61566,6 +61944,10 @@
     "name": "Andrea Belotti"
   },
   {
+    "id": "167741",
+    "name": "Mattia Valoti"
+  },
+  {
     "id": "167791",
     "name": "Stefano Beltrame"
   },
@@ -61876,6 +62258,10 @@
   {
     "id": "169511",
     "name": "Uros Radakovic"
+  },
+  {
+    "id": "169648",
+    "name": "Guido Bistazzoni"
   },
   {
     "id": "169651",
@@ -63296,6 +63682,10 @@
     "name": "Mattia Bani"
   },
   {
+    "id": "176140",
+    "name": "Rodrigo Ely"
+  },
+  {
     "id": "176182",
     "name": "Luca Maniero"
   },
@@ -63740,6 +64130,10 @@
     "name": "Guillermo del Solar"
   },
   {
+    "id": "177673",
+    "name": "Mario Ielpo"
+  },
+  {
     "id": "177685",
     "name": "Alessandro Orlando"
   },
@@ -64152,6 +64546,10 @@
   {
     "id": "180478",
     "name": "Massimo Agostini"
+  },
+  {
+    "id": "180479",
+    "name": "Gianluca Gaudenzi"
   },
   {
     "id": "180530",
@@ -66776,8 +67174,20 @@
     "name": "Nikolaos Melissas"
   },
   {
+    "id": "199243",
+    "name": "Kingsley Boateng"
+  },
+  {
     "id": "199248",
     "name": "Bryan Cristante"
+  },
+  {
+    "id": "199252",
+    "name": "Alessio Innocenti"
+  },
+  {
+    "id": "199255",
+    "name": "Davide Narduzzo"
   },
   {
     "id": "199258",
@@ -67422,6 +67832,10 @@
     "name": "Alberto Rosa Gastaldo"
   },
   {
+    "id": "202977",
+    "name": "Luca Iotti"
+  },
+  {
     "id": "202979",
     "name": "Gennaro Tutino"
   },
@@ -67934,6 +68348,10 @@
   {
     "id": "206699",
     "name": "Matteo Cincilla"
+  },
+  {
+    "id": "206701",
+    "name": "Mario Piccinocchi"
   },
   {
     "id": "206717",
@@ -70576,6 +70994,10 @@
     "name": "Steve Palmer"
   },
   {
+    "id": "223453",
+    "name": "Simone Braglia"
+  },
+  {
     "id": "223457",
     "name": "Massimo Ciocci"
   },
@@ -70594,6 +71016,10 @@
   {
     "id": "223468",
     "name": "Maurizio Iorio"
+  },
+  {
+    "id": "223470",
+    "name": "Roberto Lorenzini"
   },
   {
     "id": "223471",
@@ -71262,6 +71688,10 @@
     "name": "Marko Dabro"
   },
   {
+    "id": "226066",
+    "name": "Francesco De Francesco"
+  },
+  {
     "id": "226068",
     "name": "Hrvoje Dzijan"
   },
@@ -71312,6 +71742,10 @@
   {
     "id": "226090",
     "name": "Ante Roguljic"
+  },
+  {
+    "id": "226092",
+    "name": "Mirco Sadotti"
   },
   {
     "id": "226093",
@@ -72068,6 +72502,10 @@
     "name": "Angelo Cimadomo"
   },
   {
+    "id": "228855",
+    "name": "Giandomenico Costi"
+  },
+  {
     "id": "228856",
     "name": "Massimo Filardi"
   },
@@ -72698,6 +73136,10 @@
     "name": "Georgios Giakoumakis"
   },
   {
+    "id": "234880",
+    "name": "Lorenzo Andrenacci"
+  },
+  {
     "id": "234887",
     "name": "Lazar Petkovic"
   },
@@ -73134,6 +73576,14 @@
   {
     "id": "238950",
     "name": "Francesco Di Mariano"
+  },
+  {
+    "id": "238951",
+    "name": "Davide Di Molfetta"
+  },
+  {
+    "id": "238953",
+    "name": "Lorenzo Ferrari"
   },
   {
     "id": "238980",
@@ -73916,6 +74366,10 @@
     "name": "Luke Croll"
   },
   {
+    "id": "244491",
+    "name": "Stefano Gori"
+  },
+  {
     "id": "244706",
     "name": "Koray Yıldız"
   },
@@ -74070,6 +74524,10 @@
   {
     "id": "246351",
     "name": "Zach Clough"
+  },
+  {
+    "id": "246380",
+    "name": "Davide Corti"
   },
   {
     "id": "246579",
@@ -74238,6 +74696,10 @@
   {
     "id": "248936",
     "name": "Pavlo Orikhovskyi"
+  },
+  {
+    "id": "248990",
+    "name": "Roberto Bandirali"
   },
   {
     "id": "248991",
@@ -74754,6 +75216,10 @@
   {
     "id": "253215",
     "name": "Raúl Valencia"
+  },
+  {
+    "id": "253267",
+    "name": "Hachim Mastour"
   },
   {
     "id": "253294",
@@ -75956,6 +76422,10 @@
     "name": "Timothy Castagne"
   },
   {
+    "id": "262257",
+    "name": "Matteo Placida"
+  },
+  {
     "id": "262320",
     "name": "Luka Ivanovic"
   },
@@ -76048,6 +76518,10 @@
   {
     "id": "263118",
     "name": "Johannes Bühler"
+  },
+  {
+    "id": "263126",
+    "name": "Massimiliano Grego"
   },
   {
     "id": "263183",
@@ -76174,6 +76648,14 @@
     "name": "Viktor Tsygankov"
   },
   {
+    "id": "264480",
+    "name": "Francesco Bordi"
+  },
+  {
+    "id": "264485",
+    "name": "Ivan De Santis"
+  },
+  {
     "id": "264514",
     "name": "Luca Vido"
   },
@@ -76184,6 +76666,14 @@
   {
     "id": "264567",
     "name": "Baptiste Guillaume"
+  },
+  {
+    "id": "264597",
+    "name": "Vincenzo Maiolo"
+  },
+  {
+    "id": "264602",
+    "name": "Massimo Prete"
   },
   {
     "id": "264633",
@@ -76220,6 +76710,10 @@
   {
     "id": "265079",
     "name": "Mattia Del Favero"
+  },
+  {
+    "id": "265087",
+    "name": "Andrés Llamas"
   },
   {
     "id": "265088",
@@ -78150,6 +78644,14 @@
     "name": "Mirko Livaja"
   },
   {
+    "id": "287307",
+    "name": "Alessandro Mastalli"
+  },
+  {
+    "id": "287313",
+    "name": "Andrej Modic"
+  },
+  {
     "id": "287343",
     "name": "Lorenzo Saporetti"
   },
@@ -78578,6 +79080,10 @@
     "name": "Nicolò Gigli"
   },
   {
+    "id": "290733",
+    "name": "Gian Filippo Felicioli"
+  },
+  {
     "id": "290774",
     "name": "Silvije Begic"
   },
@@ -78640,6 +79146,10 @@
   {
     "id": "291392",
     "name": "Fabio Della Giovanna"
+  },
+  {
+    "id": "291400",
+    "name": "Giovanni Crociata"
   },
   {
     "id": "291402",
@@ -79146,6 +79656,10 @@
   {
     "id": "295663",
     "name": "Kristjan Kushta"
+  },
+  {
+    "id": "295766",
+    "name": "Alessandro Livieri"
   },
   {
     "id": "295780",
@@ -80018,6 +80532,10 @@
     "name": "Solomon Nlemchukwu"
   },
   {
+    "id": "312678",
+    "name": "Léo Duarte"
+  },
+  {
     "id": "312715",
     "name": "Igor Postonjski"
   },
@@ -80260,6 +80778,10 @@
     "name": "Jarrod Bowen"
   },
   {
+    "id": "314886",
+    "name": "Tiago Dias"
+  },
+  {
     "id": "314959",
     "name": "Obbi Oulare"
   },
@@ -80422,6 +80944,10 @@
   {
     "id": "315869",
     "name": "Maurizio Schaeper"
+  },
+  {
+    "id": "315870",
+    "name": "Emanuele Torrasi"
   },
   {
     "id": "315876",
@@ -82454,6 +82980,10 @@
     "name": "Wilf Rostron"
   },
   {
+    "id": "339460",
+    "name": "Mario Stancanelli"
+  },
+  {
     "id": "339556",
     "name": "Rico Henry"
   },
@@ -82812,6 +83342,10 @@
     "name": "Juan Agüero"
   },
   {
+    "id": "341262",
+    "name": "Marcello Lambrughi"
+  },
+  {
     "id": "341263",
     "name": "Adrián de la Fuente"
   },
@@ -83088,6 +83622,14 @@
     "name": "Antonis Kyriazis"
   },
   {
+    "id": "343945",
+    "name": "Niccolò Zanellato"
+  },
+  {
+    "id": "343949",
+    "name": "Zakaria Hamadi"
+  },
+  {
     "id": "343952",
     "name": "Aleksandar Stankovic",
     "dateOfBirth": "Feb 17, 1998",
@@ -83286,6 +83828,10 @@
   {
     "id": "345473",
     "name": "Nicolás Schiappacasse"
+  },
+  {
+    "id": "345548",
+    "name": "Eros Favaretto"
   },
   {
     "id": "345557",
@@ -84054,6 +84600,14 @@
     "name": "Axel Bakayoko"
   },
   {
+    "id": "354909",
+    "name": "Giorgio Altare"
+  },
+  {
+    "id": "354910",
+    "name": "Raul Zucchetti"
+  },
+  {
     "id": "355051",
     "name": "Luigi D'Ignazio"
   },
@@ -84440,6 +84994,10 @@
     "name": "Leonardo Stanzani"
   },
   {
+    "id": "357991",
+    "name": "Alessandro Plizzari"
+  },
+  {
     "id": "357992",
     "name": "Raoul Bellanova"
   },
@@ -84808,6 +85366,10 @@
   {
     "id": "364109",
     "name": "Marco de Laat"
+  },
+  {
+    "id": "364133",
+    "name": "Pietro Pellegri"
   },
   {
     "id": "364134",
@@ -87024,8 +87586,20 @@
     "name": "Andrea Ciofi"
   },
   {
+    "id": "392530",
+    "name": "Alessandro Guarnone"
+  },
+  {
     "id": "392538",
     "name": "Tommaso Pobega"
+  },
+  {
+    "id": "392540",
+    "name": "Riccardo Forte"
+  },
+  {
+    "id": "392545",
+    "name": "Frank Tsadjout"
   },
   {
     "id": "392569",
@@ -87802,6 +88376,10 @@
     "name": "Jakov Gogic"
   },
   {
+    "id": "401161",
+    "name": "Matteo Soncin"
+  },
+  {
     "id": "401163",
     "name": "Ciro Palmieri"
   },
@@ -88024,6 +88602,14 @@
   {
     "id": "404469",
     "name": "Tomislav Knezevic"
+  },
+  {
+    "id": "404479",
+    "name": "Simone Giovanni Brunelli"
+  },
+  {
+    "id": "404480",
+    "name": "William Nava"
   },
   {
     "id": "404586",
@@ -89024,6 +89610,10 @@
     "name": "Davide Ghislandi"
   },
   {
+    "id": "421773",
+    "name": "Riccardo Tonin"
+  },
+  {
     "id": "421775",
     "name": "Nicolò Armini"
   },
@@ -89642,6 +90232,10 @@
     "name": "Idrissa Doumbia"
   },
   {
+    "id": "430595",
+    "name": "Marco Gabrielli"
+  },
+  {
     "id": "430646",
     "name": "Federico Gmeiner"
   },
@@ -89842,6 +90436,10 @@
     "name": "Ivijan Svrznjak"
   },
   {
+    "id": "432765",
+    "name": "Felice Cavaliere"
+  },
+  {
     "id": "432895",
     "name": "Pedro",
     "dateOfBirth": "Jun 20, 1997",
@@ -89858,6 +90456,10 @@
   {
     "id": "433049",
     "name": "Youssef En-Nesyri"
+  },
+  {
+    "id": "433133",
+    "name": "Costantino Borneo"
   },
   {
     "id": "433177",
@@ -90088,6 +90690,10 @@
   {
     "id": "437789",
     "name": "Adam Jolic"
+  },
+  {
+    "id": "437877",
+    "name": "Davide Favaro"
   },
   {
     "id": "438001",
@@ -90546,6 +91152,10 @@
   {
     "id": "448930",
     "name": "Raffaele Rivetti"
+  },
+  {
+    "id": "449151",
+    "name": "Junior Messias"
   },
   {
     "id": "449324",
@@ -93068,6 +93678,10 @@
     "name": "Max Bird"
   },
   {
+    "id": "486466",
+    "name": "Daniele Guerzoni"
+  },
+  {
     "id": "486491",
     "name": "Simeon Hodson"
   },
@@ -93186,6 +93800,10 @@
   {
     "id": "487838",
     "name": "Niccolò Squizzato"
+  },
+  {
+    "id": "487843",
+    "name": "Lorenzo Colombo"
   },
   {
     "id": "487846",
@@ -93404,6 +94022,10 @@
   {
     "id": "492574",
     "name": "Mauro Rasera"
+  },
+  {
+    "id": "492627",
+    "name": "Marco Frigerio"
   },
   {
     "id": "492730",
@@ -93676,6 +94298,10 @@
     "name": "Nicolas Glaus"
   },
   {
+    "id": "499441",
+    "name": "Leonardo Moleri"
+  },
+  {
     "id": "499508",
     "name": "Mark Barham"
   },
@@ -93942,6 +94568,10 @@
   {
     "id": "503482",
     "name": "Min-jae Kim"
+  },
+  {
+    "id": "503485",
+    "name": "Alexandro Cavagnera"
   },
   {
     "id": "503607",
@@ -95496,6 +96126,10 @@
     "name": "Doğukan Özkan"
   },
   {
+    "id": "537644",
+    "name": "Davide Canini"
+  },
+  {
     "id": "537759",
     "name": "Sergio Santos"
   },
@@ -95616,6 +96250,10 @@
   {
     "id": "539065",
     "name": "Alexis Beka Beka"
+  },
+  {
+    "id": "539132",
+    "name": "Giacomo Olzer"
   },
   {
     "id": "539134",
@@ -96036,6 +96674,10 @@
   {
     "id": "549440",
     "name": "Jacob Widell Zetterström"
+  },
+  {
+    "id": "550086",
+    "name": "Alessandro Parravicini"
   },
   {
     "id": "550106",
@@ -96542,6 +97184,10 @@
     "name": "Gaizka Ayesa"
   },
   {
+    "id": "561952",
+    "name": "Davide Gobbato"
+  },
+  {
     "id": "562049",
     "name": "Edoardo Bove"
   },
@@ -96564,6 +97210,10 @@
   {
     "id": "562257",
     "name": "Shaun Hobson"
+  },
+  {
+    "id": "562259",
+    "name": "Antonio Mionic"
   },
   {
     "id": "562514",
@@ -96860,6 +97510,10 @@
   {
     "id": "567454",
     "name": "Lorenzo Lucchesi"
+  },
+  {
+    "id": "567465",
+    "name": "Sebastiano Desplanches"
   },
   {
     "id": "567470",
@@ -97830,6 +98484,10 @@
     "name": "Fernández Cuesta"
   },
   {
+    "id": "582302",
+    "name": "Enrico Di Gesù"
+  },
+  {
     "id": "582353",
     "name": "Mattia Zanotti"
   },
@@ -98012,6 +98670,10 @@
   {
     "id": "584450",
     "name": "Georgios Marinos"
+  },
+  {
+    "id": "584452",
+    "name": "Nikolaos Michelis"
   },
   {
     "id": "584493",
@@ -98382,6 +99044,10 @@
   {
     "id": "592534",
     "name": "Nicolai Remberg"
+  },
+  {
+    "id": "592924",
+    "name": "Andreas Jungdal"
   },
   {
     "id": "592975",
@@ -99016,6 +99682,10 @@
   {
     "id": "610007",
     "name": "Filip Kosic"
+  },
+  {
+    "id": "610010",
+    "name": "Marco Taddonio"
   },
   {
     "id": "610015",
@@ -99694,6 +100364,10 @@
     "name": "Matteo Angeli"
   },
   {
+    "id": "621123",
+    "name": "Luca Stanga"
+  },
+  {
     "id": "621365",
     "name": "Tom Sparrow"
   },
@@ -100196,6 +100870,10 @@
     "name": "Raúl García",
     "dateOfBirth": "Nov 3, 2000",
     "position": "CF"
+  },
+  {
+    "id": "631007",
+    "name": "Filippo Terracciano"
   },
   {
     "id": "631098",
@@ -102098,6 +102776,10 @@
     "name": "Marin Mamut"
   },
   {
+    "id": "669793",
+    "name": "Andrea Bozzolan"
+  },
+  {
     "id": "669915",
     "name": "Filippo Distefano"
   },
@@ -102362,6 +103044,10 @@
   {
     "id": "673492",
     "name": "Morato"
+  },
+  {
+    "id": "673495",
+    "name": "Emil Roback"
   },
   {
     "id": "673514",
@@ -105312,6 +105998,10 @@
     "name": "Maxime Montay"
   },
   {
+    "id": "776303",
+    "name": "Marco Pellegrino"
+  },
+  {
     "id": "776798",
     "name": "Abdallah Sima"
   },
@@ -105698,6 +106388,10 @@
   {
     "id": "800946",
     "name": "Dennis Seimen"
+  },
+  {
+    "id": "800948",
+    "name": "Jan-Carlo Simić"
   },
   {
     "id": "800988",
@@ -106178,6 +106872,18 @@
   {
     "id": "815546",
     "name": "Francesco Gioielli"
+  },
+  {
+    "id": "815550",
+    "name": "Andrea Bartoccioni"
+  },
+  {
+    "id": "815556",
+    "name": "Antonio Gala"
+  },
+  {
+    "id": "815563",
+    "name": "Lapo Nava"
   },
   {
     "id": "815652",
@@ -107508,6 +108214,10 @@
     "name": "Kostyantyn Akinin"
   },
   {
+    "id": "883349",
+    "name": "Kevin Zeroli"
+  },
+  {
     "id": "883539",
     "name": "Charlie Crew"
   },
@@ -107872,6 +108582,10 @@
   {
     "id": "893782",
     "name": "Jamie Palmer"
+  },
+  {
+    "id": "894324",
+    "name": "Bob Murphy Omoregbe"
   },
   {
     "id": "894692",
@@ -109116,6 +109830,10 @@
   {
     "id": "935480",
     "name": "Martim Fernandes"
+  },
+  {
+    "id": "935508",
+    "name": "Victor Eletu"
   },
   {
     "id": "935550",
@@ -110750,6 +111468,10 @@
     "name": "Jayden Davidson"
   },
   {
+    "id": "986180",
+    "name": "Noah Raveyre"
+  },
+  {
     "id": "986298",
     "name": "Joachim Kayi Sanda"
   },
@@ -110804,6 +111526,10 @@
   {
     "id": "988697",
     "name": "Logan Briggs"
+  },
+  {
+    "id": "988964",
+    "name": "Mattia Liberali"
   },
   {
     "id": "988977",
@@ -111086,6 +111812,10 @@
   {
     "id": "999059",
     "name": "Carl Bartley"
+  },
+  {
+    "id": "999402",
+    "name": "Diego Sia"
   },
   {
     "id": "999745",
@@ -112338,6 +113068,10 @@
   {
     "id": "1058359",
     "name": "Samuele Inácio"
+  },
+  {
+    "id": "1058368",
+    "name": "Francesco Camarda"
   },
   {
     "id": "1058520",
