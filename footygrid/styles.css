@@ -28,6 +28,10 @@ body {
     min-height: 90vh;
 }
 
+/* MODE BUTTONS WRAPPER */
+
+/* --- MODE BUTTONS --- */
+/* --- MODE BUTTONS --- */
 .mode-buttons {
     display: flex;
     justify-content: center;
@@ -37,42 +41,145 @@ body {
 }
 
 .mode-btn {
-    background: var(--green-accent);
+    background: #104a28;
     color: #fff;
-    border: none;
-    border-radius: var(--border-radius);
-    width: 190px;
-    height: 75px;
-    padding: 0;
-    font-size: 1.13rem;
+    border: 2px solid transparent;
+    border-radius: 16px;
+    width: 170px;
+    height: 80px;
+    font-size: 1.07rem;
     font-weight: 700;
     cursor: pointer;
-    transition: background var(--transition-fast), box-shadow var(--transition-fast), color var(--transition-fast);
-    box-shadow: var(--cell-shadow);
+    transition: background var(--transition-fast), box-shadow var(--transition-fast),
+        color var(--transition-fast), border-color 0.16s, transform 0.12s;
+    box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.06);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    gap: 2px;
-}
-.mode-btn span {
-    font-size: 1.05rem;
-    font-weight: 500;
-    color: #f4fff3;  /* More visible subtitle */
-    opacity: 1;
-    margin-top: 2px;
-}
-.mode-btn.active, .mode-btn:hover {
-    background: var(--green-dark);
-    color: #fff;
-    box-shadow: 0 0 0 4px var(--green-light)11;
-}
-.mode-btn.active span, .mode-btn:hover span {
-    color: #fff;
-    opacity: 1;
+    gap: 0px;
+    position: relative;
+    outline: none;
 }
 
+.mode-btn i {
+    font-size: 1.15rem;
+    margin-bottom: 2px;
+    display: block;
+}
+
+.mode-btn span {
+    font-size: 0.98rem;
+    font-weight: 500;
+    color: #d5ffe1;
+    opacity: 1;
+    margin-top: 2px;
+    letter-spacing: 0.01em;
+}
+
+/* ACTIVE: only border, keep base colors */
+.mode-btn.active {
+    border: 2px solid var(--green-light);
+    background: #104a28;
+    color: #fff;
+}
+.mode-btn.active span,
+.mode-btn.active i {
+    color: #fff;
+}
+
+/* Manual Pick Button (same as others) */
+.mode-btn.btn-manual {
+    background: #104a28;
+    color: #fff;
+}
+.mode-btn.btn-manual span,
+.mode-btn.btn-manual i {
+    color: #d5ffe1;
+}
+
+/* Manual Pick ACTIVE: only border, keep base colors */
+.mode-btn.btn-manual.active {
+    background: #104a28;
+    color: #fff;
+    border: 2px solid var(--green-light);
+}
+.mode-btn.btn-manual.active span,
+.mode-btn.btn-manual.active i {
+    color: #fff;
+}
+
+/* HOVER: always wins visually while hovered, even if active */
+.mode-btn:hover {
+    background: var(--green-accent) !important; /* always hover bg */
+    color: #104a28 !important; /* always hover text */
+    border: 2px solid transparent;
+    box-shadow: 0 0 0 2px var(--green-accent)1a;
+    transform: scale(1.04);
+}
+.mode-btn:hover span,
+.mode-btn:hover i {
+    color: #104a28 !important;
+}
+
+/* SHOW hover/focus style only when keyboard:focus-visible */
+.mode-btn:focus-visible {
+    background: var(--green-accent) !important;
+    color: #104a28 !important;
+    border: 2px solid transparent;
+    box-shadow: 0 0 0 2px var(--green-accent)1a;
+    transform: scale(1.04);
+}
+.mode-btn:focus-visible span,
+.mode-btn:focus-visible i {
+    color: #104a28 !important;
+}
+
+/* Remove hover color when only focused (mouse click) */
+.mode-btn:focus {
+    /* No extra background, no color change, just outline if needed */
+    outline: none;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .mode-btn {
+        width: 120px;
+        height: 45px;
+        font-size: 0.97rem;
+    }
+    .mode-buttons {
+        gap: 0.6rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .mode-btn {
+        width: 100%;
+        min-width: 110px;
+        font-size: 0.92rem;
+        height: 40px;
+        border-radius: 12px;
+        gap: 0px;
+    }
+    .mode-buttons {
+        flex-direction: column;
+        gap: 0.3rem;
+        margin-bottom: 1rem;
+    }
+
+}
+.status-bar-wrap.invisible {
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+.status-bar-wrap {
+    width: fit-content;
+    margin: 0 auto 18px auto;
+    min-height: 72px; /* or whatever height fits your bar */
+    transition: visibility 0s, min-height 0.2s;
+}
 .scoreboard {
     display: flex;
     align-items: center;
@@ -118,18 +225,33 @@ body {
     padding: 0.5rem 1.4rem;
     margin-left: 10px;
     cursor: pointer;
-    transition: background var(--transition-fast), box-shadow var(--transition-fast);
+    transition: background var(--transition-fast), box-shadow var(--transition-fast), color var(--transition-fast);
     display: flex;
     align-items: center;
     gap: 10px;
+    outline: none;
 }
+
 .btn-skip i {
     font-size: 1.2rem;
 }
-.btn-skip:hover, .btn-skip:focus {
-    background: var(--green-light);
-    color: var(--green-dark);
+
+/* Hover (always wins visually) */
+.btn-skip:hover {
+    background: var(--green-light) !important;
+    color: var(--green-dark) !important;
     box-shadow: 0 0 0 3px var(--green-light)99;
+}
+
+/* Keyboard accessibility: focus-visible */
+.btn-skip:focus-visible {
+    background: var(--green-light) !important;
+    color: var(--green-dark) !important;
+    box-shadow: 0 0 0 3px var(--green-light)99;
+}
+
+/* Remove mouse-focus highlight, keep outline clean */
+.btn-skip:focus {
     outline: none;
 }
 
@@ -238,6 +360,13 @@ body {
     box-shadow: 0 0 0 2px var(--green-light)cc;
     outline: none;
 }
+
+.club-cell[style*="pointer"]:hover .choose-category-text,
+.club-cell[style*="pointer"]:focus .choose-category-text {
+    color: #14341b;
+    transition: color 0.17s;
+}
+
 .club-cell .choose-category-text {
     display: flex;
     align-items: center;
@@ -256,6 +385,11 @@ body {
     box-shadow: 0 0 0 3px var(--green-light)cc;
     background: var(--green-light);
     color: var(--green-dark);
+}
+.club-cell:not([style*="pointer"]) {
+    background: #174e2c;
+    color: #fff;
+    cursor: default;
 }
 .title-cell {
     background: #174e2c;
@@ -375,9 +509,10 @@ body {
     box-sizing: border-box !important;
 }
 #clubList li {
+    display: flex;
+    align-items: center;
     justify-content: flex-start !important;
     text-align: left !important;
-    align-items: center !important;
     flex-direction: row !important;
     gap: 10px;
 }
@@ -386,6 +521,9 @@ body {
     font-weight: 600;
     font-size: 1.07rem;
     color: #fff;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    flex: none !important;
 }
 #clubList li:hover, #playerList li:hover,
 #clubList li.active, #playerList li.active {
@@ -393,13 +531,15 @@ body {
     color: #14341b;
 }
 .club-badge-in-list {
+    display: inline-block !important;
+    margin: 0 !important;
+    margin-right: 10px !important;
+    vertical-align: middle !important;
     width: 34px !important;
     height: 34px !important;
     object-fit: contain;
     border-radius: 7px;
     background: #fff2;
-    margin-right: 10px;
-    vertical-align: middle;
     flex-shrink: 0 !important;
 }
 .player-pos-on-hover {
@@ -626,8 +766,8 @@ body {
 .sidebar-drawer {
     position: fixed;
     top: 0;
-    left: -250px;
-    width: 230px;
+    left: -320px;
+    width: 310px;
     height: 100%;
     background: #14341b;
     box-shadow: 2px 0 10px rgba(0,0,0,0.16);
@@ -786,17 +926,41 @@ body {
     color: #b2ffce;
 }
 
-.sidebar-game-btn.active,
-.sidebar-game-btn.active:focus,
-.sidebar-game-btn.active:hover {
-    background: #19d678;
-    color: #14341b;
-    box-shadow: 0 2px 8px #19d67844;
+.sidebar-game-btn.active {
+  background: #19d678;
+  color: #14341b;
+  box-shadow: 0 2px 8px #19d67844;
 }
 .sidebar-game-btn.active .sidebar-game-title,
 .sidebar-game-btn.active .sidebar-game-desc {
-    color: #14341b;
+  color: #14341b;
 }
+
+/* Remove .active highlight only if hovering a non-active menu item */
+.sidebar-menu:hover .sidebar-game-btn.active:not(:hover) {
+  background: none;
+  color: #fff;
+  box-shadow: none;
+}
+.sidebar-menu:hover .sidebar-game-btn.active:not(:hover) .sidebar-game-title,
+.sidebar-menu:hover .sidebar-game-btn.active:not(:hover) .sidebar-game-desc {
+  color: #b2ffce;
+}
+
+.sidebar-game-btn:hover,
+.sidebar-game-btn:focus {
+  background: #19d678;
+  color: #14341b;
+  text-decoration: none;
+}
+.sidebar-game-btn:hover .sidebar-game-title,
+.sidebar-game-btn:focus .sidebar-game-title,
+.sidebar-game-btn:hover .sidebar-game-desc,
+.sidebar-game-btn:focus .sidebar-game-desc {
+  color: #14341b;
+  text-decoration: none;
+}
+
 .coming-soon-row {
     display: flex;
     align-items: center;

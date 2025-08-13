@@ -211,7 +211,9 @@ async function renderClubs(mode = "manual") {
         clubCellsTop.forEach((cell, i) => setClubCellWithBadgeAndName(cell, "CHOOSE CATEGORY"));
         clubCellsLeft.forEach((cell, i) => setClubCellWithBadgeAndName(cell, "CHOOSE CATEGORY"));
         document.querySelectorAll('.club-cell.top, .club-cell.left').forEach(cell => {
-            if (cell.textContent === "CHOOSE CATEGORY") {
+            const clubName = cell.textContent.trim();
+            // Only set .onclick and pointer if "CHOOSE CATEGORY"
+            if (clubName === "CHOOSE CATEGORY") {
                 cell.onclick = function() {
                     currentClubCell = cell;
                     populateClubModal();
@@ -265,6 +267,7 @@ async function renderGrid() {
     if (currentMode === "manual" && !allClubsChosen()) {
         lockGridCells();
     }
+    updateStatusBarVisibility();
 }
 
 function debounce(fn, delay) {
@@ -290,7 +293,9 @@ let suppressClubSearchBlur = false;
 
 function populateClubModal() {
     clubSearch.value = "";
+    let initialInputValue = "";
     clubList.innerHTML = "";
+
 
     const easyClubs = categoriesData["easy"] || [];
     const hardClubs = categoriesData["hard"] || [];
@@ -320,7 +325,7 @@ function populateClubModal() {
 
     setTimeout(() => clubSearch.focus(), 0);
 
-    let userInputValue = "";
+    let userInputValue = initialInputValue;
     let suggestions = [];
     let highlightIdx = -1;
     let dropdownOpen = true;
@@ -357,19 +362,34 @@ function populateClubModal() {
             srcList = others;
             clubSearch.placeholder = "Search other...";
         }
+        // DO NOT reset clubSearch.value unless preserveInput is false
         if (!preserveInput) {
             clubSearch.value = "";
             userInputValue = "";
         }
+
+        // If nothing typed, update placeholder and show full list
+        // If typed, keep value and show filtered list
         const query = clubSearch.value.trim().toLowerCase();
-        suggestions = srcList.filter(clubName =>
-            !usedClubs.has(clubName) &&
-            clubName.toLowerCase().includes(query)
-        );
+        if (query === "") {
+            suggestions = srcList.filter(clubName => !usedClubs.has(clubName));
+        } else {
+            suggestions = srcList.filter(clubName =>
+                !usedClubs.has(clubName) &&
+                clubName.toLowerCase().includes(query)
+            );
+        }
+
         clubList.innerHTML = "";
         highlightIdx = -1;
         suggestions.forEach((clubName, idx) => {
             let li = document.createElement("li");
+            // Left aligned badge and name
+            li.style.display = "flex";
+            li.style.alignItems = "center";
+            li.style.justifyContent = "flex-start"; // <--- left align!
+            li.style.gap = "10px";
+            li.style.flexDirection = "row";
             let badgeImg = document.createElement("img");
             badgeImg.className = "club-badge club-badge-in-list";
             badgeImg.style.width = "34px";
@@ -382,13 +402,11 @@ function populateClubModal() {
             badgeImg.alt = clubName;
             badgeImg.src = `badges/${clubName.toLowerCase()}.png`;
             badgeImg.onerror = function() { this.src = "badges/default.png"; };
-            li.style.display = "flex";
-            li.style.alignItems = "center";
-            li.style.gap = "10px";
             li.appendChild(badgeImg);
             let span = document.createElement("span");
             span.className = "club-list-name";
             span.textContent = clubName;
+            span.style.textAlign = "left";
             li.appendChild(span);
 
             li.onmouseenter = function() {
@@ -418,8 +436,8 @@ function populateClubModal() {
             btn.classList.add("active");
             highlightIdx = -1;
             dropdownOpen = true;
-            clubSearch.value = "";
-            userInputValue = "";
+            // DO NOT reset clubSearch.value; preserve user input!
+            // Only update placeholder and update list type
             renderList(btn.getAttribute("data-type"), true);
             clubList.style.display = "block";
             setTimeout(() => clubSearch.focus(), 0);
@@ -453,6 +471,14 @@ function populateClubModal() {
                             icon: "warning",
                             background: '#174e2c',
                             color: '#ffffff'
+                        }).then(() => {
+                            // Clear search and show list after popup closes
+                            clubSearch.value = "";
+                            userInputValue = "";
+                            dropdownOpen = true;
+                            renderList(currentListType, false);
+                            clubList.style.display = "block";
+                            setTimeout(() => clubSearch.focus(), 0);
                         });
                         possible = false;
                     }
@@ -495,7 +521,6 @@ function populateClubModal() {
             if (clubModal.contains(active)) {
                 return; // Don't close
             }
-            // If you really want to close only if clicking outside modal
             dropdownOpen = false;
             clubList.innerHTML = "";
         }, 120);
@@ -549,7 +574,7 @@ function populateClubModal() {
         }
     };
 
-    renderList("clubs");
+    renderList(currentListType, true);
     clubList.scrollTop = 0;
 }
 
@@ -735,6 +760,13 @@ function populatePlayerModal(cell) {
 }
 // ... [rest of your code remains unchanged]
 // --- WIN CHECK ---
+function animateWinCells(cells) {
+    // Example: highlight winning cells
+    cells.forEach(cell => {
+        cell.classList.add("cell-win");
+    });
+}
+
 function checkWin() {
     // Helper: get cell by row/col
     function getCell(r, c) {
@@ -781,33 +813,39 @@ function showWin(winner) {
             if (winner === "O") scoreO++;
             updateScoreInfo();
         }
-        Swal.fire({
-            title: title,
-            icon: icon,
-            background: '#174e2c',
-            color: '#ffffff',
-            confirmButtonColor: "#19d678",
-            showCancelButton: true,
-            confirmButtonText: "New Round",
-            cancelButtonText: "Start Menu"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                renderClubs(currentMode);
-                renderGrid();
-                updateStatusBarVisibility();
-                ticTurn = "X";
-                updateTurnInfo();
-            } else {
-                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-                document.getElementById('manual').classList.add('active');
-                currentMode = "manual";
-                renderClubs(currentMode);
-                renderGrid();
-                updateStatusBarVisibility();
-                ticTurn = "X";
-                updateTurnInfo();
-            }
-        });
+        if (typeof Swal !== "undefined") {
+            Swal.fire({
+                title: title,
+                icon: icon,
+                background: '#174e2c',
+                color: '#ffffff',
+                confirmButtonColor: "#19d678",
+                showCancelButton: true,
+                confirmButtonText: "New Round",
+                cancelButtonText: "Start Menu"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    renderClubs(currentMode);
+                    renderGrid();
+                    updateStatusBarVisibility();
+                    ticTurn = "X";
+                    updateTurnInfo();
+                    checkWin();
+                } else {
+                    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                    document.getElementById('manual').classList.add('active');
+                    currentMode = "manual";
+                    renderClubs(currentMode);
+                    renderGrid();
+                    updateStatusBarVisibility();
+                    ticTurn = "X";
+                    updateTurnInfo();
+                    checkWin();
+                }
+            });
+        } else {
+            alert(title + " (SweetAlert2 not loaded!)");
+        }
     }, 100);
 }
 
@@ -875,9 +913,12 @@ function unlockGridCells() {
 
 function updateStatusBarVisibility() {
     const statusBar = document.querySelector('.status-bar-wrap');
-    // A round is "active" if not manual mode, or if all clubs chosen in manual mode
-    let active = currentMode !== "manual" || allClubsChosen();
-    if (active) {
+    // ONLY show if the grid is playable (any grid cell is clickable)
+    const gridCells = Array.from(document.querySelectorAll('.grid-cell[data-row][data-col]'));
+    // "Round active" means at least one grid cell is enabled and not locked
+    const anyPlayable = gridCells.some(cell => !cell.disabled && !cell.classList.contains("cell-locked"));
+
+    if (anyPlayable) {
         statusBar.classList.remove('invisible');
     } else {
         statusBar.classList.add('invisible');
@@ -906,8 +947,18 @@ const clubList = document.getElementById("clubList");
 const playerList = document.getElementById("playerList");
 const clubSearch = document.getElementById("clubSearch");
 const playerSearch = document.getElementById("playerSearch");
-function showModal(modal) { modal.style.display = "block"; }
-function hideModal(modal) { modal.style.display = "none"; }
+function showModal(modal) {
+    modal.style.display = "block";
+    if (modal === clubModal) {
+        clubSearch.value = "";
+    }
+}
+function hideModal(modal) {
+    modal.style.display = "none";
+    if (modal === clubModal) {
+        clubSearch.value = "";
+    }
+}
 document.getElementById("closeClubModal").onclick = () => hideModal(clubModal);
 document.getElementById("closePlayerModal").onclick = () => hideModal(playerModal);
 window.onclick = (event) => {

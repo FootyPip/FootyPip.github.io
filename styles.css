@@ -284,8 +284,8 @@ html, body {
 .sidebar-drawer {
     position: fixed;
     top: 0;
-    left: -250px;
-    width: 230px;
+    left: -320px;
+    width: 310px;
     height: 100%;
     background: #14341b;
     box-shadow: 2px 0 10px rgba(0,0,0,0.16);

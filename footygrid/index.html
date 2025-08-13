@@ -40,19 +40,16 @@
             <div class="sidebar-header">Games</div>
             <ul class="sidebar-menu">
                 <li>
-                    <a class="sidebar-game-btn active" href="/footygrid">
+                    <a class="sidebar-game-btn" href="/footygrid">
                         <span class="sidebar-game-title">⚽ FootyGrid</span>
                         <span class="sidebar-game-desc">Classic football tic-tac-toe</span>
                     </a>
                 </li>
                 <li>
-                    <div class="sidebar-game-btn disabled">
+                    <a class="sidebar-game-btn" href="/footygrid+">
                         <span class="sidebar-game-title">⚽ FootyGrid+</span>
-                        <span class="sidebar-game-desc coming-soon-row">
-                            <span class="lock-icon">🔒</span>
-                            <span>Coming Soon</span>
-                        </span>
-                    </div>
+                        <span class="sidebar-game-desc">Daily footy tic-tac-toe with a twist</span>
+                    </a>
                 </li>
                 <li>
                     <div class="sidebar-game-btn disabled">
@@ -99,17 +96,20 @@
                 <button class="mode-btn btn-manual active" id="manual"><i class="fa-solid fa-sliders"></i> Manual pick<br><span>Choose Categories</span></button>
                 <button class="mode-btn btn-random-easy" id="random-easy"><i class="fa-solid fa-dice-one"></i> Random Easy<br><span>Easy random clubs</span></button>
                 <button class="mode-btn btn-random-hard" id="random-hard"><i class="fa-solid fa-dice-six"></i> Random Hard<br><span>Hard random clubs</span></button>
-                <button class="mode-btn btn-hnl" id="croatian-league"><i class="fa-solid fa-flag-checkered"></i> Random HNL<br><span>Croatian clubs only</span></button>
+                <button class="mode-btn btn-hnl" id="croatian-league">
+                    <img src="badges/hnl.png" alt="HNL" style="width: 1.3em; height: 1.3em; display: block; margin: 0 auto 2px auto; border-radius: 4px;">
+                    Random HNL<br>
+                    <span>Croatian clubs only</span>
+                </button>
             </nav>
-
-            <section class="scoreboard" aria-label="Scoreboard">
-                <div class="score-info" id="score-info">
-                    <!-- Score: X image 0 - 0 O image -->
+            <section class="status-bar-wrap invisible">
+                <div class="scoreboard" aria-label="Scoreboard">
+                    <div class="score-info" id="score-info"></div>
+                    <div class="turn-info" id="turn-info"></div>
+                    <button class="btn-skip" id="skip-turn-btn" aria-label="Skip Turn">
+                        <i class="fa-solid fa-arrow-rotate-right"></i> Skip Turn
+                    </button>
                 </div>
-                <div class="turn-info" id="turn-info">
-                    <!-- Turn: X image -->
-                </div>
-                <button class="btn-skip" id="skip-turn-btn" aria-label="Skip Turn"><i class="fa-solid fa-arrow-rotate-right"></i> Skip Turn</button>
             </section>
 
             <section class="board-area">
