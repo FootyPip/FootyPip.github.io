@@ -82795,7 +82795,9 @@
   },
   {
     "id": "341705",
-    "name": "Gerson"
+    "name": "Gerson",
+    "dateOfBirth": "May 20, 1997",
+    "position": "CM"
   },
   {
     "id": "341710",
@@ -100008,6 +100010,10 @@
     "name": "Yannik Lührs"
   },
   {
+    "id": "627362",
+    "name": "Lamine Cissé"
+  },
+  {
     "id": "627439",
     "name": "Amir Feratovic"
   },
@@ -102682,6 +102688,10 @@
   {
     "id": "688593",
     "name": "Santiago Ramos Mingo"
+  },
+  {
+    "id": "688707",
+    "name": "Salis Abdul Samed"
   },
   {
     "id": "688886",
@@ -105456,6 +105466,10 @@
   {
     "id": "792265",
     "name": "Antonio Prancevic"
+  },
+  {
+    "id": "792331",
+    "name": "Roony Bardghji"
   },
   {
     "id": "792380",
@@ -108944,6 +108958,10 @@
     "name": "Ibra Sow"
   },
   {
+    "id": "934529",
+    "name": "Kelven Frees"
+  },
+  {
     "id": "934645",
     "name": "Reno Münz"
   },
@@ -109895,7 +109913,7 @@
   },
   {
     "id": "955357",
-    "name": "Eli Junior Kroupi"
+    "name": "Eli Kroupi"
   },
   {
     "id": "955358",
