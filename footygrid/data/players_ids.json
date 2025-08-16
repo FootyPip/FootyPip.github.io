@@ -13853,7 +13853,9 @@
   },
   {
     "id": "8128",
-    "name": "Eusebio"
+    "name": "Eusebio",
+    "dateOfBirth": "Apr 13, 1964",
+    "position": "CDM"
   },
   {
     "id": "8132",
@@ -54841,7 +54843,9 @@
   },
   {
     "id": "121756",
-    "name": "Rômulo"
+    "name": "Rômulo",
+    "dateOfBirth": "May 22, 1987",
+    "position": "CM"
   },
   {
     "id": "121804",
@@ -105034,6 +105038,10 @@
     "name": "Ruslan Uzakov"
   },
   {
+    "id": "748795",
+    "name": "Franklin Tebo Uchenna"
+  },
+  {
     "id": "748804",
     "name": "Mika Godts"
   },
@@ -109970,6 +109978,12 @@
     "name": "Nenad Miljković"
   },
   {
+    "id": "957874",
+    "name": "Rômulo",
+    "dateOfBirth": "08.02.2002",
+    "position": "CF"
+  },
+  {
     "id": "958248",
     "name": "Martyn Chalk"
   },
@@ -110758,6 +110772,10 @@
     "name": "Filip Djevelekaj"
   },
   {
+    "id": "990637",
+    "name": "Zachary Athekame"
+  },
+  {
     "id": "990732",
     "name": "Ousmane Touré"
   },
@@ -111366,6 +111384,10 @@
   {
     "id": "1015449",
     "name": "Rod Thomas"
+  },
+  {
+    "id": "1015822",
+    "name": "Eman Kospo"
   },
   {
     "id": "1015965",
@@ -112574,6 +112596,10 @@
     "name": "Vasilije Kostov"
   },
   {
+    "id": "1073633",
+    "name": "Luka Zaric"
+  },
+  {
     "id": "1073997",
     "name": "Shio Fukuda"
   },
@@ -113734,6 +113760,10 @@
     "name": "Ivan Baric"
   },
   {
+    "id": "1172616",
+    "name": "Roko Cular"
+  },
+  {
     "id": "1172620",
     "name": "Bruno Durdov"
   },
@@ -114004,6 +114034,10 @@
   {
     "id": "1195798",
     "name": "Mathias Ferrante"
+  },
+  {
+    "id": "1197234",
+    "name": "Isaiah Otache"
   },
   {
     "id": "1199576",
@@ -114382,6 +114416,10 @@
   {
     "id": "1285603",
     "name": "Josip Brkic"
+  },
+  {
+    "id": "1285608",
+    "name": "Matej Primorac"
   },
   {
     "id": "1300202",
