@@ -12,7 +12,7 @@ let usedClubs = new Set();
 let usedPlayers = new Set();
 
 let categoriesData = null;
-let clubNationalityPlayers = null;
+let CategoriesToIds  = null;
 let playerIdList = null; // array of player objects
 let playerIdMap = {}; // id → player object
 let allAvailablePlayerIds = null; // array of all player IDs
@@ -57,7 +57,7 @@ function normalizeStr(str) {
 let dataReadyPromise = (async function preloadData() {
     await Promise.all([
         fetchCategories(),
-        fetchClubNationalityPlayers(),
+        fetchCategoriesToIds(),
         fetchPlayerIdList()
     ]);
     extractSpecialListsFromCategories();
@@ -72,12 +72,12 @@ async function fetchCategories() {
     }
     return categoriesData;
 }
-async function fetchClubNationalityPlayers() {
-    if (!clubNationalityPlayers) {
-        const res = await fetch("data/clubs_and_nationalities_players.json");
-        clubNationalityPlayers = await res.json();
+async function fetchCategoriesToIds() {
+    if (!CategoriesToIds) {
+        const res = await fetch("data/categories_to_ids.json");
+        CategoriesToIds = await res.json();
     }
-    return clubNationalityPlayers;
+    return CategoriesToIds;
 }
 async function fetchPlayerIdList() {
     if (!playerIdList) {
@@ -98,10 +98,14 @@ function extractSpecialListsFromCategories() {
 
 function buildCategoryPlayersMap() {
     categoryPlayersMap = {};
-    for (const [category, playerIds] of Object.entries(clubNationalityPlayers)) {
-        categoryPlayersMap[category] = new Set(playerIds);
+
+    for (const group of Object.values(CategoriesToIds)) {
+        for (const [category, playerIds] of Object.entries(group)) {
+            categoryPlayersMap[category] = new Set(playerIds);
+        }
     }
 }
+
 
 async function prepareAllAvailablePlayers() {
     await fetchPlayerIdList();
@@ -111,26 +115,48 @@ async function prepareAllAvailablePlayers() {
 // --- Fetch categories (was clubs) ---
 async function fetchCategoriesList(mode = null) {
     await fetchCategories();
-    let catArray;
-    if (mode === "manual") {
-        catArray = Array.from(
-            new Set([
-                ...categoriesData["hard"],
-                ...categoriesData["hnl"]
-            ])
-        );
-    } else if (mode === "random-hard" || mode === "hard") {
-        catArray = categoriesData["hard"];
-    } else if (mode === "croatian-league" || mode === "hnl") {
-        catArray = categoriesData["hnl"];
-    } else {
-        catArray = categoriesData["easy"];
+    await fetchCategoriesToIds();
+
+    const easy = new Set(categoriesData.easy || []);
+    const hnl = new Set(categoriesData.hnl || []);
+
+    const allCats = new Set([
+        ...Object.keys(CategoriesToIds.clubs || {}),
+        ...Object.keys(CategoriesToIds.nations || {}),
+        ...Object.keys(CategoriesToIds.managers || {}),
+        ...Object.keys(CategoriesToIds.winners || {}),
+        ...Object.keys(CategoriesToIds.competitions || {})
+    ]);
+
+    let result = [];
+
+    if (mode === "easy" || mode === "random-easy") {
+        result = [
+            ...easy,
+            ...Object.keys(CategoriesToIds.winners || {}),
+            ...Object.keys(CategoriesToIds.competitions || {})
+        ];
     }
-    return catArray
-        .slice()
-        .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
-        .map(name => ({ name }));
+    else if (mode === "hard" || mode === "random-hard") {
+        result = [...allCats].filter(c => !hnl.has(c));
+    }
+    else if (mode === "croatian-league") {
+        result = [
+            ...Array.from(hnl).map(name => ({ name })),
+            ...Object.keys(CategoriesToIds.nations || {}).map(name => ({ name }))
+        ];
+    }
+    else {
+        result = [...easy];
+    }
+
+
+    return result
+        .map(r => typeof r === "string" ? { name: r } : r)
+        .filter((v, i, arr) => arr.findIndex(x => x.name === v.name) === i)
+        .sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
 }
+
 
 function categoriesHaveIntersectionSync(catA, catB) {
     if (!catA || !catB || catA === "CHOOSE CATEGORY" || catB === "CHOOSE CATEGORY") return true;
@@ -175,30 +201,51 @@ async function fetchCategoryPositions(mode = "manual") {
         };
     }
     let cats = await fetchCategoriesList(mode);
-    let catNames = cats.map(c => c.name);
+
+    // 🎲 shuffle da ne budu uvijek iste
+    let catNames = cats
+        .map(c => c.name)
+        .sort(() => Math.random() - 0.5);
+
     return getRandomValidCategoriesSync(catNames);
 }
 
-function setClubCellWithBadgeAndName(cell, clubName) {
+function setClubCellWithBadgeAndName(cell, item) {
+    const category = item.category || item;
+    const display = item.display || item;
     cell.innerHTML = "";
-    if (clubName === "CHOOSE CATEGORY") {
+
+    if (category === "CHOOSE CATEGORY") {
         cell.innerHTML = '<span class="choose-category-text">CHOOSE CATEGORY</span>';
-    } else {
-        const img = document.createElement('img');
-        img.src = `badges/${clubName.toLowerCase()}.png`;
-        img.alt = clubName;
-        img.title = clubName;
-        img.className = "club-badge";
-        img.onerror = function() { this.src = 'badges/default.png'; };
-
-        const span = document.createElement('span');
-        span.textContent = clubName;
-        span.className = "club-name-under-badge";
-
-        cell.appendChild(img);
-        cell.appendChild(span);
+        return;
     }
+
+    const img = document.createElement("img");
+
+    // ⭐ FIX: managers ALWAYS default badge
+    if (
+        Object.keys(CategoriesToIds.managers || {}).includes(category)
+    ) {
+        img.src = "badges/default.png";
+    } else {
+        img.src = `badges/${category.toLowerCase()}.png`;
+        img.onerror = function () {
+            this.src = "badges/default.png";
+        };
+    }
+
+    img.alt = display;
+    img.title = display;
+    img.className = "club-badge";
+
+    const span = document.createElement("span");
+    span.className = "club-name-under-badge";
+    span.textContent = display;
+
+    cell.appendChild(img);
+    cell.appendChild(span);
 }
+
 
 async function renderClubs(mode = "manual") {
     let clubCellsTop = [0,1,2].map(i => document.querySelector('.club-cell.top-' + i));
@@ -297,14 +344,20 @@ function populateClubModal() {
     clubList.innerHTML = "";
 
 
-    const easyClubs = categoriesData["easy"] || [];
-    const hardClubs = categoriesData["hard"] || [];
-    let clubsSet = new Set([...easyClubs, ...hardClubs]);
-    nationsList.forEach(nation => clubsSet.delete(nation));
-    let clubs = Array.from(clubsSet).sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
-    const hnlClubs = (categoriesData["hnl"] || []).sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
-    const nations = nationsList.slice().sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
-    const others = (otherList || []).slice().sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
+    const clubs = Object.keys(CategoriesToIds.clubs || {});
+    const nations = Object.keys(CategoriesToIds.nations || {});
+    const managers = Object.keys(CategoriesToIds.managers || {});
+
+    const winners = Object.keys(CategoriesToIds.winners || {}).map(c => ({
+        display: `Won ${c}`,
+        category: c
+    }));
+
+    const competitions = Object.keys(CategoriesToIds.competitions || {}).map(c => ({
+        display: `Played in ${c}`,
+        category: c
+    }));
+
 
     let oldBtnsDiv = clubList.parentElement.querySelector(".club-filter-buttons");
     if (oldBtnsDiv) oldBtnsDiv.remove();
@@ -316,10 +369,11 @@ function populateClubModal() {
     btnsDiv.style.marginBottom = "10px";
     btnsDiv.style.gap = "6px";
     btnsDiv.innerHTML = `
-        <button class="club-filter-btn active" data-type="clubs" style="flex:1;font-weight:bold">CLUBS</button>
-        <button class="club-filter-btn" data-type="nations" style="flex:1;font-weight:bold">NATIONS</button>
-        <button class="club-filter-btn" data-type="hnl" style="flex:1;font-weight:bold">HNL</button>
-        <button class="club-filter-btn" data-type="other" style="flex:1;font-weight:bold">OTHER</button>
+            <button class="club-filter-btn active" data-type="clubs">CLUBS</button>
+            <button class="club-filter-btn" data-type="nations">NATIONS</button>
+            <button class="club-filter-btn" data-type="managers">MANAGERS</button>
+            <button class="club-filter-btn" data-type="other">OTHER</button>
+
     `;
     clubList.parentElement.insertBefore(btnsDiv, clubList);
 
@@ -349,19 +403,23 @@ function populateClubModal() {
     function renderList(type, preserveInput = true) {
         currentListType = type;
         let srcList;
-        if (type === "clubs") {
-            srcList = clubs;
-            clubSearch.placeholder = "Search club...";
-        } else if (type === "hnl") {
-            srcList = hnlClubs;
-            clubSearch.placeholder = "Search HNL club...";
-        } else if (type === "nations") {
-            srcList = nations;
-            clubSearch.placeholder = "Search nation...";
-        } else {
-            srcList = others;
-            clubSearch.placeholder = "Search other...";
-        }
+            if (type === "clubs") {
+                srcList = clubs.map(c => ({ display: c, category: c }));
+                clubSearch.placeholder = "Search club...";
+            }
+            else if (type === "nations") {
+                srcList = nations.map(c => ({ display: c, category: c }));
+                clubSearch.placeholder = "Search nation...";
+            }
+            else if (type === "managers") {
+                srcList = managers.map(c => ({ display: c, category: c }));
+                clubSearch.placeholder = "Search manager...";
+            }
+            else {
+                srcList = [...winners, ...competitions];
+                clubSearch.placeholder = "Search category...";
+            }
+
         // DO NOT reset clubSearch.value unless preserveInput is false
         if (!preserveInput) {
             clubSearch.value = "";
@@ -374,10 +432,11 @@ function populateClubModal() {
         if (query === "") {
             suggestions = srcList.filter(clubName => !usedClubs.has(clubName));
         } else {
-            suggestions = srcList.filter(clubName =>
-                !usedClubs.has(clubName) &&
-                clubName.toLowerCase().includes(query)
-            );
+                suggestions = srcList.filter(obj =>
+                    !usedClubs.has(obj.category) &&
+                    obj.display.toLowerCase().includes(query)
+                );
+
         }
 
         clubList.innerHTML = "";
@@ -399,13 +458,17 @@ function populateClubModal() {
             badgeImg.style.verticalAlign = "middle";
             badgeImg.style.background = "transparent";
             badgeImg.style.display = "inline-block";
-            badgeImg.alt = clubName;
-            badgeImg.src = `badges/${clubName.toLowerCase()}.png`;
+            badgeImg.alt = clubName.display;
+            if (currentListType === "managers") {
+                badgeImg.src = "badges/default.png";
+            } else {
+                badgeImg.src = `badges/${clubName.category.toLowerCase()}.png`;
+            }
             badgeImg.onerror = function() { this.src = "badges/default.png"; };
             li.appendChild(badgeImg);
             let span = document.createElement("span");
             span.className = "club-list-name";
-            span.textContent = clubName;
+            span.textContent = suggestions[idx].display;
             span.style.textAlign = "left";
             li.appendChild(span);
 
@@ -444,7 +507,9 @@ function populateClubModal() {
         };
     });
 
-    function pickClub(clubName) {
+    function pickClub(item) {
+        const category = item.category || item;
+        const display = item.display || item;
         let testTop = [...topClubs];
         let testLeft = [...leftClubs];
         let posType, posIdx;
@@ -455,8 +520,8 @@ function populateClubModal() {
             posType = "left";
             posIdx = parseInt(currentClubCell.getAttribute('data-idx'));
         }
-        if (posType === "top") testTop[posIdx] = clubName;
-        else testLeft[posIdx] = clubName;
+        if (posType === "top") testTop[posIdx] = category;
+        else testLeft[posIdx] = category;
 
         let possible = true;
         for (let row = 0; row < 3 && possible; ++row) {
@@ -487,10 +552,10 @@ function populateClubModal() {
         }
         if (!possible) return;
 
-        setClubCellWithBadgeAndName(currentClubCell, clubName);
-        usedClubs.add(clubName);
-        if (posType === "top") topClubs[posIdx] = clubName;
-        else leftClubs[posIdx] = clubName;
+        setClubCellWithBadgeAndName(currentClubCell, item);
+        usedClubs.add(category);
+        if (posType === "top") topClubs[posIdx] = category;
+        else leftClubs[posIdx] = category;
         currentClubCell.onclick = null;
         currentClubCell.style.cursor = "default";
         hideModal(clubModal);

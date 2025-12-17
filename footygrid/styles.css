@@ -465,6 +465,26 @@ body {
     text-align: left;
     box-shadow: 0 8px 32px #0005;
 }
+#clubModal .modal-content {
+    width: 400px;
+    max-width: 95vw;
+}
+/* ONLY club choosing modal */
+#clubModal .club-filter-buttons {
+    flex-wrap: wrap;     /* ⭐ ključ */
+}
+
+#clubModal .club-filter-btn {
+    flex: 1 1 calc(50% - 3px); /* 2 gumba po redu */
+    white-space: nowrap;
+    text-align: center;
+}
+@media (min-width: 600px) {
+    #clubModal .club-filter-btn {
+        flex: 1 1 auto;
+    }
+}
+
 .close {
     color: #aaa;
     position: absolute;
@@ -981,3 +1001,4 @@ body {
     .sidebar-game-title { font-size: 1rem; }
     .sidebar-game-desc { font-size: 0.89rem; }
 }
+

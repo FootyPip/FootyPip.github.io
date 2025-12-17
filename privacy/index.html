@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy | FootyPip</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <!-- Google Font to match your site -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<script src="app.js"></script>
+<body>
+    <main>
+        <!-- HEADER NAVBAR -->
+        <header class="main-header">
+            <button class="menu-btn" id="sidebarToggle" aria-label="Open sidebar">
+                <span class="menu-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+            </button>
+            <button class="home-btn" onclick="location.href='/'">
+                <img src="../logo.png" alt="FootyPip Logo" class="header-logo">
+                <span class="header-title">FootyPip</span>
+            </button>
+            <div class="header-center-title">Privacy Policy</div>
+        </header>
+
+        <nav class="sidebar-drawer" id="sidebarDrawer">
+            <div class="sidebar-top">
+                <button class="sidebar-home-btn" onclick="location.href='/'" tabindex="0">
+                    <img src="../logo.png" alt="FootyPip Logo" class="sidebar-logo">
+                    <span class="sidebar-title">FootyPip</span>
+                </button>
+                <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close sidebar" tabindex="0">&times;</button>
+            </div>
+            <div class="sidebar-header">Games</div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a class="sidebar-game-btn" href="/footygrid">
+                        <span class="sidebar-game-title">⚽ FootyGrid</span>
+                        <span class="sidebar-game-desc">Classic football tic-tac-toe</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="sidebar-game-btn" href="/footygrid+">
+                        <span class="sidebar-game-title">⚽ FootyGrid+</span>
+                        <span class="sidebar-game-desc">Daily footy tic-tac-toe with a twist</span>
+                    </a>
+                </li>
+                <li>
+                    <div class="sidebar-game-btn disabled">
+                        <span class="sidebar-game-title">🌍 GeoFooty</span>
+                        <span class="sidebar-game-desc coming-soon-row">
+                            <span class="lock-icon">🔒</span>
+                            <span>Coming Soon</span>
+                        </span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sidebar-game-btn disabled">
+                        <span class="sidebar-game-title">❓ FootyGuessr</span>
+                        <span class="sidebar-game-desc coming-soon-row">
+                            <span class="lock-icon">🔒</span>
+                            <span>Coming Soon</span>
+                        </span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sidebar-game-btn disabled">
+                        <span class="sidebar-game-title">🎯 FootyDarts</span>
+                        <span class="sidebar-game-desc coming-soon-row">
+                            <span class="lock-icon">🔒</span>
+                            <span>Coming Soon</span>
+                        </span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sidebar-game-btn disabled">
+                        <span class="sidebar-game-title">💰 FootyMillionaire</span>
+                        <span class="sidebar-game-desc coming-soon-row">
+                            <span class="lock-icon">🔒</span>
+                            <span>Coming Soon</span>
+                        </span>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <section class="privacy-container">
+      <div class="privacy-card">
+        <h1>Privacy Policy</h1>
+        <p>At <strong>FootyPip</strong>, we value and respect your privacy. This Privacy Policy explains what information we collect and how we use it.</p>
+
+        <h2>Information We Collect</h2>
+        <p>We do not collect any personal information such as your name, email address, or location when you use our games.</p>
+        <p>Our website may use basic technical cookies that are strictly necessary for the functionality of the game (for example, saving your preferences or game progress). These cookies are not used to track or identify you.</p>
+
+        <h2>Use of Information</h2>
+        <p>Any non-personal information we collect (such as technical data or cookies) is used solely to improve the performance and user experience of our website and games.</p>
+
+        <h2>Sharing of Information</h2>
+        <p>We do not sell, trade, or share your information with third parties. If in the future we introduce analytics tools (such as Google Analytics), this Privacy Policy will be updated accordingly.</p>
+
+        <h2>Security</h2>
+        <p>We are committed to keeping our website secure and ensuring that any data collected is handled responsibly and not misused.</p>
+
+        <h2>Your Rights</h2>
+        <p>If you are located in the EU or another region with data protection laws, you have the right to request information about the data we may hold about you and the right to request its deletion. Since we do not collect personal information, this generally does not apply.</p>
+
+        <h2 id="contact">Contact</h2>
+        <p>If you have any questions about this Privacy Policy, please contact us at:<br>
+        <a href="mailto:footypip@gmail.com">footypip@gmail.com</a></p>
+
+        <p class="updated"><em>This Privacy Policy was last updated on August 21, 2025.</em></p>
+      </div>
+    </section>
+  </main>
+<div id="footer"></div>
+
+
+  <script>
+        // Sidebar open/close logic
+        document.addEventListener("DOMContentLoaded", function() {
+            var sidebarDrawer = document.getElementById("sidebarDrawer");
+            var sidebarBackdrop = document.getElementById("sidebarBackdrop");
+            var sidebarToggle = document.getElementById("sidebarToggle");
+            var sidebarCloseBtn = document.getElementById("sidebarCloseBtn");
+            sidebarToggle.onclick = function() {
+                sidebarDrawer.classList.add("open");
+                sidebarBackdrop.style.display = "block";
+            };
+            sidebarBackdrop.onclick = function() {
+                sidebarDrawer.classList.remove("open");
+                sidebarBackdrop.style.display = "none";
+            };
+            sidebarCloseBtn.onclick = function() {
+                sidebarDrawer.classList.remove("open");
+                sidebarBackdrop.style.display = "none";
+            };
+
+            // Optional: close sidebar after clicking a game
+            document.querySelectorAll('.sidebar-game-btn:not(.disabled)').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    sidebarDrawer.classList.remove("open");
+                    sidebarBackdrop.style.display = "none";
+                });
+            });
+        });
+</script>
+    <script>
+    fetch("/footer.html")
+        .then(response => response.text())
+        .then(data => {
+        document.getElementById("footer").innerHTML = data;
+        });
+    </script>
+</body>
+</html>
