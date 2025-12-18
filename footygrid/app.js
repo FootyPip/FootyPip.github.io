@@ -1,3 +1,4 @@
+// contents of file
 let currentClubCell = null;
 let currentGridCell = null;
 let currentMode = "manual";
@@ -14,9 +15,9 @@ let usedPlayers = new Set();
 let categoriesData = null;
 let CategoriesToIds  = null;
 let playerIdList = null; // array of player objects
-let playerIdMap = {}; // id → player object
-let allAvailablePlayerIds = null; // array of all player IDs
-let categoryPlayersMap = {}; // category → Set of player IDs
+let playerIdMap = {}; // idString → player object
+let allAvailablePlayerIds = null; // array of all player ID strings
+let categoryPlayersMap = {}; // category → Set of player ID strings
 
 let nationsList = [];
 let otherList = [];
@@ -50,7 +51,17 @@ document.getElementById("skip-turn-btn").onclick = function() {
 };
 
 function normalizeStr(str) {
-    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    return (str || "").normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
+// Helper: normalize category input (accepts string or object {category,name,display})
+function normalizeCategory(cat) {
+    if (!cat && cat !== "") return "CHOOSE CATEGORY";
+    if (typeof cat === "string") return cat;
+    if (typeof cat === "object") {
+        return cat.category || cat.name || cat.display || "CHOOSE CATEGORY";
+    }
+    return String(cat);
 }
 
 // --- DATA LOADERS ---
@@ -82,13 +93,41 @@ async function fetchCategoriesToIds() {
 async function fetchPlayerIdList() {
     if (!playerIdList) {
         const res = await fetch("data/players_ids.json");
-        playerIdList = await res.json();
+        const data = await res.json();
+
         playerIdMap = {};
-        for (const player of playerIdList) {
-            playerIdMap[player.id] = player;
+        playerIdList = [];
+
+        if (Array.isArray(data)) {
+            // Stari format: [ { id: 1, name: "...", ... }, ... ]
+            for (const p of data) {
+                const idStr = String(p.id);
+                const playerObj = Object.assign({}, p, { id: idStr });
+                playerObj.normalized_name = playerObj.normalized_name || normalizeStr(playerObj.name || "");
+                playerIdMap[idStr] = playerObj;
+                playerIdList.push(playerObj);
+            }
+        } else if (data && typeof data === "object") {
+            // Novi format: { "1": { name: "...", normalized_name: "..." }, "2": {...} }
+            for (const [id, p] of Object.entries(data)) {
+                const idStr = String(id);
+                const playerObj = Object.assign({ id: idStr }, p);
+                playerObj.normalized_name = playerObj.normalized_name || normalizeStr(playerObj.name || "");
+                playerIdMap[idStr] = playerObj;
+                playerIdList.push(playerObj);
+            }
+        } else {
+            // neočekivan format -> ostavi prazno
+            playerIdList = [];
+            playerIdMap = {};
         }
     }
     return playerIdList;
+}
+
+async function prepareAllAvailablePlayers() {
+    await fetchPlayerIdList();
+    allAvailablePlayerIds = Object.keys(playerIdMap).slice(); // niz stringova "1","2",...
 }
 
 function extractSpecialListsFromCategories() {
@@ -96,21 +135,96 @@ function extractSpecialListsFromCategories() {
     otherList = Array.isArray(categoriesData.other) ? categoriesData.other : [];
 }
 
+// Robustna izgradnja categoryPlayersMap (zamijeni postojeću)
 function buildCategoryPlayersMap() {
     categoryPlayersMap = {};
 
-    for (const group of Object.values(CategoriesToIds)) {
-        for (const [category, playerIds] of Object.entries(group)) {
-            categoryPlayersMap[category] = new Set(playerIds);
+    // 1) Privremeno sakupljanje po kanoničkom (trimiranom) nazivu
+    const temp = {}; // canonicalName -> Set(ids)
+    for (const [groupName, groupObj] of Object.entries(CategoriesToIds || {})) {
+        if (!groupObj) continue;
+        for (const [rawCat, ids] of Object.entries(groupObj || {})) {
+            const canonical = String(rawCat).trim();
+            if (!temp[canonical]) temp[canonical] = new Set();
+            for (const pid of (ids || [])) {
+                // trim i string da uklonimo whitespace / tip mismatch
+                temp[canonical].add(String(pid).trim());
+            }
         }
+    }
+
+    // 2) Popuni categoryPlayersMap s više varijanata ključeva koji referenciraju isti set
+    for (const canonical of Object.keys(temp)) {
+        const set = temp[canonical];
+        // canonical form (exact, trimmed)
+        categoryPlayersMap[canonical] = set;
+        // normalized (no diacritics, lowercase)
+        categoryPlayersMap[normalizeStr(canonical)] = set;
+        // lowercase trimmed
+        categoryPlayersMap[canonical.toLowerCase()] = set;
+        // also map common display variants for winners/competitions
+        const played = ("Played in " + canonical).trim();
+        const won = ("Won " + canonical).trim();
+        categoryPlayersMap[played] = set;
+        categoryPlayersMap[won] = set;
+        // also normalized/display variants
+        categoryPlayersMap[normalizeStr(played)] = set;
+        categoryPlayersMap[normalizeStr(won)] = set;
+        categoryPlayersMap[played.toLowerCase()] = set;
+        categoryPlayersMap[won.toLowerCase()] = set;
     }
 }
 
+function getCanonicalKey(raw) {
+    if (raw === undefined || raw === null) return null;
+    let s = raw;
+    if (typeof raw === "object") {
+        s = raw.category || raw.name || raw.display || "";
+    }
+    s = String(s).trim();
+    if (s === "" || s === "CHOOSE CATEGORY") return "CHOOSE CATEGORY";
 
-async function prepareAllAvailablePlayers() {
-    await fetchPlayerIdList();
-    allAvailablePlayerIds = playerIdList.map(player => player.id);
+    // 1) direktna (trimirana) provjera
+    if (categoryPlayersMap[s]) return s;
+    // 2) normalized
+    const ns = normalizeStr(s);
+    if (categoryPlayersMap[ns]) return ns;
+    // 3) lowercase
+    const ls = s.toLowerCase();
+    if (categoryPlayersMap[ls]) return ls;
+    // 4) common display prefixes stripped (npr. "Won X" -> "X")
+    const low = s.toLowerCase();
+    if (low.startsWith("won ")) {
+        const rest = s.slice(4).trim();
+        if (categoryPlayersMap[rest]) return rest;
+        const nrest = normalizeStr(rest);
+        if (categoryPlayersMap[nrest]) return nrest;
+    }
+    if (low.startsWith("played in ")) {
+        const rest = s.slice(10).trim();
+        if (categoryPlayersMap[rest]) return rest;
+        const nrest = normalizeStr(rest);
+        if (categoryPlayersMap[nrest]) return nrest;
+    }
+    // 5) last resort: try adding display prefixes
+    const played = ("Played in " + s).trim();
+    if (categoryPlayersMap[played]) return played;
+    const won = ("Won " + s).trim();
+    if (categoryPlayersMap[won]) return won;
+    const nplayed = normalizeStr(played);
+    if (categoryPlayersMap[nplayed]) return nplayed;
+    const nwon = normalizeStr(won);
+    if (categoryPlayersMap[nwon]) return nwon;
+
+    return s; // may not exist in map
 }
+
+function lookupSetFor(raw) {
+    const key = getCanonicalKey(raw);
+    if (!key || key === "CHOOSE CATEGORY") return null;
+    return categoryPlayersMap[key] || null;
+}
+
 
 // --- Fetch categories (was clubs) ---
 async function fetchCategoriesList(mode = null) {
@@ -158,10 +272,14 @@ async function fetchCategoriesList(mode = null) {
 }
 
 
+// Return true if there's at least one shared player between two categories
 function categoriesHaveIntersectionSync(catA, catB) {
-    if (!catA || !catB || catA === "CHOOSE CATEGORY" || catB === "CHOOSE CATEGORY") return true;
-    const setA = categoryPlayersMap[catA];
-    const setB = categoryPlayersMap[catB];
+    // treat CHOOSE CATEGORY as wildcard (unknown) => consider valid
+    const a = normalizeCategory(catA);
+    const b = normalizeCategory(catB);
+    if (!a || !b || a === "CHOOSE CATEGORY" || b === "CHOOSE CATEGORY") return true;
+    const setA = categoryPlayersMap[a];
+    const setB = categoryPlayersMap[b];
     if (!setA || !setB) return false;
     for (const playerId of setA) {
         if (setB.has(playerId)) return true;
@@ -169,29 +287,207 @@ function categoriesHaveIntersectionSync(catA, catB) {
     return false;
 }
 
-function getRandomValidCategoriesSync(categoriesList) {
-    let tries = 0;
-    while (tries < 30) {
-        let catNames = categoriesList.slice().sort(() => Math.random() - 0.5);
-        let top = catNames.slice(0, 3);
-        let left = catNames.slice(3, 6);
-        let ok = true;
-        for (let row = 0; row < 3 && ok; ++row) {
-            for (let col = 0; col < 3 && ok; ++col) {
-                let c1 = top[col];
-                let c2 = left[row];
-                if (!categoriesHaveIntersectionSync(c1, c2)) ok = false;
+function gridIsPlayable(top, left) {
+    // top/left mogu biti stringovi ili objekti
+    for (let r = 0; r < 3; r++) {
+        for (let c = 0; c < 3; c++) {
+            const topRaw = top[c];
+            const leftRaw = left[r];
+            const topKey = getCanonicalKey(topRaw);
+            const leftKey = getCanonicalKey(leftRaw);
+
+            // ako je jedna strana CHOOSE -> ignoriraj (manual mod)
+            if (topKey === "CHOOSE CATEGORY" || leftKey === "CHOOSE CATEGORY") continue;
+
+            const setA = lookupSetFor(topRaw);
+            const setB = lookupSetFor(leftRaw);
+
+            if (!setA || !setB) {
+                // nema podataka za neku kategoriju => neigrivo
+                return false;
+            }
+
+            let hasAny = false;
+            // iterate smaller set first for perf
+            if (setA.size < setB.size) {
+                for (const pid of setA) {
+                    if (setB.has(pid)) { hasAny = true; break; }
+                }
+            } else {
+                for (const pid of setB) {
+                    if (setA.has(pid)) { hasAny = true; break; }
+                }
+            }
+            if (!hasAny) return false;
+        }
+    }
+    return true;
+}
+
+// POMOĆNE FUNKCIJE: pronađi kojoj grupi pripada kategorija
+function findCategoryGroup(name) {
+    if (!name) return null;
+    const s = String(name).trim();
+    // pretraži u CategoriesToIds po grupama
+    for (const group of ['clubs','nations','managers','winners','competitions']) {
+        if (CategoriesToIds && CategoriesToIds[group] && Object.prototype.hasOwnProperty.call(CategoriesToIds[group], s)) {
+            return group;
+        }
+    }
+    // pokušaj normalized lookup (ako ključevi u mapama normalizirani)
+    const ns = normalizeStr(s);
+    for (const group of ['clubs','nations','managers','winners','competitions']) {
+        if (CategoriesToIds && CategoriesToIds[group]) {
+            for (const key of Object.keys(CategoriesToIds[group])) {
+                if (normalizeStr(key) === ns) return group;
             }
         }
-        if (ok) return { top, left };
-        tries++;
     }
-    let catNames = categoriesList.slice();
+    return null;
+}
+
+// Vraća "težinu" (weight) za group ovisno o modu
+function getWeightForGroup(group, mode) {
+    // default weights
+    const defaultWeights = {
+        clubs: 2,
+        nations: 1,
+        managers: 1,
+        winners: 1,
+        competitions: 1,
+        other: 1
+    };
+
+    if (mode === 'croatian-league') {
+        return {
+            clubs: 4,
+            nations: 1,
+            managers: 1,
+            winners: 1,
+            competitions: 1,
+            other: 1
+        }[group] || 1;
+    }
+
+    if (mode === 'random-easy') {
+        return {
+            clubs: 3,
+            nations: 1,
+            managers: 1,
+            winners: 1,
+            competitions: 1,
+            other: 1
+        }[group] || 1;
+    }
+
+    if (mode === 'random-hard') {
+        return {
+            clubs: 3,
+            nations: 1,
+            managers: 1,
+            winners: 1,
+            competitions: 1,
+            other: 1
+        }[group] || 1;
+    }
+
+    // HNL mode/other random modes: prefer clubs modestly
+    return defaultWeights[group] || defaultWeights.other;
+}
+
+// Weighted sampling without replacement (items is array of unique names)
+function pickWeightedUnique(items, weightsMap, n) {
+    const chosen = [];
+    const remaining = new Set(items);
+    // clone weights for remaining items
+    const weightFor = key => Math.max(0, Number(weightsMap[key] || 1));
+    while (chosen.length < n && remaining.size > 0) {
+        // compute total weight among remaining
+        let total = 0;
+        for (const it of remaining) total += weightFor(it);
+        if (total <= 0) break;
+        let r = Math.random() * total;
+        let picked = null;
+        for (const it of remaining) {
+            r -= weightFor(it);
+            if (r <= 0) { picked = it; break; }
+        }
+        if (!picked) {
+            // fallback: pick any remaining
+            picked = remaining.values().next().value;
+        }
+        chosen.push(picked);
+        remaining.delete(picked);
+    }
+    return chosen;
+}
+
+// zamijeni staru funkciju; sada prima i mode (string)
+function getRandomValidCategoriesSync(categoriesList, mode = null) {
+    // categoriesList može biti niz stringova ili objekata s .name
+    const allNames = categoriesList
+        .map(c => (typeof c === 'object' ? (c.name || c.category || c.display) : String(c)))
+        .filter(Boolean);
+
+    // deduplicate by normalized name but keep original form
+    const mapByNorm = new Map();
+    for (const name of allNames) {
+        const nk = normalizeStr(name);
+        if (!mapByNorm.has(nk)) mapByNorm.set(nk, name);
+    }
+    const unique = Array.from(mapByNorm.values());
+
+    if (unique.length < 6) {
+        const fallback = unique.slice(0, 6);
+        return { top: fallback.slice(0,3), left: fallback.slice(3,6).concat([]).slice(0,3) };
+    }
+
+    // build weights map per item (by group)
+    const weights = {};
+    for (const name of unique) {
+        const group = findCategoryGroup(name) || 'other';
+        weights[name] = getWeightForGroup(group, mode);
+    }
+
+    const perCycleAttempts = 200;
+    const timeLimitMs = 10000;
+    const start = Date.now();
+
+    // helper: quick check
+    const isPlayable = (top, left) => {
+        try { return gridIsPlayable(top, left); }
+        catch (e) { return false; }
+    };
+
+    let cycles = 0;
+    while (timeLimitMs === null || (Date.now() - start) < timeLimitMs) {
+        cycles++;
+        for (let attempt = 0; attempt < perCycleAttempts; attempt++) {
+            // pick 6 distinct names weighted by weights
+            const six = pickWeightedUnique(unique, weights, 6);
+            if (six.length < 6) continue;
+            const top = six.slice(0,3);
+            const left = six.slice(3,6);
+
+            if (isPlayable(top, left)) {
+                // return raw strings (will be canonicalized later into display objects)
+                return {
+                    top: top.map(x => x),
+                    left: left.map(x => x)
+                };
+            }
+        }
+        if (cycles % 5 === 0) console.debug(`getRandomValidCategoriesSync: ${cycles} cycles of ${perCycleAttempts} attempts done for mode=${mode}; still searching...`);
+    }
+
+    console.warn("getRandomValidCategoriesSync: could not find playable combination within time limit. Returning fallback.");
+    const fallback = unique.slice(0, 6);
     return {
-        top: catNames.slice(0, 3),
-        left: catNames.slice(3, 6)
+        top: fallback.slice(0,3),
+        left: fallback.slice(3,6).concat([]).slice(0,3)
     };
 }
+
 
 async function fetchCategoryPositions(mode = "manual") {
     if (mode === "manual") {
@@ -200,19 +496,42 @@ async function fetchCategoryPositions(mode = "manual") {
             left: ["CHOOSE CATEGORY", "CHOOSE CATEGORY", "CHOOSE CATEGORY"]
         };
     }
+
     let cats = await fetchCategoriesList(mode);
+    // fetchCategoriesList već vraća niz objekata {name}
+    const catNames = cats.map(c => (c && (c.name || c)) || c).filter(Boolean).sort(() => Math.random() - 0.5);
 
-    // 🎲 shuffle da ne budu uvijek iste
-    let catNames = cats
-        .map(c => c.name)
-        .sort(() => Math.random() - 0.5);
+    // get random valid as strings (may be winners/competitions names)
+    const raw = getRandomValidCategoriesSync(catNames, mode);
 
-    return getRandomValidCategoriesSync(catNames);
+    // convert to items that setClubCellWithBadgeAndName expects:
+    // If category belongs to 'winners' -> display "Won X", competitions -> "Played in X"
+    function makeItem(name) {
+        const group = findCategoryGroup(name);
+        if (group === 'winners') return { category: name, display: `Won ${name}` };
+        if (group === 'competitions') return { category: name, display: `Played in ${name}` };
+        if (group === 'managers') return { category: name, display: name };
+        // clubs/nations/other -> display name
+        return { category: name, display: name };
+    }
+
+    const topItems = raw.top.map(makeItem);
+    const leftItems = raw.left.map(makeItem);
+
+    // But renderClubs expects arrays of category strings in topClubs/leftClubs (we earlier used category strings).
+    // To keep compatibility, return plain strings but also set display objects inside renderClubs when needed.
+    // We'll return strings (category names) but also expose a map for display when setting badges.
+    // For simplicity return strings (renderClubs will call setClubCellWithBadgeAndName which supports object)
+    // So here return arrays of item objects:
+    return {
+        top: topItems,
+        left: leftItems
+    };
 }
 
 function setClubCellWithBadgeAndName(cell, item) {
-    const category = item.category || item;
-    const display = item.display || item;
+    const category = (item && (item.category || item.name)) || item;
+    const display = (item && (item.display || item.name)) || item;
     cell.innerHTML = "";
 
     if (category === "CHOOSE CATEGORY") {
@@ -228,7 +547,7 @@ function setClubCellWithBadgeAndName(cell, item) {
     ) {
         img.src = "badges/default.png";
     } else {
-        img.src = `badges/${category.toLowerCase()}.png`;
+        img.src = `badges/${String(category).toLowerCase()}.png`;
         img.onerror = function () {
             this.src = "badges/default.png";
         };
@@ -275,10 +594,13 @@ async function renderClubs(mode = "manual") {
         });
     } else {
         let data = await fetchCategoryPositions(mode);
-        topClubs = data.top;
-        leftClubs = data.left;
-        clubCellsTop.forEach((cell, i) => setClubCellWithBadgeAndName(cell, topClubs[i]));
-        clubCellsLeft.forEach((cell, i) => setClubCellWithBadgeAndName(cell, leftClubs[i]));
+        topClubs = data.top.map(it => (it && (it.category || it.name)) || it);
+        leftClubs = data.left.map(it => (it && (it.category || it.name)) || it);
+        clubCellsTop.forEach((cell, i) => setClubCellWithBadgeAndName(cell, data.top[i]));
+        clubCellsLeft.forEach((cell, i) => setClubCellWithBadgeAndName(cell, data.left[i]));
+        // mark usedClubs so modal hides already used ones
+        topClubs.forEach(c => usedClubs.add(normalizeCategory(c)));
+        leftClubs.forEach(c => usedClubs.add(normalizeCategory(c)));
         document.querySelectorAll('.club-cell.top, .club-cell.left').forEach(cell => {
             cell.onclick = null;
             cell.style.cursor = "default";
@@ -323,11 +645,6 @@ function debounce(fn, delay) {
         clearTimeout(timeoutId);
         timeoutId = setTimeout(() => fn.apply(this, args), delay);
     };
-}
-
-function activateCellFeedback(cell) {
-    cell.classList.add('cell-active');
-    setTimeout(() => cell.classList.remove('cell-active'), 300);
 }
 
 function activateCellFeedback(cell) {
@@ -399,6 +716,20 @@ function populateClubModal() {
             }, 0);
         }
     }
+    function categoryWouldBreakGrid(testCategory, posType, posIdx) {
+        // testCategory is a string (category)
+        let testTop = topClubs.slice();
+        let testLeft = leftClubs.slice();
+
+        if (posType === "top") testTop[posIdx] = testCategory;
+        else testLeft[posIdx] = testCategory;
+
+        // Normalize before checking. gridIsPlayable treats "CHOOSE CATEGORY" as wildcard
+        testTop = testTop.map(c => normalizeCategory(c));
+        testLeft = testLeft.map(c => normalizeCategory(c));
+
+        return !gridIsPlayable(testTop, testLeft);
+    }
 
     function renderList(type, preserveInput = true) {
         currentListType = type;
@@ -430,18 +761,18 @@ function populateClubModal() {
         // If typed, keep value and show filtered list
         const query = clubSearch.value.trim().toLowerCase();
         if (query === "") {
-            suggestions = srcList.filter(clubName => !usedClubs.has(clubName));
+            suggestions = srcList.filter(clubObj => !usedClubs.has(normalizeCategory(clubObj.category)));
         } else {
                 suggestions = srcList.filter(obj =>
-                    !usedClubs.has(obj.category) &&
-                    obj.display.toLowerCase().includes(query)
+                    !usedClubs.has(normalizeCategory(obj.category)) &&
+                    (obj.display || "").toLowerCase().includes(query)
                 );
 
         }
 
         clubList.innerHTML = "";
         highlightIdx = -1;
-        suggestions.forEach((clubName, idx) => {
+        suggestions.forEach((clubObj, idx) => {
             let li = document.createElement("li");
             // Left aligned badge and name
             li.style.display = "flex";
@@ -458,17 +789,17 @@ function populateClubModal() {
             badgeImg.style.verticalAlign = "middle";
             badgeImg.style.background = "transparent";
             badgeImg.style.display = "inline-block";
-            badgeImg.alt = clubName.display;
+            badgeImg.alt = clubObj.display;
             if (currentListType === "managers") {
                 badgeImg.src = "badges/default.png";
             } else {
-                badgeImg.src = `badges/${clubName.category.toLowerCase()}.png`;
+                badgeImg.src = `badges/${normalizeCategory(clubObj.category).toLowerCase()}.png`;
             }
             badgeImg.onerror = function() { this.src = "badges/default.png"; };
             li.appendChild(badgeImg);
             let span = document.createElement("span");
             span.className = "club-list-name";
-            span.textContent = suggestions[idx].display;
+            span.textContent = clubObj.display;
             span.style.textAlign = "left";
             li.appendChild(span);
 
@@ -480,11 +811,26 @@ function populateClubModal() {
                 highlightIdx = -1;
                 updateHighlight();
             };
+            const posType = currentClubCell.classList.contains('top') ? "top" : "left";
+            const posIdx = parseInt(currentClubCell.dataset.idx);
+
+            const isInvalid = categoryWouldBreakGrid(
+                normalizeCategory(clubObj.category),
+                posType,
+                posIdx
+            );
+
+            if (isInvalid) {
+                li.style.opacity = "0.4";
+                li.style.pointerEvents = "none";
+            }
+
             li.onclick = function() {
-                clubSearch.value = suggestions[idx];
-                userInputValue = suggestions[idx];
+                // set input to display string (not object)
+                clubSearch.value = clubObj.display;
+                userInputValue = clubObj.display;
                 dropdownOpen = false;
-                pickClub(suggestions[idx]);
+                pickClub(clubObj);
             };
             clubList.appendChild(li);
         });
@@ -510,8 +856,7 @@ function populateClubModal() {
     function pickClub(item) {
         const category = item.category || item;
         const display = item.display || item;
-        let testTop = [...topClubs];
-        let testLeft = [...leftClubs];
+
         let posType, posIdx;
         if (currentClubCell.classList.contains('top')) {
             posType = "top";
@@ -520,50 +865,25 @@ function populateClubModal() {
             posType = "left";
             posIdx = parseInt(currentClubCell.getAttribute('data-idx'));
         }
-        if (posType === "top") testTop[posIdx] = category;
-        else testLeft[posIdx] = category;
-
-        let possible = true;
-        for (let row = 0; row < 3 && possible; ++row) {
-            for (let col = 0; col < 3 && possible; ++col) {
-                let c1 = testTop[col];
-                let c2 = testLeft[row];
-                if (c1 !== "CHOOSE CATEGORY" && c2 !== "CHOOSE CATEGORY") {
-                    let ok = categoriesHaveIntersectionSync(c1, c2);
-                    if (!ok) {
-                        Swal.fire({
-                            html: "<b>PLEASE, CHOOSE ANOTHER CATEGORY!</b><br>There isn't a player that fits these two categories:<br><b>" + c1 + "</b> and <b>" + c2 + "</b>",
-                            icon: "warning",
-                            background: '#174e2c',
-                            color: '#ffffff'
-                        }).then(() => {
-                            // Clear search and show list after popup closes
-                            clubSearch.value = "";
-                            userInputValue = "";
-                            dropdownOpen = true;
-                            renderList(currentListType, false);
-                            clubList.style.display = "block";
-                            setTimeout(() => clubSearch.focus(), 0);
-                        });
-                        possible = false;
-                    }
-                }
-            }
-        }
-        if (!possible) return;
 
         setClubCellWithBadgeAndName(currentClubCell, item);
-        usedClubs.add(category);
-        if (posType === "top") topClubs[posIdx] = category;
-        else leftClubs[posIdx] = category;
+        usedClubs.add(normalizeCategory(category));
+
+        if (posType === "top") topClubs[posIdx] = normalizeCategory(category);
+        else leftClubs[posIdx] = normalizeCategory(category);
+
         currentClubCell.onclick = null;
         currentClubCell.style.cursor = "default";
+
         hideModal(clubModal);
+
         if (allClubsChosen()) unlockGridCells();
-        updateStatusBarVisibility(); 
+        updateStatusBarVisibility();
+
         highlightIdx = -1;
         dropdownOpen = false;
     }
+
 
     clubSearch.oninput = function(e) {
         userInputValue = clubSearch.value;
@@ -606,7 +926,7 @@ function populateClubModal() {
             }
             updateHighlight();
             if (highlightIdx >= 0) {
-                clubSearch.value = suggestions[highlightIdx];
+                clubSearch.value = suggestions[highlightIdx].display || "";
             }
         } else if (e.key === "ArrowUp") {
             e.preventDefault();
@@ -619,13 +939,13 @@ function populateClubModal() {
             }
             updateHighlight();
             if (highlightIdx >= 0) {
-                clubSearch.value = suggestions[highlightIdx];
+                clubSearch.value = suggestions[highlightIdx].display || "";
             }
         } else if (e.key === "Enter") {
             e.preventDefault();
             if (highlightIdx >= 0) {
-                clubSearch.value = suggestions[highlightIdx];
-                userInputValue = suggestions[highlightIdx];
+                clubSearch.value = suggestions[highlightIdx].display || "";
+                userInputValue = suggestions[highlightIdx].display || "";
                 dropdownOpen = false;
                 pickClub(suggestions[highlightIdx]);
             }
@@ -643,9 +963,6 @@ function populateClubModal() {
     clubList.scrollTop = 0;
 }
 
-
-// --- Modal for picking a player; displays ALL players, date of birth if present ---
-// ... [all previous code remains unchanged]
 
 // --- Modal for picking a player; displays ALL players, date of birth if present ---
 function populatePlayerModal(cell) {
@@ -743,7 +1060,7 @@ function populatePlayerModal(cell) {
                     playerSearch.value = suggestions[idx].name;
                     userInputValue = suggestions[idx].name;
                     dropdownOpen = false;
-                    handlePlayerPick(cell, suggestions[idx].id);
+                    handlePlayerPick(cell, String(suggestions[idx].id));
                     hideModal(playerModal);
                 };
                 playerList.appendChild(li);
@@ -806,7 +1123,7 @@ function populatePlayerModal(cell) {
                     playerSearch.value = suggestions[highlightIdx].name;
                     userInputValue = suggestions[highlightIdx].name;
                     dropdownOpen = false;
-                    handlePlayerPick(cell, suggestions[highlightIdx].id);
+                    handlePlayerPick(cell, String(suggestions[highlightIdx].id));
                     hideModal(playerModal);
                 }
             } else if (e.key === "Escape") {
@@ -915,16 +1232,26 @@ function showWin(winner) {
 }
 
 async function handlePlayerPick(cell, playerId) {
-    let row = parseInt(cell.dataset.row), col = parseInt(cell.dataset.col);
-    let rowCat = leftClubs[row];
-    let colCat = topClubs[col];
+    // ensure id is string (we stored IDs as strings)
+    const pidStr = String(playerId);
+
+    let row = parseInt(cell.dataset.row);
+    let col = parseInt(cell.dataset.col);
+
+    let rowCatRaw = leftClubs[row];
+    let colCatRaw = topClubs[col];
+
+    const rowCat = normalizeCategory(rowCatRaw);
+    const colCat = normalizeCategory(colCatRaw);
+
     const playersCol = categoryPlayersMap[colCat] || new Set();
     const playersRow = categoryPlayersMap[rowCat] || new Set();
-    let isValid = playersCol.has(playerId) && playersRow.has(playerId);
+
+    let isValid = playersCol.has(pidStr) && playersRow.has(pidStr);
 
     if (isValid) {
-        usedPlayers.add(playerId);
-        const player = playerIdMap[playerId];
+        usedPlayers.add(pidStr);
+        const player = playerIdMap[pidStr];
         cell.innerHTML = `
             <div style="display: flex; flex-direction: column; align-items: center;">
                 <span class="tic-sign">${ticTurn === "X" ? "✖" : "◯"}</span>
@@ -939,6 +1266,9 @@ async function handlePlayerPick(cell, playerId) {
         cell.onclick = null;
         activateCellFeedback(cell);
         checkWin();
+    } else {
+        // Optionally show feedback that pick was invalid
+        // console.warn("Picked player does not belong to both categories", playerId, rowCat, colCat);
     }
     ticTurn = ticTurn === "X" ? "O" : "X";
     updateTurnInfo();
@@ -956,7 +1286,7 @@ function getDisplaySurname(playerName) {
 }
 
 function allClubsChosen() {
-    return topClubs.every(c => c !== "CHOOSE CATEGORY") && leftClubs.every(c => c !== "CHOOSE CATEGORY");
+    return topClubs.every(c => normalizeCategory(c) !== "CHOOSE CATEGORY") && leftClubs.every(c => normalizeCategory(c) !== "CHOOSE CATEGORY");
 }
 
 function lockGridCells() {
@@ -1052,3 +1382,5 @@ document.getElementById("sidebarCloseBtn").onclick = function() {
     document.getElementById("sidebarDrawer").classList.remove("open");
     document.getElementById("sidebarBackdrop").style.display = "none";
 };
+
+

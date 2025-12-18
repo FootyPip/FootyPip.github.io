@@ -42,31 +42,31 @@
                 </a>
             </li>
             <li>
-                <a class="sidebar-game-btn active" href="footygrid+/">
+                <div class="sidebar-game-btn disabled" aria-disabled="true">
                     <span class="sidebar-game-title">⚽ FootyGrid+</span>
-                    <span class="sidebar-game-desc">Daily footy tic-tac-toe with a twist</span>
-                </a>
+                    <span class="sidebar-game-desc"><span class="lock-icon">🔒</span> Coming Soon</span>
+                </div>
             </li>
             <li>
-                <div class="sidebar-game-btn disabled">
+                <div class="sidebar-game-btn disabled" aria-disabled="true">
                     <span class="sidebar-game-title">🌍 GeoFooty</span>
                     <span class="sidebar-game-desc"><span class="lock-icon">🔒</span> Coming Soon</span>
                 </div>
             </li>
             <li>
-                <div class="sidebar-game-btn disabled">
+                <div class="sidebar-game-btn disabled" aria-disabled="true">
                     <span class="sidebar-game-title">❓ FootyGuessr</span>
                     <span class="sidebar-game-desc"><span class="lock-icon">🔒</span> Coming Soon</span>
                 </div>
             </li>
             <li>
-                <div class="sidebar-game-btn disabled">
+                <div class="sidebar-game-btn disabled" aria-disabled="true">
                     <span class="sidebar-game-title">🎯 FootyDarts</span>
                     <span class="sidebar-game-desc"><span class="lock-icon">🔒</span> Coming Soon</span>
                 </div>
             </li>
             <li>
-                <div class="sidebar-game-btn disabled">
+                <div class="sidebar-game-btn disabled" aria-disabled="true">
                     <span class="sidebar-game-title">💰 FootyMillionaire</span>
                     <span class="sidebar-game-desc"><span class="lock-icon">🔒</span> Coming Soon</span>
                 </div>
@@ -91,13 +91,15 @@
                     <div class="game-desc">Classic football tic-tac-toe</div>
                 </div>
             </a>
-            <a href="footygrid+/" class="game-card">
+            <div class="game-card disabled">
                 <span class="game-icon">⚽</span>
                 <div class="game-info">
                     <div class="game-title">FootyGrid+</div>
-                    <div class="game-desc">Daily footy tic-tac-toe with a twist</div>
+                    <div class="game-desc">
+                        <span class="coming-soon-label"><span class="lock-icon">🔒</span> Coming Soon</span>
+                    </div>
                 </div>
-            </a>
+            </div>
             <div class="game-card disabled">
                 <span class="game-icon">🌍</span>
                 <div class="game-info">
@@ -174,7 +176,6 @@
       document.getElementById("footer").innerHTML = data;
     });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="app.js"></script>
+
 </body>
 </html>
