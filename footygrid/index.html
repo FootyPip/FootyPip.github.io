@@ -1,59 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FootyGrid – Football Tic-Tac-Toe | FootyPip</title>
-    <link rel="icon" href="favicon.ico">
-    <link rel="stylesheet" href="/styles.css"> <!-- shared -->
-    <link rel="stylesheet" href="styles.css"> <!-- specific to footygrid -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <meta charset="utf-8">
+  <title>FootyGrid – Football Tic-Tac-Toe | FootyPip</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Preload critical assets so mobile renders correctly immediately -->
+  <link rel="preload" href="/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="/styles.css"></noscript>
+
+  <link rel="preload" href="styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="styles.css"></noscript>
+
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"></noscript>
+
+  <!-- inline critical mobile overrides (applied instantly) -->
+  <style>
+    /* only mobile overrides - desktop styles remain in styles.css unchanged */
+    @media (max-width: 900px) {
+      /* Ensure header/button spacing fits mobile right away */
+      .main-header { height: 52px; padding: 0 12px 0 6px; }
+      .header-title { margin-right: 1rem; }
+      .header-center-title { display: none; }
+
+      /* mode buttons row -> smaller compact buttons */
+      .mode-buttons { gap: 0.5rem; }
+      .mode-btn { width: 120px; height: 46px; font-size: .95rem; border-radius: 12px; }
+
+      /* scoreboard compact */
+      .scoreboard { padding: 10px 12px; gap: 10px; }
+      .score-info { font-size: 1.25rem; }
+      .turn-info { font-size: 1.0rem; }
+      .btn-skip { font-size: .95rem; padding: .45rem .9rem; }
+
+      /* grid: ensure compact but proportional immediately */
+      .grid.board-grid-wrap {
+        grid-template-columns: repeat(4, 84px) !important;
+        grid-template-rows: repeat(4, 84px) !important;
+        gap: 8px !important;
+      }
+      .grid-cell, .club-cell, .title-cell {
+        width: 84px !important;
+        height: 84px !important;
+        font-size: 1.0rem !important;
+      }
+
+      /* modals: ensure usable */
+      .modal-content { margin: 8vh auto; padding: 1.1rem; width: calc(100% - 32px); max-width: 520px; }
+
+      /* club / player lists */
+      #clubList, #playerList { max-height: 60vh; }
+      .club-badge-in-list { width: 32px !important; height: 32px !important; }
+    }
+
+    @media (max-width: 420px) {
+      .grid.board-grid-wrap {
+        grid-template-columns: repeat(4, 64px) !important;
+        grid-template-rows: repeat(4, 64px) !important;
+        gap: 6px !important;
+      }
+      .grid-cell, .club-cell, .title-cell {
+        width: 64px !important;
+        height: 64px !important;
+        font-size: 0.92rem !important;
+      }
+      .mode-btn { width: 100% !important; min-width: 120px !important; height: 40px !important; font-size: .9rem !important; }
+      .club-badge { width: 30px !important; height: 30px !important; }
+      .club-badge-in-list { width: 28px !important; height: 28px !important; }
+      .modal-content { padding: 0.9rem; margin: 6vh auto; }
+    }
+  </style>
+
+  <!-- keep normal stylesheet includes (preload will set them to stylesheet onload) -->
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
-    <main>
-        <!-- HEADER NAVBAR -->
-        <header class="main-header">
-            <button class="menu-btn" id="sidebarToggle" aria-label="Open sidebar">
-                <span class="menu-icon">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </span>
-            </button>
-            <button class="home-btn" onclick="location.href='/'">
-                <img src="../logo.png" alt="FootyPip Logo" class="header-logo">
-                <span class="header-title">FootyPip</span>
-            </button>
-            <span class="header-center-title">FootyGrid</span>
-        </header>
+  <main>
+    <!-- HEADER NAVBAR -->
+    <header class="main-header">
+      <button class="menu-btn" id="sidebarToggle" aria-label="Open sidebar">
+        <span class="menu-icon"><span></span><span></span><span></span></span>
+      </button>
+      <button class="home-btn" onclick="location.href='/'">
+        <img src="../logo.png" alt="FootyPip Logo" class="header-logo" width="32" height="32">
+        <span class="header-title">FootyPip</span>
+      </button>
+      <span class="header-center-title">FootyGrid</span>
+    </header>
 
-        <nav class="sidebar-drawer" id="sidebarDrawer">
-            <div class="sidebar-top">
-                <button class="sidebar-home-btn" onclick="location.href='/'" tabindex="0">
-                    <img src="../logo.png" alt="FootyPip Logo" class="sidebar-logo">
-                    <span class="sidebar-title">FootyPip</span>
-                </button>
-                <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close sidebar" tabindex="0">&times;</button>
-            </div>
-            <div class="sidebar-header">Games</div>
-            <ul class="sidebar-menu">
-                <li>
-                    <a class="sidebar-game-btn" href="/footygrid">
-                        <span class="sidebar-game-title">⚽ FootyGrid</span>
-                        <span class="sidebar-game-desc">Classic football tic-tac-toe</span>
-                    </a>
-                </li>
-                <li>
-                    <div class="sidebar-game-btn disabled" aria-disabled="true" title="Coming soon">
-                        <span class="sidebar-game-title">⚽ FootyGrid+</span>
-                            <span class="lock-icon">🔒</span>
-                            <span>Coming Soon</span>
-                    </div>
+    <!-- SIDEBAR -->
+    <nav class="sidebar-drawer" id="sidebarDrawer">
+      <div class="sidebar-top">
+        <button class="sidebar-home-btn" onclick="location.href='/'" tabindex="0">
+          <img src="../logo.png" alt="FootyPip Logo" class="sidebar-logo" width="34" height="34">
+          <span class="sidebar-title">FootyPip</span>
+        </button>
+        <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close sidebar" tabindex="0">&times;</button>
+      </div>
+      <div class="sidebar-header">Games</div>
+      <ul class="sidebar-menu">
+        <li><a class="sidebar-game-btn" href="/footygrid"><span class="sidebar-game-title">⚽ FootyGrid</span><span class="sidebar-game-desc">Classic football tic-tac-toe</span></a></li>
+        <li><div class="sidebar-game-btn disabled" aria-disabled="true"><span class="sidebar-game-title">⚽ FootyGrid+</span><span class="sidebar-game-desc"><span class="lock-icon">🔒</span> Coming Soon</span></div></li>
+        <li>
                 </li>
                 <li>
                     <div class="sidebar-game-btn disabled" aria-disabled="true">
@@ -169,17 +220,15 @@
                 <ul id="playerList"></ul>
             </div>
         </div>
-    </main>
-    <div id="footer"></div>
+  </main>
 
-    <script>
-    fetch("/footer.html")
-        .then(response => response.text())
-        .then(data => {
-        document.getElementById("footer").innerHTML = data;
-        });
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="app.js"></script>
+  <div id="footer"></div>
+  <script>
+    fetch("/footer.html").then(r => r.text()).then(t => { document.getElementById("footer").innerHTML = t; });
+  </script>
+
+  <!-- SweetAlert + app logic -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="app.js"></script>
 </body>
 </html>

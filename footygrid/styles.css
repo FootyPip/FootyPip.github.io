@@ -1,13 +1,13 @@
-:root {
-    --green-bg: #004d26;
-    --green-dark: #002d17;
-    --green-accent: #19d678;
-    --green-light: #29e98d;
-    --text-light: #f9fff7;
-    --cell-shadow: 0 4px 16px rgba(0,0,0,0.08);
-    --border-radius: 16px;
-    --transition-fast: 0.18s;
-    --font-game: 'Inter', 'Segoe UI', Arial, sans-serif;
+:root{
+  --green-bg:#004d26;
+  --green-dark:#002d17;
+  --green-accent:#19d678;
+  --green-light:#29e98d;
+  --text-light:#f9fff7;
+  --cell-shadow:0 4px 16px rgba(0,0,0,0.08);
+  --border-radius:16px;
+  --transition-fast:0.18s;
+  --font-game:'Inter','Segoe UI',Arial,sans-serif;
 }
 
 body {
@@ -61,6 +61,7 @@ body {
     gap: 0px;
     position: relative;
     outline: none;
+    padding: 10px;
 }
 
 .mode-btn i {
@@ -622,383 +623,215 @@ body {
     color: #14341b;
 }
 @media (max-width: 900px) {
-    .game-container { max-width: 100vw; }
-    .grid.board-grid-wrap { max-width: 100vw; }
-}
-@media (max-width: 600px) {
-    .game-container {
-        padding: 60px 0.5rem 0 0.5rem;
-        min-width: 100vw;
-    }
-    .scoreboard { flex-direction: column; gap: 12px; padding: 11px 8px; }
-    .mode-buttons { flex-direction: column; gap: 0.7rem; }
-    .grid.board-grid-wrap {
-        grid-template-columns: repeat(4, 70px);
-        grid-template-rows: repeat(4, 70px);
-        gap: 7px;
-    }
-    .grid-cell, .club-cell, .title-cell {
-        width: 70px;
-        height: 70px;
-        font-size: 1rem;
-    }
-    .club-badge { width: 34px; height: 34px; }
-    .footer { font-size: 0.98rem; }
-}
+  /* layout container */
+  .game-container {
+    padding: 64px 0.8rem 0 0.8rem;
+    min-height: calc(100vh - 64px);
+    max-width: 100vw;
+  }
 
-/* Modal header flex */
-.modal-header-flex {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 12px;
-}
-.choose-player-title {
-    color: #19d678;
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin: 0;
-    padding: 0;
-    flex-shrink: 0;
-}
-.close {
-    color: #aaa;
-    font-size: 1.5rem;
-    cursor: pointer;
-    margin-left: 10px;
-    margin-top: 0;
-    flex-shrink: 0;
-}
-.club-cell.top[style*="pointer"]:hover,
-.club-cell.left[style*="pointer"]:hover {
-    background: #46f09e;
-    color: #14341b;
-    transition: background 0.17s, color 0.17s;
-}
-
-/* HEADER NAVBAR */
-.header-center-title {
-    position: absolute;
-    left: 50%;
-    top: 0;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.45rem;
-    font-weight: bold;
-    color: #d6ffe0;
-    transform: translateX(-50%);
-    letter-spacing: 0.04em;
-    z-index: 110;
-    pointer-events: none;
-    user-select: none;
-}
-
-.main-header {
-    position: fixed;
-    top: 0;
-    left: 0;
+  /* Mode buttons: use grid 2x so they form two rows of 2 on narrow screens */
+  .mode-buttons {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.6rem !important;
     width: 100%;
-    height: 48px;
-    background: #10281d;
-    color: #d6ffe0;
-    display: flex;
-    align-items: center;
-    padding: 0 22px 0 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    z-index: 102;
-}
-
-.menu-btn {
-    background: transparent;
-    border: none;
-    outline: none;
-    margin: 0;
-    padding: 0 7px 0 0;
-    height: 48px;
-    width: 40px;
-    display: flex;
+    max-width: 520px;
+    justify-items: center;
+    margin-bottom: 1rem;
+  }
+  .mode-btn {
+    width: 100% !important;
+    max-width: 260px;
+    height: 46px;
+    font-size: .96rem;
+    border-radius: 12px;
+    padding: 8px 10px;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    box-shadow: none;
-    position: relative;
-    left: 0;
-}
-.menu-icon {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    width: 28px;
-    height: 28px;
     gap: 6px;
-    background: transparent;
-}
-.menu-icon span {
-    display: block;
-    height: 4px;
-    border-radius: 2px;
-    background: #19d678;
-    width: 100%;
-    min-width: 18px;
-    transition: background 0.18s;
-}
-.menu-btn:active .menu-icon span,
-.menu-btn:focus .menu-icon span {
-    background: #29e98d;
-}
-.home-btn {
-    background: none;
-    border: none;
-    display: flex;
-    align-items: center;
-    margin-left: 12px;
-    cursor: pointer;
-    padding: 0;
-    transition: background 0.17s;
-}
-.home-btn:focus, .home-btn:hover {
-    background: none;
-}
-.header-logo {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    object-fit: contain;
-    background: #093016;
-    margin-right: 13px;
-    pointer-events: none;
-}
-.header-title {
-    font-size: 1.33rem;
-    font-weight: 700;
-    color: #d6ffe0;
-    letter-spacing: 0.04em;
-    margin-right: 2rem;
-    pointer-events: none;
-}
+  }
+  .mode-btn i { font-size: 1.0rem; }
 
-/* SIDEBAR DRAWER & CONTENT */
-.sidebar-drawer {
-    position: fixed;
-    top: 0;
-    left: -320px;
-    width: 310px;
-    height: 100%;
-    background: #14341b;
-    box-shadow: 2px 0 10px rgba(0,0,0,0.16);
-    z-index: 120;
-    transition: left 0.24s cubic-bezier(.4,0,.2,1);
-    display: flex;
+  /* Scoreboard: compact & clearer */
+  .scoreboard {
+    width: 94%;
+    padding: 10px 12px;
+    gap: 12px;
+    border-radius: 12px;
     flex-direction: column;
-    padding-top: 0;
-}
-.sidebar-drawer.open {
-    left: 0;
-}
-.sidebar-backdrop {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0,0,0,0.18);
-    z-index: 110;
-}
-.sidebar-drawer.open ~ .sidebar-backdrop {
-    display: block;
-}
-.sidebar-top {
+    align-items: center;
+  }
+  /* present the score centered with icons */
+  .score-info {
+    font-size: 1.5rem;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 15px 18px 8px 18px;
-    margin-bottom: 2px;
-}
-.sidebar-home-btn {
-    background: none;
-    border: none;
+    gap: 12px;
+    justify-content: center;
+  }
+  .score-info img.turn-img { width: 1.8rem; height: 1.8rem; }
+  .turn-info {
+    font-size: 1rem;
     display: flex;
+    gap: 8px;
     align-items: center;
-    cursor: pointer;
-    padding: 0;
-    font-family: inherit;
-    transition: background 0.17s;
-    outline: none;
-}
-.sidebar-home-btn:focus, .sidebar-home-btn:hover {
-    background: none;
-}
-.sidebar-logo {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    object-fit: contain;
-    background: #093016;
-    margin-right: 10px;
-    pointer-events: none;
-}
-.sidebar-title {
-    font-size: 1.32rem;
-    font-weight: 700;
-    color: #d6ffe0;
-    letter-spacing: 0.04em;
-    pointer-events: none;
-}
-.sidebar-close-btn {
-    background: none;
-    border: none;
-    color: #19d678;
-    font-size: 2.15rem;
-    font-weight: bold;
-    cursor: pointer;
-    padding: 0 2px;
-    line-height: 1;
-    transition: color 0.17s;
-    margin-left: 10px;
-    outline: none;
-}
-.sidebar-close-btn:hover, .sidebar-close-btn:focus {
-    color: #29e98d;
-    background: none;
-}
-.sidebar-header {
-    font-size: 1.12rem;
-    color: #19d678;
-    font-weight: bold;
-    padding: 18px 20px 8px 26px;
-    letter-spacing: 0.03em;
-}
-.sidebar-menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-.sidebar-menu li {
-    margin-bottom: 6px;
-}
+  }
+  .btn-skip {
+    padding: .4rem .9rem;
+    font-size: .95rem;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    margin-left: 0;
+  }
 
-.sidebar-game-btn {
-    display: block;
-    background: none;
-    border: none;
-    outline: none;
-    padding: 10px 20px 10px 26px;
-    text-align: left;
+  /* Board grid: scale down but keep proportions (a bit larger than before) */
+  .grid.board-grid-wrap {
+    grid-template-columns: repeat(4, 96px) !important;
+    grid-template-rows: repeat(4, 96px) !important;
+    gap: 10px !important;
+    margin: 0 auto 10px auto;
+  }
+  .grid-cell, .club-cell, .title-cell {
+    width: 96px !important;
+    height: 96px !important;
+    font-size: 1.06rem !important;
+    border-radius: 12px;
+    box-shadow: var(--cell-shadow);
+  }
+  .grid-cell { font-size: 1.08rem; }
+
+  /* Club badge and name compact */
+  .club-badge { width: 56px; height: 56px; }
+  .club-name-under-badge { font-size: .95rem; }
+
+  /* Footer spacing */
+  .footer {
+    margin-top: 18px;
+    font-size: .98rem;
+  }
+
+  /* Modals: full-ish width but comfortable padding */
+  .modal-content {
+    width: calc(100% - 28px);
+    max-width: 520px;
+    padding: 1.1rem;
+    margin: 8vh auto;
+    border-radius: 14px;
+  }
+  #clubModal .modal-content { width: calc(100% - 24px); max-width: 520px; }
+
+  /* Club / player lists adjustments */
+  #clubList, #playerList {
+    max-height: 62vh;
+    padding-right: 6px;
+  }
+  #clubList li, #playerList li {
+    padding: .6rem;
+    font-size: .97rem;
     border-radius: 10px;
-    cursor: pointer;
-    color: inherit;
-    text-decoration: none;
-    transition: background .16s, color .16s, opacity 0.18s;
+  }
+  .club-badge-in-list {
+    width: 32px !important;
+    height: 32px !important;
+  }
+  .club-list-name { font-size: .98rem !important; }
+
+  /* Ensure interactive targets large enough while balanced */
+  .sidebar-game-btn { padding: 10px 16px; }
+  .sidebar-logo { width: 40px; height: 40px; }
+
+  /* Increase header logo + adjust text so they don't overlap on mobile */
+  .menu-btn { width: 48px; height: 48px; }
+  .header-logo { width: 40px; height: 40px; margin-right: 10px; }
+  .header-title { font-size: 1.06rem; margin-right: 0.6rem; display: inline-block; }
+
+  /* Prevent background scroll when modal open (body class toggled by JS) */
+  body.modal-open { overflow: hidden; height: 100%; touch-action: none; }
+
+  /* Improve focus visibility on touch devices */
+  @media (any-pointer: coarse) {
+    .mode-btn:focus, .btn-skip:focus, .grid-cell:focus, .club-cell:focus {
+      outline: 3px solid rgba(25,214,120,0.27);
+      outline-offset: 2px;
+    }
+  }
 }
 
-.sidebar-game-btn .sidebar-game-title {
-    font-weight: 700;
-    font-size: 1.09rem;
-    display: block;
-    margin-bottom: 2px;
-    color: inherit;
-    transition: color 0.18s;
-}
-.sidebar-game-btn .sidebar-game-desc {
-    font-size: 0.97rem;
-    color: #b2ffce;
-    font-weight: 400;
-    line-height: 1.2;
-    letter-spacing: 0.01em;
-    transition: color 0.18s;
-}
-.sidebar-game-btn .lock-icon {
-    font-size: 1.1em;
-    margin-right: 5px;
-    filter: grayscale(85%);
-    vertical-align: middle;
-}
-.sidebar-game-btn:focus,
-.sidebar-game-btn:hover {
-    background: #19d678;
-    color: #14341b;
-    text-decoration: none;
-}
-.sidebar-game-btn:focus .sidebar-game-title,
-.sidebar-game-btn:hover .sidebar-game-title,
-.sidebar-game-btn:focus .sidebar-game-desc,
-.sidebar-game-btn:hover .sidebar-game-desc {
-    color: #14341b;
-    text-decoration: none;
-}
-.sidebar-game-btn.disabled,
-.sidebar-game-btn.disabled:hover,
-.sidebar-game-btn.disabled:focus {
-    cursor: not-allowed;
-    opacity: 0.7;
-    pointer-events: none;
-    background: #11321d;
-    color: #b2ffce;
-}
-.sidebar-game-btn.disabled .sidebar-game-title,
-.sidebar-game-btn.disabled .sidebar-game-desc {
-    color: #b2ffce;
-}
-
-.sidebar-game-btn.active {
-  background: #19d678;
-  color: #14341b;
-  box-shadow: 0 2px 8px #19d67844;
-}
-.sidebar-game-btn.active .sidebar-game-title,
-.sidebar-game-btn.active .sidebar-game-desc {
-  color: #14341b;
-}
-
-/* Remove .active highlight only if hovering a non-active menu item */
-.sidebar-menu:hover .sidebar-game-btn.active:not(:hover) {
-  background: none;
-  color: #fff;
-  box-shadow: none;
-}
-.sidebar-menu:hover .sidebar-game-btn.active:not(:hover) .sidebar-game-title,
-.sidebar-menu:hover .sidebar-game-btn.active:not(:hover) .sidebar-game-desc {
-  color: #b2ffce;
-}
-
-.sidebar-game-btn:hover,
-.sidebar-game-btn:focus {
-  background: #19d678;
-  color: #14341b;
-  text-decoration: none;
-}
-.sidebar-game-btn:hover .sidebar-game-title,
-.sidebar-game-btn:focus .sidebar-game-title,
-.sidebar-game-btn:hover .sidebar-game-desc,
-.sidebar-game-btn:focus .sidebar-game-desc {
-  color: #14341b;
-  text-decoration: none;
-}
-
-.coming-soon-row {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-}
-.lock-icon {
-    font-size: 1.1em;
-    margin-right: 0;
-    filter: grayscale(85%);
-    vertical-align: middle;
-}
-
-/* Responsive: shift content below header */
 @media (max-width: 600px) {
-    .sidebar-drawer { width: 170px; }
-    .sidebar-header { font-size: 1rem; padding-left: 13px; }
-    .sidebar-game-btn { padding-left: 13px; font-size: 0.98rem; }
-    .sidebar-game-title { font-size: 1rem; }
-    .sidebar-game-desc { font-size: 0.89rem; }
+  /* further compact for small phones */
+  .game-container { padding: 56px 8px 0 8px; min-height: calc(100vh - 56px); }
+
+  /* Use 2x2 layout for mode buttons on small phones too */
+  .mode-buttons {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.45rem !important;
+    width: 100%;
+    max-width: 420px;
+    justify-items: center;
+    margin-bottom: 0.9rem;
+  }
+  .mode-btn { width: 100% !important; min-width: 120px; height: 40px; font-size: .92rem; border-radius: 12px; }
+
+  .scoreboard { width: 100%; padding: 10px; gap: 8px; flex-direction: column; align-items: center; }
+
+  .grid.board-grid-wrap {
+    grid-template-columns: repeat(4, 78px) !important;
+    grid-template-rows: repeat(4, 78px) !important;
+    gap: 7px !important;
+  }
+  .grid-cell, .club-cell, .title-cell {
+    width: 78px !important;
+    height: 78px !important;
+    font-size: .98rem !important;
+    border-radius: 12px;
+  }
+
+  .club-badge { width: 44px; height: 44px; }
+  .club-name-under-badge { font-size: .88rem; }
+
+  .modal-content { padding: 1rem; width: calc(100% - 22px); margin: 6vh auto; border-radius: 12px; }
+  #clubList, #playerList { max-height: 56vh; }
+
+  .footer { font-size: .95rem; margin-top: 12px; }
+
+  /* Sidebar becomes full-screen overlay for easier tapping */
+  .sidebar-drawer { width: 100% !important; left: -100% !important; box-shadow: none !important; }
+  .sidebar-drawer.open { left: 0 !important; z-index: 1005 !important; }
+  .sidebar-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.42); z-index: 1000; }
+  .sidebar-drawer.open ~ .sidebar-backdrop { display: block !important; }
 }
 
+@media (max-width: 420px) {
+  /* very small phones: compact everything but keep tap targets usable */
+  .grid.board-grid-wrap {
+    grid-template-columns: repeat(4, 64px) !important;
+    grid-template-rows: repeat(4, 64px) !important;
+    gap: 6px !important;
+  }
+  .grid-cell, .club-cell, .title-cell {
+    width: 64px !important;
+    height: 64px !important;
+    font-size: .9rem !important;
+    border-radius: 10px;
+  }
+  .club-badge { width: 34px; height: 34px; }
+  .club-badge-in-list { width: 28px; height: 28px; }
+  .club-list-name { font-size: .9rem !important; }
+  .mode-btn { height: 36px !important; font-size: .88rem !important; border-radius: 10px !important; }
+  .modal-content { padding: .8rem; margin: 5vh auto; width: calc(100% - 18px); }
+  .footer { font-size: .9rem; margin-top: 10px; }
+}
+
+/* Accessibility tweaks for all mobile breakpoints */
+@media (any-pointer: coarse) {
+  .menu-btn:focus, .home-btn:focus, .sidebar-game-btn:focus, .sidebar-close-btn:focus, .game-card:focus {
+    outline: 3px solid #19d67844;
+    outline-offset: 2px;
+  }
+}
+
+/* END of mobile overrides */
+/* (Desktop rules remain above exactly as originally provided.) */

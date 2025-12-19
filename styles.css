@@ -1,4 +1,4 @@
-/* ---------- ORIGINAL DESKTOP STYLES (unchanged) ---------- */
+/* ----------------- DESKTOP STYLES (NIŠTA NE MIJENJANO) ----------------- */
 body {
     background: #093016;
     color: #fff;
@@ -282,7 +282,7 @@ html, body {
     filter: grayscale(85%);
 }
 
-/* SIDEBAR DRAWER (unchanged for desktop behavior) */
+/* SIDEBAR DRAWER (desktop behavior unchanged) */
 .sidebar-drawer {
     position: fixed;
     top: 0;
@@ -504,46 +504,17 @@ html, body {
   margin-top: 10px;
 }
 
-/* ===== Additional responsive refinements (kept, and extended for larger mobile fonts) ===== */
+/* ------------- AGGRESIVE MOBILE OVERRIDES (NIŠTA ZA DESKTOP) ------------- */
 
-/* Tablet-ish */
-@media (max-width: 1100px) {
-  .hero-inner { max-width: 420px; padding: 0 8px; }
-  .hero-title { font-size: 2.05rem; }
-  .hero-subtitle { font-size: 1.06rem; }
-}
-
-/* Medium tablet */
-@media (max-width: 900px) and (min-width: 601px) {
-  .games-grid { gap: 22px; padding: 0 14px 30px 14px; }
-  .game-card { padding: 22px 16px 18px 16px; border-radius: 14px; }
-  .header-center-title { font-size: 1.2rem; left: 50%; transform: translateX(-50%); }
-}
-
-/* ----------------- MOBILE: Aggressive, large, stacked layout ----------------- */
-/* This section changes layout/size on phones only. Desktop rules above are unchanged. */
-@media (max-width: 600px) {
-  /* Header adjustments for mobile */
-  .main-header { height: 52px; padding: 0 10px; }
-  .menu-btn { width: 46px; height: 52px; }
-  .header-logo { width: 36px; height: 36px; margin-right: 10px; }
-  .header-title { margin-right: 1rem; font-size: 1.02rem; }
-  /* keep center title hidden to avoid overlap with buttons on very small screens */
-  .header-center-title { display: none; }
-
-  /* Make hero compact but text readable (slightly bigger for small screens) */
-  .hero-section { padding: 26px 0 18px 0; box-shadow: none; }
-  .hero-inner { max-width: 420px; padding: 0 12px; }
-  .hero-title { font-size: 1.9rem; letter-spacing: 1px; }
-  .hero-subtitle { font-size: 1.06rem; }
-
-  /* Make games grid single column and larger for touch targets */
+/* Wider mobile / phablet breakpoint - apply larger sizes on bigger phones too */
+@media (max-width: 900px) {
+  /* Stack cards into a single column and enlarge so phones + phablets see bigger content */
   .games-grid {
     display: block;
-    width: 100%;
+    width: 92%;
     max-width: none;
     margin: 18px auto 0 auto;
-    padding: 0 14px 28px 14px;
+    padding: 0 14px 24px 14px;
     box-sizing: border-box;
   }
   .games-grid > a.game-card,
@@ -555,15 +526,15 @@ html, body {
     box-sizing: border-box;
   }
 
-  /* Bigger, more touch-friendly cards */
+  /* reduce card size a bit for better balance on phablets */
   .game-card, .game-card.disabled {
-    padding: 18px 16px;
+    padding: 14px 12px;
     border-radius: 14px;
     border-width: 1px;
-    gap: 14px;
+    gap: 12px;
   }
   .game-icon {
-    font-size: 2.4rem;
+    font-size: 2.2rem;
     min-width: 44px;
     margin-right: 12px;
   }
@@ -575,17 +546,13 @@ html, body {
     line-height: 1.15;
   }
   .game-desc {
-    font-size: 1.06rem;
+    font-size: 1.0rem;
     white-space: normal;
     overflow: visible;
     text-overflow: unset;
   }
 
-  /* Slightly larger coming soon label and lock icon */
-  .coming-soon-label { font-size: 1.04rem; }
-  .lock-icon { font-size: 1.2em; margin-right: 8px; }
-
-  /* Sidebar: full-screen overlay on mobile with larger text */
+  /* Sidebar: allow full-screen on wider phones / phablets */
   .sidebar-drawer {
       width: 100%;
       left: -100%;
@@ -595,70 +562,136 @@ html, body {
       overflow-y: auto;
   }
   .sidebar-drawer.open { left: 0; z-index: 1005; }
-  /* keep backdrop visible when drawer open */
-  .sidebar-backdrop {
-      display: none; /* default hidden; JS toggles via open sibling rule below */
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.4);
-      z-index: 1000;
+  .sidebar-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.36); z-index: 1000; }
+  .sidebar-drawer.open ~ .sidebar-backdrop { display: block; }
+
+  .sidebar-top { padding: 12px 14px; }
+  .sidebar-logo { width: 40px; height: 40px; margin-right: 10px; }
+  .sidebar-title { font-size: 1.32rem; }
+  .sidebar-close-btn { font-size: 1.9rem; padding: 0 6px; }
+  .sidebar-header { font-size: 1.12rem; padding: 14px 16px 8px 16px; }
+  .sidebar-game-btn { padding: 12px 16px; }
+  .sidebar-game-title { font-size: 1.16rem; line-height: 1.16; }
+  .sidebar-game-desc { font-size: 1.00rem; }
+
+  /* Footer for phones */
+  .site-footer { padding: 20px 12px; margin-top: 24px; }
+  .social-icons a { font-size: 1.4rem; margin: 0 10px; }
+  .footer-links { margin: 12px 0; font-size: 0.98rem; }
+  .footer-copy { font-size: 0.9rem; }
+}
+
+/* Small phones - make everything touch-friendly but smaller than previous */
+@media (max-width: 600px) {
+  .main-header { height: 52px; padding: 0 10px; }
+  .menu-btn { width: 46px; height: 52px; }
+  .header-logo { width: 36px; height: 36px; margin-right: 10px; }
+  .header-title { margin-right: 0.8rem; font-size: 1rem; }
+  .header-center-title { display: none; }
+
+  .hero-section { padding: 20px 0 14px 0; box-shadow: none; }
+  .hero-inner { max-width: 380px; padding: 0 12px; }
+  .hero-title { font-size: 1.9rem; }
+  .hero-subtitle { font-size: 1.0rem; }
+
+  /* cards full-width stacked, moderated size */
+  .games-grid {
+    padding: 0 12px 22px 12px;
+    margin-top: 12px;
+    width: 96%;
   }
+  .games-grid > a.game-card,
+  .games-grid > div.game-card,
+  .games-grid > div.game-card.disabled {
+    margin-bottom: 12px;
+  }
+
+  .game-card, .game-card.disabled {
+    padding: 12px 12px;
+    border-radius: 14px;
+    gap: 12px;
+    border-width: 1px;
+  }
+  .game-icon {
+    font-size: 2.8rem;
+    min-width: 48px;
+    margin-right: 12px;
+  }
+  .game-title {
+    font-size: 1.45rem;
+    white-space: normal;
+    line-height: 1.12;
+  }
+  .game-desc {
+    font-size: 1.02rem;
+  }
+  .coming-soon-label { font-size: 1.02rem; }
+  .lock-icon { font-size: 1.12em; margin-right: 8px; }
+
+  /* Sidebar full-screen overlay with comfortable text sizes */
+  .sidebar-drawer {
+      width: 100%;
+      left: -100%;
+      height: 100%;
+      transition: left 0.2s ease;
+      overflow-y: auto;
+      background: #14341b;
+  }
+  .sidebar-drawer.open { left: 0; z-index: 1005; }
+  .sidebar-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.42); z-index: 1000; }
   .sidebar-drawer.open ~ .sidebar-backdrop { display: block; }
 
   .sidebar-top { padding: 14px 16px; }
-  .sidebar-logo { width: 40px; height: 40px; margin-right: 12px; }
+  .sidebar-logo { width: 42px; height: 42px; margin-right: 12px; }
   .sidebar-title { font-size: 1.36rem; }
-
-  .sidebar-close-btn { font-size: 2rem; padding: 0 6px; }
+  .sidebar-close-btn { font-size: 2rem; }
 
   .sidebar-header {
     font-size: 1.18rem;
-    padding: 16px 18px 10px 18px;
+    padding: 14px 16px 10px 16px;
   }
-  .sidebar-game-btn { padding: 12px 18px; }
+  .sidebar-game-btn { padding: 12px 16px; }
   .sidebar-game-title {
     font-size: 1.18rem;
-    line-height: 1.15;
+    line-height: 1.14;
   }
   .sidebar-game-desc {
     font-size: 1.02rem;
   }
 
-  /* Footer adjustments for mobile */
-  .site-footer { padding: 22px 14px; margin-top: 28px; }
-  .footer-content { padding: 0 6px; }
-  .social-icons a { font-size: 1.45rem; margin: 0 10px; }
-  .footer-links { margin: 14px 0; font-size: 1rem; }
-  .footer-copy { font-size: 0.9rem; }
+  /* footer tweaks */
+  .site-footer { padding: 16px 12px; }
+  .social-icons a { font-size: 1.35rem; margin: 0 8px; }
+  .footer-links { margin: 10px 0; font-size: 0.98rem; }
+  .footer-copy { font-size: 0.92rem; }
 }
 
-/* Very small phones: keep fonts readable and spacing comfortable */
+/* Very small devices - ensure everything still readable but compact */
 @media (max-width: 420px) {
   .main-header { height: 50px; padding: 0 8px; }
   .menu-btn { width: 44px; height: 50px; }
   .header-logo { width: 34px; height: 34px; }
-  .header-title { font-size: 0.98rem; }
+  .header-title { font-size: 0.98rem; display: inline-block; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-  .hero-inner { max-width: 360px; padding: 0 10px; }
-  .hero-title { font-size: 1.6rem; }
-  .hero-subtitle { font-size: 1rem; }
+  .hero-inner { max-width: 340px; padding: 0 8px; }
+  .hero-title { font-size: 1.7rem; }
+  .hero-subtitle { font-size: 0.98rem; }
 
-  .games-grid { padding: 0 12px 18px 12px; }
-  .game-card, .game-card.disabled { padding: 14px 12px; border-radius: 12px; }
-  .game-icon { font-size: 2.1rem; min-width: 40px; }
-  .game-title { font-size: 1.16rem; }
-  .game-desc { font-size: 1rem; }
+  .games-grid { padding: 0 10px 14px 10px; width: 98%; }
+  .game-card, .game-card.disabled { padding: 10px 10px; border-radius: 12px; }
+  .game-icon { font-size: 2.4rem; min-width: 44px; }
+  .game-title { font-size: 1.22rem; }
+  .game-desc { font-size: 0.98rem; }
 
-  /* Sidebar full-screen on smallest phones */
   .sidebar-drawer { width: 100%; left: -100%; }
   .sidebar-drawer.open { left: 0; }
-  .sidebar-game-btn { padding: 12px 16px; }
+  .sidebar-game-btn { padding: 10px 14px; }
   .sidebar-game-title { font-size: 1.12rem; }
-  .sidebar-game-desc { font-size: 1rem; }
+  .sidebar-game-desc { font-size: 0.98rem; }
 
-  .site-footer { padding: 16px 10px; }
-  .social-icons a { margin: 0 6px; font-size: 1.2rem; }
-  .footer-links a { margin: 0 6px; font-size: 0.95rem; display: inline-block; }
+  .site-footer { padding: 12px 8px; }
+  .social-icons a { margin: 0 6px; font-size: 1.1rem; }
+  .footer-links a { margin: 0 6px; font-size: 0.9rem; display: inline-block; }
 }
 
 /* Accessibility: visible focus on touch devices */
@@ -668,3 +701,4 @@ html, body {
     outline-offset: 2px;
   }
 }
+

@@ -1343,17 +1343,36 @@ const playerList = document.getElementById("playerList");
 const clubSearch = document.getElementById("clubSearch");
 const playerSearch = document.getElementById("playerSearch");
 function showModal(modal) {
+    // set visible and trap background scroll on mobile
     modal.style.display = "block";
+    document.body.classList.add('modal-open');
+
+    // if it's the club modal, reset search to improve UX on mobile
     if (modal === clubModal) {
         clubSearch.value = "";
+        setTimeout(() => clubSearch.focus(), 50);
+    }
+    if (modal === playerModal) {
+        playerSearch.value = "";
+        setTimeout(() => playerSearch.focus(), 50);
     }
 }
 function hideModal(modal) {
     modal.style.display = "none";
+    // remove the modal-open only if no other modal is open
+    const anyOpen = Array.from(document.querySelectorAll('.modal')).some(m => m.style.display === 'block');
+    if (!anyOpen) document.body.classList.remove('modal-open');
+
     if (modal === clubModal) {
         clubSearch.value = "";
     }
 }
+window.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        if (clubModal && clubModal.style.display === 'block') hideModal(clubModal);
+        if (playerModal && playerModal.style.display === 'block') hideModal(playerModal);
+    }
+});
 document.getElementById("closeClubModal").onclick = () => hideModal(clubModal);
 document.getElementById("closePlayerModal").onclick = () => hideModal(playerModal);
 window.onclick = (event) => {
