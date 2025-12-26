@@ -582,40 +582,43 @@ body {
     color: #14341b;
 }
 @media (max-width: 900px) {
-  .game-container { padding: 64px 0.8rem 0 0.8rem; }
+  .game-container { padding: 25px 0.5rem 0 0.5rem; }
 
   /* Force exactly 2 columns for mode buttons (two per row) */
-  .mode-buttons {
+    .mode-buttons {
     display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 12px !important;
-    width: calc(100% - 24px);
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 6px !important;            /* manji razmak */
+    width: 100%;
     max-width: 520px;
-    margin: 0 auto 12px auto;
+    margin: 0 auto 10px auto;
     justify-items: stretch;
     align-items: center;
-  }
+    }
+
 
   /* Make each button fill its grid cell and be taller so text doesn't overlap */
-  .mode-btn {
-    width: 100% !important;
-    height: 84px !important;
-    min-height: 84px !important;
-    padding: 10px 12px;
-    border-radius: 12px;
-    font-size: 0.98rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    white-space: normal;
-    line-height: 1.02;
-  }
-  .mode-btn span { font-size: .9rem; margin-top: 4px; }
+    .mode-btn {
+        width: auto !important;        /* 🔴 makni 170px */
+        height: 40px !important;       /* 🔴 UMJESTO 80px */
+        min-height: 40px !important;
+        padding: 4px 6px !important;   /* 🔴 manje paddinga */
+        border-radius: 8px !important; /* 🔴 manji radius */
+        font-size: 0.55rem;
 
-  /* Slightly reduce icon size to preserve space */
-  .mode-btn i { font-size: 0.95rem; margin-bottom: 4px; }
+        box-sizing: border-box;
+    }
+
+    .mode-btn span {
+    font-size: 0.6rem;
+    margin-top: 2px;
+    }
+
+    .mode-btn i {
+    font-size: 0.7rem;
+    margin-bottom: 2px;
+    }
+
 
   /* Scoreboard single row */
   .scoreboard {
