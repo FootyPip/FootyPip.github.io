@@ -1,4 +1,3 @@
-// contents of file
 let currentClubCell = null;
 let currentGridCell = null;
 let currentMode = "manual";
@@ -520,8 +519,7 @@ async function fetchCategoryPositions(mode = "manual") {
 
     // But renderClubs expects arrays of category strings in topClubs/leftClubs (we earlier used category strings).
     // To keep compatibility, return plain strings but also set display objects inside renderClubs when needed.
-    // We'll return strings (category names) but also expose a map for display when setting badges.
-    // For simplicity return strings (renderClubs will call setClubCellWithBadgeAndName which supports object)
+    // We'll return strings (renderClubs will call setClubCellWithBadgeAndName which supports object)
     // So here return arrays of item objects:
     return {
         top: topItems,
@@ -849,7 +847,7 @@ function populateClubModal() {
             // Only update placeholder and update list type
             renderList(btn.getAttribute("data-type"), true);
             clubList.style.display = "block";
-            setTimeout(() => clubSearch.focus(), 0);
+            // NOTE: removed automatic focus here to avoid reopening keyboard when switching tabs
         };
     });
 
@@ -1401,5 +1399,3 @@ document.getElementById("sidebarCloseBtn").onclick = function() {
     document.getElementById("sidebarDrawer").classList.remove("open");
     document.getElementById("sidebarBackdrop").style.display = "none";
 };
-
-
