@@ -406,11 +406,12 @@ body {
 .modal {
     display: none;
     position: fixed;
-    z-index: 99;
     left: 0; top: 0;
     width: 100%; height: 100%;
     overflow: auto;
     background: rgba(0,0,0,0.5);
+    /* default stacking will be overridden below with a high z-index so modals display above grid */
+    z-index: 99;
 }
 .modal-content {
     background: #14341b;
@@ -748,8 +749,19 @@ body {
   }
 }
 
-/* Small z-index safety so modals/buttons never visually stack weirdly */
-.modal, .mode-btn, .club-cell, .grid-cell { position: relative; z-index: 1; }
+/* Small z-index safety so buttons/cells keep local stacking context,
+   but ensure modals always sit above everything by explicitly giving them a very high z-index. */
+.mode-btn, .club-cell, .grid-cell { position: relative; z-index: 1; }
+
+/* Ensure modals always overlay the board / other UI */
+.modal {
+  position: fixed; /* already set above but reinforce here */
+  z-index: 10050; /* high value to guarantee overlay */
+}
+.modal .modal-content {
+  position: relative;
+  z-index: 10051;
+}
 
 /* END of mobile overrides */
 /* (Desktop rules remain above exactly as originally provided.) */
