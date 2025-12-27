@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FootyGrid Database Filter</title>
+  <style>
+    :root {
+      --bg-dark: #062f1e;
+      --bg-card: #0b3f2a;
+      --bg-accent: #0f5a3a;
+      --text-main: #ffffff;
+      --text-muted: #b7d5c7;
+      --border-accent: #1fa36b;
+    }
+
+    * { box-sizing: border-box; font-family: Inter, system-ui, sans-serif; }
+
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #06301f, #041e14);
+      color: var(--text-main);
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 20px 32px;
+      font-size: 24px;
+      font-weight: 700;
+      background: #052619;
+      border-bottom: 1px solid #0d4a32;
+    }
+
+    main { padding: 32px; }
+
+    .controls {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    button {
+      background: var(--bg-accent);
+      border: 1px solid var(--border-accent);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button:hover { background: #157d52; }
+
+    .category-row {
+      display: grid;
+      grid-template-columns: 160px 1fr 40px;
+      gap: 12px;
+      align-items: center;
+      background: var(--bg-card);
+      padding: 16px;
+      border-radius: 16px;
+      margin-bottom: 12px;
+    }
+
+    select {
+      background: #062f1e;
+      color: white;
+      border: 1px solid #1b7a53;
+      border-radius: 8px;
+      padding: 8px;
+    }
+
+    .remove-btn {
+      background: transparent;
+      border: none;
+      color: #ff8c8c;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .results {
+      margin-top: 32px;
+      background: var(--bg-card);
+      border-radius: 20px;
+      padding: 24px;
+    }
+
+    .player {
+      padding: 8px 0;
+      border-bottom: 1px solid #124a33;
+      color: var(--text-muted);
+    }
+
+    .player:last-child { border-bottom: none; }
+  </style>
+</head>
+<body>
+  <header>FootyGrid · Player Database Filter</header>
+
+  <main>
+    <div class="controls">
+      <button id="addCategory">+ Add category</button>
+      <button id="apply">Apply filters</button>
+    </div>
+
+    <div id="categories"></div>
+
+    <div class="results">
+      <h3>Matching players</h3>
+      <div id="players"></div>
+    </div>
+  </main>
+
+  <script>
+    let categoriesToIds = {};
+    let players = {};
+
+    fetch('../../footygrid/data/categories_to_ids.json').then(r => r.json()).then(d => categoriesToIds = d);
+    fetch('../../footygrid/data/players_ids.json').then(r => r.json()).then(d => players = d);
+
+    const categoriesDiv = document.getElementById('categories');
+
+    function addCategoryRow() {
+      const row = document.createElement('div');
+      row.className = 'category-row';
+
+      const categorySelect = document.createElement('select');
+      Object.keys(categoriesToIds).forEach(c => {
+        const o = document.createElement('option');
+        o.value = c; o.textContent = c;
+        categorySelect.appendChild(o);
+      });
+
+      const valueSelect = document.createElement('select');
+
+      categorySelect.onchange = () => {
+        valueSelect.innerHTML = '';
+        const values = Object.keys(categoriesToIds[categorySelect.value] || {});
+        values.forEach(v => {
+          const o = document.createElement('option');
+          o.value = v; o.textContent = v;
+          valueSelect.appendChild(o);
+        });
+      };
+
+      categorySelect.onchange();
+
+      const remove = document.createElement('button');
+      remove.textContent = '×';
+      remove.className = 'remove-btn';
+      remove.onclick = () => row.remove();
+
+      row.append(categorySelect, valueSelect, remove);
+      categoriesDiv.appendChild(row);
+    }
+
+    document.getElementById('addCategory').onclick = addCategoryRow;
+
+    document.getElementById('apply').onclick = () => {
+      const rows = document.querySelectorAll('.category-row');
+      let resultSet = null;
+
+      rows.forEach(r => {
+        const [catSel, valSel] = r.querySelectorAll('select');
+        const ids = new Set(categoriesToIds[catSel.value][valSel.value] || []);
+        resultSet = resultSet === null ? ids : new Set([...resultSet].filter(x => ids.has(x)));
+      });
+
+      const container = document.getElementById('players');
+      container.innerHTML = '';
+
+      if (!resultSet || resultSet.size === 0) {
+        container.textContent = 'No players found.';
+        return;
+      }
+
+      [...resultSet].forEach(id => {
+        const div = document.createElement('div');
+        div.className = 'player';
+        div.textContent = players[id]?.name || id;
+        container.appendChild(div);
+      });
+    };
+
+    addCategoryRow();
+  </script>
+</body>
+</html>
