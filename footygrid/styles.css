@@ -245,6 +245,8 @@ body {
     font-weight: 600;
 }
 
+
+
 .grid-cell {
     background: var(--green-accent);
     color: #fff;
@@ -582,6 +584,7 @@ body {
     background: var(--green-light);
     color: #14341b;
 }
+
 @media (max-width: 900px) {
   .game-container { padding: 25px 0.5rem 0 0.5rem; }
 
@@ -657,12 +660,17 @@ body {
   }
 
   /* Reduce title/logo size to prevent overlap */
-  .title-cell img {
-    max-width: 48px;
-    max-height: 48px;
-    display:block;
-    margin: 0 auto;
+.title-cell {
+    overflow: hidden;
+}
+
+.title-cell img {
+    max-width: 100%;
+    max-height: 100%;
+    flex-shrink: 1;
+    object-fit: contain;
   }
+}
 
   /* Reduce club badge and label sizes to avoid pushing text */
   .club-badge { width: 52px; max-height: 52px; }
@@ -670,7 +678,7 @@ body {
 
   /* Reduce CHOOSE CATEGORY main text inside cell */
   .club-cell .choose-category-text {
-    font-size: 0.85rem;
+    font-size: 0.80rem;
     line-height: 1.02;
     padding: 6px;
     white-space: normal;
@@ -734,10 +742,10 @@ body {
   .grid-cell, .club-cell, .title-cell {
     font-size: .88rem !important;
   }
-  .title-cell img { max-width: 44px; max-height:44px; }
+  .title-cell img { max-width: 30px; max-height:30px; }
   .club-badge { width: 40px; max-height:40px; }
   .club-name-under-badge { font-size: .8rem; }
-  .club-cell .choose-category-text { font-size: .78rem; }
+  .club-cell .choose-category-text { font-size: .65rem; }
   #clubList, #playerList { max-height: 44vh; }
 }
 
