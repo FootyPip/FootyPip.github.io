@@ -62,7 +62,7 @@ body {
     outline: none;
     padding: 10px;
     box-sizing: border-box;
-    white-space: normal; /* allow wrapping on small screens */
+    white-space: normal;
 }
 
 .mode-btn i {
@@ -124,7 +124,6 @@ body {
 .mode-btn:focus { outline: none; }
 
 /* Scoreboard visibility helper */
-/* Scoreboard etc. desktop defaults */
 .status-bar-wrap.invisible {
     visibility: hidden !important;
     pointer-events: none !important;
@@ -191,21 +190,18 @@ body {
     font-size: 1.2rem;
 }
 
-/* Hover (always wins visually) */
 .btn-skip:hover {
     background: var(--green-light) !important;
     color: var(--green-dark) !important;
     box-shadow: 0 0 0 3px var(--green-light)99;
 }
 
-/* Keyboard accessibility: focus-visible */
 .btn-skip:focus-visible {
     background: var(--green-light) !important;
     color: var(--green-dark) !important;
     box-shadow: 0 0 0 3px var(--green-light)99;
 }
 
-/* Remove mouse-focus highlight, keep outline clean */
 .btn-skip:focus {
     outline: none;
 }
@@ -225,8 +221,8 @@ body {
     border-radius: var(--border-radius);
     box-shadow: none;
     display: grid;
-    grid-template-columns: repeat(4, 120px); /* fixed width for each cell */
-    grid-template-rows: repeat(4, 120px);    /* fixed height for each cell */
+    grid-template-columns: repeat(4, 120px);
+    grid-template-rows: repeat(4, 120px);
     gap: 12px;
 }
 .grid-cell, .club-cell, .title-cell {
@@ -244,8 +240,6 @@ body {
     font-size: 1.13rem;
     font-weight: 600;
 }
-
-
 
 .grid-cell {
     background: var(--green-accent);
@@ -340,7 +334,6 @@ body {
     box-sizing: border-box;
 }
 
-
 .club-cell:focus {
     box-shadow: 0 0 0 3px var(--green-light)cc;
     background: var(--green-light);
@@ -359,6 +352,7 @@ body {
     flex-direction: column;
     cursor: default;
     user-select: none;
+    overflow: hidden;
 }
 
 .club-badge {
@@ -412,7 +406,6 @@ body {
     width: 100%; height: 100%;
     overflow: auto;
     background: rgba(0,0,0,0.5);
-    /* default stacking will be overridden below with a high z-index so modals display above grid */
     z-index: 99;
 }
 .modal-content {
@@ -431,13 +424,13 @@ body {
     width: 400px;
     max-width: 95vw;
 }
-/* ONLY club choosing modal */
+
 #clubModal .club-filter-buttons {
-    flex-wrap: wrap;     /* ⭐ ključ */
+    flex-wrap: wrap;
 }
 
 #clubModal .club-filter-btn {
-    flex: 1 1 calc(50% - 3px); /* 2 gumba po redu */
+    flex: 1 1 calc(50% - 3px);
     white-space: nowrap;
     text-align: center;
 }
@@ -585,171 +578,257 @@ body {
     color: #14341b;
 }
 
-@media (max-width: 900px) {
-  .game-container { padding: 25px 0.5rem 0 0.5rem; }
+/* ========== MOBILE OPTIMIZATIONS ========== */
 
-  /* Force exactly 2 columns for mode buttons (two per row) */
-    .mode-buttons {
+@media (max-width: 900px) {
+  .game-container { 
+    padding: 20px 0.5rem 20px 0.5rem;
+    min-height: unset !important;
+    height: auto;
+  }
+
+  /* Mode buttons: 4 columns, smaller */
+  .mode-buttons {
     display: grid !important;
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-    gap: 6px !important;            /* manji razmak */
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 6px !important;
     width: 100%;
     max-width: 520px;
-    margin: 0 auto 10px auto;
-    justify-items: stretch;
-    align-items: center;
-    }
+    margin: 0 auto 8px auto;
+  }
 
+  .mode-btn {
+    width: 100% !important;
+    height: 56px !important;
+    padding: 4px !important;
+    border-radius: 8px !important;
+    font-size: 0.85rem !important;
+    box-sizing: border-box;
+  }
 
-  /* Make each button fill its grid cell and be taller so text doesn't overlap */
-    .mode-btn {
-        width: auto !important;        /* 🔴 makni 170px */
-        height: 40px !important;       /* 🔴 UMJESTO 80px */
-        min-height: 40px !important;
-        padding: 4px 6px !important;   /* 🔴 manje paddinga */
-        border-radius: 8px !important; /* 🔴 manji radius */
-        font-size: 0.55rem;
+  .mode-btn span {
+    font-size: 0.55rem !important;
+    margin-top: 1px !important;
+  }
 
-        box-sizing: border-box;
-    }
+  .mode-btn i {
+    font-size: 0.75rem !important;
+    margin-bottom: 2px !important;
+  }
 
-    .mode-btn span {
-    font-size: 0.6rem;
-    margin-top: 2px;
-    }
+  /* Tighter scoreboard */
+  .status-bar-wrap {
+    margin: 4px auto 8px auto;
+  }
 
-    .mode-btn i {
-    font-size: 0.7rem;
-    margin-bottom: 2px;
-    }
-
-
-  /* Scoreboard single row */
   .scoreboard {
     width: 94%;
-    padding: 10px 12px;
-    gap: 12px;
-    border-radius: 12px;
+    padding: 8px 10px;
+    gap: 10px;
+    border-radius: 10px;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
   }
-  .score-info { font-size: 1.15rem; flex: 0 0 auto; }
-  .turn-info { font-size: 0.95rem; flex: 1 1 auto; justify-content: center; }
-  .btn-skip { padding: .36rem .8rem; font-size:.9rem; flex: 0 0 auto; }
+  .score-info { font-size: 1.1rem; flex: 0 0 auto; }
+  .turn-info { font-size: 0.9rem; flex: 1 1 auto; justify-content: center; }
+  .btn-skip { padding: .32rem .7rem; font-size: .85rem; flex: 0 0 auto; }
 
-  /* Increase grid box size (make board use most of width) */
+  /* Grid: FIXED sizing to prevent overlap */
   .grid.board-grid-wrap {
-    width: calc(100% - 20px); /* larger than before so boxes grow */
-    max-width: 560px;         /* allow slightly wider on larger phones */
-    margin: 6px auto 14px auto;
-    grid-template-columns: repeat(4, 1fr) !important;
-    grid-auto-rows: 1fr;
-    gap: 10px !important;
+    width: calc(100% - 20px);
+    max-width: 340px;
+    margin: 4px auto 8px auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 6px !important;
+    aspect-ratio: 1 / 1;
   }
 
-  /* Make cells square and a bit larger; reduce internal font to avoid overlap */
   .grid-cell, .club-cell, .title-cell {
-    width: 100% !important;
+    width: 100%;
+    height: 100%;
     aspect-ratio: 1 / 1;
-    border-radius: 12px;
-    font-size: 0.96rem !important; /* smaller text so CHOOSE CATEGORY wraps safely */
-    box-shadow: var(--cell-shadow);
-    padding: 6px;
+    border-radius: 8px;
+    font-size: 0.85rem !important;
+    padding: 2px;
     box-sizing: border-box;
   }
 
-  /* Reduce title/logo size to prevent overlap */
-.title-cell {
+  /* Logo: properly scaled */
+  .title-cell {
     overflow: hidden;
-}
-
-.title-cell img {
-    max-width: 100%;
-    max-height: 100%;
-    flex-shrink: 1;
-    object-fit: contain;
+    padding: 0;
   }
-}
 
-  /* Reduce club badge and label sizes to avoid pushing text */
-  .club-badge { width: 52px; max-height: 52px; }
-  .club-name-under-badge { font-size: .84rem; }
+  .title-cell img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 4px;
+    box-sizing: border-box;
+  }
 
-  /* Reduce CHOOSE CATEGORY main text inside cell */
+  .club-badge { width: 44px; max-height: 44px; }
+  
+  /* REDUCED club name text under badges */
+  .club-name-under-badge { 
+    font-size: .60rem !important;
+    margin-top: 1px;
+    line-height: 1.0;
+  }
+
   .club-cell .choose-category-text {
-    font-size: 0.80rem;
-    line-height: 1.02;
-    padding: 6px;
+    font-size: 0.70rem;
+    line-height: 1.1;
+    padding: 3px;
     white-space: normal;
     word-break: break-word;
   }
 
-  /* Modal sizing & list height */
+  /* SMALLER footer text and moved up */
+  .footer {
+    margin-top: 1.2rem !important;
+    font-size: 0.90rem !important;
+    line-height: 1.3;
+  }
+
   .modal-content {
-      width: calc(100% - 30px);
-      max-width: 520px;
-      padding: 1.0rem;
-      margin: 12vh auto;
-      border-radius: 14px;
-      box-sizing: border-box;
-  }
-  #clubList, #playerList { max-height: 52vh; padding-right: 6px; overflow-y:auto; }
-}
-
-/* Narrow phones: keep two columns for mode buttons */
-@media (max-width: 600px) {
-  .mode-buttons {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 10px !important;
-    width: calc(100% - 20px);
-    max-width: 440px;
-  }
-  .mode-btn {
-    height: 88px !important;
-    font-size: 0.96rem !important;
-  }
-
-  .grid.board-grid-wrap {
-    width: calc(100% - 20px);
+    width: calc(100% - 30px);
     max-width: 520px;
-    gap: 8px !important;
+    padding: 1.0rem;
+    margin: 12vh auto;
+    border-radius: 12px;
+    box-sizing: border-box;
   }
-  .grid-cell, .club-cell, .title-cell {
-    font-size: .94rem !important;
-  }
-  .club-badge { width: 48px; max-height: 48px; }
-  .club-name-under-badge { font-size: .82rem; }
+  #clubList, #playerList { max-height: 52vh; padding-right: 6px; overflow-y: auto; }
 }
 
-/* Very small phones: still try two columns; if extremely narrow it will collapse naturally */
-@media (max-width: 420px) {
-  .mode-buttons {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    width: calc(100% - 18px);
-    gap: 8px !important;
+@media (max-width: 600px) {
+  .game-container {
+    padding: 15px 0.5rem 15px 0.5rem !important;
+    min-height: unset !important;
+    height: auto;
   }
+
+  .mode-buttons {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    width: calc(100% - 16px);
+    max-width: none;
+    margin: 0 auto 8px auto;
+  }
+  
   .mode-btn {
-    height: 86px !important;
-    font-size: 0.92rem !important;
+    height: 68px !important;
+    font-size: 0.88rem !important;
+  }
+
+  .mode-btn span {
+    font-size: 0.58rem !important;
+  }
+
+  .mode-btn i {
+    font-size: 0.8rem !important;
   }
 
   .grid.board-grid-wrap {
-    width: calc(100% - 18px);
+    width: calc(100% - 16px);
+    max-width: 360px;
     gap: 6px !important;
   }
+  
   .grid-cell, .club-cell, .title-cell {
-    font-size: .88rem !important;
+    font-size: .85rem !important;
   }
-  .title-cell img { max-width: 30px; max-height:30px; }
-  .club-badge { width: 40px; max-height:40px; }
-  .club-name-under-badge { font-size: .8rem; }
-  .club-cell .choose-category-text { font-size: .65rem; }
+  
+  .club-badge { width: 42px; max-height: 42px; }
+  
+  /* REDUCED club name text */
+  .club-name-under-badge { 
+    font-size: .58rem !important;
+    margin-top: 0px;
+  }
+
+  /* SMALLER footer */
+  .footer {
+    margin-top: 1.0rem !important;
+    font-size: 0.85rem !important;
+    line-height: 1.2;
+  }
+}
+
+@media (max-width: 420px) {
+  .game-container {
+    padding: 12px 0.5rem 12px 0.5rem !important;
+    min-height: unset !important;
+    height: auto;
+  }
+
+  .mode-buttons {
+    grid-template-columns: repeat(2, 1fr) !important;
+    width: calc(100% - 12px);
+    gap: 6px !important;
+    margin: 0 auto 6px auto;
+  }
+  
+  .mode-btn {
+    height: 60px !important;
+    font-size: 0.78rem !important;
+    padding: 3px !important;
+  }
+
+  .mode-btn span {
+    font-size: 0.50rem !important;
+  }
+
+  .mode-btn i {
+    font-size: 0.65rem !important;
+  }
+
+  .status-bar-wrap {
+    margin: 3px auto 6px auto;
+  }
+
+  .grid.board-grid-wrap {
+    width: calc(100% - 12px);
+    max-width: 320px;
+    gap: 5px !important;
+  }
+  
+  .grid-cell, .club-cell, .title-cell {
+    font-size: .78rem !important;
+  }
+  
+  .title-cell img { 
+    width: 100%;
+    height: 100%;
+    padding: 3px;
+  }
+  
+  .club-badge { width: 36px; max-height: 36px; }
+  
+  /* REDUCED club name text for small phones */
+  .club-name-under-badge { 
+    font-size: .52rem !important;
+    margin-top: 0px;
+    line-height: 0.9;
+  }
+  
+  .club-cell .choose-category-text { font-size: .60rem; }
+  
+  /* SMALLER footer for small phones */
+  .footer {
+    margin-top: 0.8rem !important;
+    font-size: 0.80rem !important;
+    line-height: 1.1;
+  }
+  
   #clubList, #playerList { max-height: 44vh; }
 }
 
-/* Accessibility focus outlines */
+/* Accessibility */
 @media (any-pointer: coarse) {
   .mode-btn:focus, .btn-skip:focus, .grid-cell:focus, .club-cell:focus {
     outline: 3px solid rgba(25,214,120,0.27);
@@ -757,19 +836,14 @@ body {
   }
 }
 
-/* Small z-index safety so buttons/cells keep local stacking context,
-   but ensure modals always sit above everything by explicitly giving them a very high z-index. */
+/* Stacking */
 .mode-btn, .club-cell, .grid-cell { position: relative; z-index: 1; }
 
-/* Ensure modals always overlay the board / other UI */
 .modal {
-  position: fixed; /* already set above but reinforce here */
-  z-index: 10050; /* high value to guarantee overlay */
+  position: fixed;
+  z-index: 10050;
 }
 .modal .modal-content {
   position: relative;
   z-index: 10051;
 }
-
-/* END of mobile overrides */
-/* (Desktop rules remain above exactly as originally provided.) */
