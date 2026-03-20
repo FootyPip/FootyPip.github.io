@@ -1348,7 +1348,7 @@ function showModal(modal) {
     // if it's the club modal, reset search to improve UX on mobile
     if (modal === clubModal) {
         clubSearch.value = "";
-        setTimeout(() => clubSearch.focus(), 50);
+        // REMOVED: setTimeout(() => clubSearch.focus(), 50);
     }
     if (modal === playerModal) {
         playerSearch.value = "";
