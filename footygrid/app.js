@@ -598,6 +598,7 @@ function activateCellFeedback(cell) {
 let suppressClubSearchBlur = false;
 
 function populateClubModal() {
+    // Očisti input i list
     clubSearch.value = "";
     clubList.innerHTML = "";
 
@@ -605,7 +606,6 @@ function populateClubModal() {
     const nations = Object.keys(CategoriesToIds.nations || {});
     const managers = Object.keys(CategoriesToIds.managers || {});
     const teammates = Object.keys(CategoriesToIds.teammates || {});
-
 
     const winners = Object.keys(CategoriesToIds.winners || {}).map(c => ({
         display: `Won ${c}`,
@@ -820,19 +820,21 @@ function populateClubModal() {
         dropdownOpen = false;
     }
 
-    clubSearch.addEventListener("input", function(e) {
+    // ✅ NOVO: Koristi closure varijable umjesto globalnih event listenera
+    // Ovo sprječava akumulaciju listenera
+    const handleInput = function(e) {
         userInputValue = clubSearch.value;
         dropdownOpen = true;
         highlightIdx = -1;
         renderList(currentListType, true);
-    });
+    };
 
-    clubSearch.addEventListener("focus", function() {
+    const handleFocus = function() {
         dropdownOpen = true;
         renderList(currentListType, true);
-    });
+    };
 
-    clubSearch.addEventListener("blur", function(e) {
+    const handleBlur = function(e) {
         setTimeout(() => {
             const active = document.activeElement;
             if (clubModal.contains(active)) {
@@ -841,9 +843,9 @@ function populateClubModal() {
             dropdownOpen = false;
             clubList.innerHTML = "";
         }, 120);
-    });
+    };
 
-    clubSearch.addEventListener("keydown", function(e) {
+    const handleKeydown = function(e) {
         if (!dropdownOpen) return;
         if (suggestions.length === 0) return;
 
@@ -873,7 +875,25 @@ function populateClubModal() {
             dropdownOpen = false;
             clubList.innerHTML = "";
         }
-    });
+    };
+
+    // ✅ Ukloni sve stare listenere prije nego što dodam nove
+    clubSearch.removeEventListener("input", clubSearch._handleInput);
+    clubSearch.removeEventListener("focus", clubSearch._handleFocus);
+    clubSearch.removeEventListener("blur", clubSearch._handleBlur);
+    clubSearch.removeEventListener("keydown", clubSearch._handleKeydown);
+
+    // Spremi referencu na handlere kako bi ih kasnije mogao obrisati
+    clubSearch._handleInput = handleInput;
+    clubSearch._handleFocus = handleFocus;
+    clubSearch._handleBlur = handleBlur;
+    clubSearch._handleKeydown = handleKeydown;
+
+    // Dodaj nove listenere
+    clubSearch.addEventListener("input", handleInput);
+    clubSearch.addEventListener("focus", handleFocus);
+    clubSearch.addEventListener("blur", handleBlur);
+    clubSearch.addEventListener("keydown", handleKeydown);
 
     renderList(currentListType, true);
     clubList.scrollTop = 0;

@@ -365,12 +365,12 @@ body.modal-open {
 
 .club-name-under-badge {
     display: block;
-    font-size: 0.97rem;
+    font-size: 0.85rem;
     color: #fff;
     text-align: center;
-    margin-top: 3px;
+    margin-top: 2px;
     font-weight: 500;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.005em;
     white-space: normal;
 }
 
